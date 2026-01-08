@@ -1,0 +1,8 @@
+{
+  "name": "Mokhtar Portfolio Clone",
+  "description": "A premium UX/UI portfolio featuring dark/light modes, futuristic glassmorphism, and smooth Framer Motion animations inspired by Athos Dark.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}

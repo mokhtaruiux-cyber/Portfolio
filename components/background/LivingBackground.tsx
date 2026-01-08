@@ -1,0 +1,146 @@
+
+import React from "react";
+import { motion, useReducedMotion } from "framer-motion";
+
+/**
+ * LivingBackground: A high-end atmospheric background system.
+ * Features:
+ * 1. Animated morphing blobs (GPU accelerated)
+ * 2. Shifting grid overlay (infinite movement)
+ * 3. Noise grain texture
+ * 4. Theme-aware colors
+ */
+const cn = (...classes: (string | boolean | undefined)[]) => classes.filter(Boolean).join(' ');
+
+export const LivingBackground: React.FC<{ darkMode: boolean }> = ({ darkMode }) => {
+
+  const reduce = useReducedMotion();
+
+  return (
+    <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden select-none">
+      {/* 1. Base Gradient Glow (Hero anchor) */}
+      <div className={cn(
+        "absolute top-0 left-1/2 -translate-x-1/2 w-[140vw] h-screen blur-[120px] rounded-full opacity-40 will-change-[filter,opacity]",
+        darkMode ? 'bg-blue-600/20' : 'bg-blue-400/10'
+      )} />
+
+      {/* 2. Athos-style Hero Blobs (Larger, softer) */}
+      <div className="absolute inset-0 overflow-hidden">
+        <Blob
+          color={darkMode ? "bg-blue-500/15" : "bg-blue-300/10"}
+          size="w-[80vw] h-[80vw]"
+          initial={{ top: "-10%", left: "10%" }}
+          animate={{
+            x: [0, 60, -20, 0],
+            y: [0, -20, 40, 0],
+            scale: [1, 1.1, 0.95, 1],
+          }}
+          duration={30}
+          reduce={reduce}
+        />
+        <Blob
+          color={darkMode ? "bg-indigo-500/10" : "bg-indigo-200/5"}
+          size="w-[70vw] h-[70vw]"
+          initial={{ top: "20%", right: "-10%" }}
+          animate={{
+            x: [0, -40, 50, 0],
+            y: [0, 60, -30, 0],
+            scale: [1.1, 1, 1.05, 1.1],
+          }}
+          duration={40}
+          delay={2}
+          reduce={reduce}
+        />
+      </div>
+
+      {/* 3. Three Animated Morphing Blobs (General atmospheric) */}
+      <div className="absolute inset-0">
+        <Blob
+          color={darkMode ? "bg-blue-600/15" : "bg-blue-400/10"}
+          size="w-[50vw] h-[50vw]"
+          initial={{ top: "10%", left: "-10%" }}
+          animate={{
+            x: [0, 40, -20, 0],
+            y: [0, -40, 20, 0],
+            borderRadius: ["30% 70% 70% 30% / 30% 30% 70% 70%", "60% 40% 30% 70% / 50% 50% 30% 70%", "30% 70% 70% 30% / 30% 30% 70% 70%"]
+          }}
+          duration={25}
+          reduce={reduce}
+        />
+        <Blob
+          color={darkMode ? "bg-fuchsia-600/10" : "bg-fuchsia-200/5"}
+          size="w-[45vw] h-[45vw]"
+          initial={{ bottom: "10%", right: "10%" }}
+          animate={{
+            x: [0, -50, 30, 0],
+            y: [0, 50, -20, 0],
+            borderRadius: ["50% 50% 20% 80% / 25% 80% 20% 75%", "40% 60% 40% 60% / 40% 60% 40% 60%", "50% 50% 20% 80% / 25% 80% 20% 75%"]
+          }}
+          duration={35}
+          delay={1}
+          reduce={reduce}
+        />
+      </div>
+
+      {/* 4. Soft Grid Overlay */}
+      <div
+        className={cn(
+          "absolute inset-0 opacity-[0.02] animate-grid will-change-[background-position]",
+          darkMode ? 'invert opacity-[0.04]' : ''
+        )}
+        style={{
+          backgroundImage: `linear-gradient(#000 1.2px, transparent 1.2px), linear-gradient(90deg, #000 1.2px, transparent 1.2px)`,
+          backgroundSize: '80px 80px'
+        }}
+      />
+
+      {/* 5. CSS Noise Grain Overlay */}
+      <div className="absolute inset-0 opacity-[0.1] pointer-events-none mix-blend-soft-light"
+        style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
+        }}
+      />
+
+      {/* 6. Vignette Depth */}
+      <div className={cn(
+        "absolute inset-0 will-change-opacity",
+        darkMode
+          ? 'bg-[radial-gradient(circle_at_center,transparent_0%,rgba(3,3,3,0.7)_100%)]'
+          : 'bg-[radial-gradient(circle_at_center,transparent_0%,rgba(250,250,250,0.7)_100%)]'
+      )} />
+    </div>
+  );
+};
+
+type MotionValues = string | number | Array<string | number>;
+type MotionTarget = Record<string, MotionValues>;
+
+interface BlobProps {
+  color: string;
+  size: string;
+  initial: MotionTarget;
+  animate: MotionTarget;
+  duration: number;
+  delay?: number;
+  reduce: boolean;
+}
+
+const Blob = ({ color, size, initial, animate, duration, delay = 0, reduce }: BlobProps) => {
+  return (
+    <motion.div
+      initial={initial}
+      animate={reduce ? { opacity: 0.6 } : animate}
+      transition={{
+        duration,
+        repeat: Infinity,
+        ease: "linear",
+        delay
+      }}
+      className={cn(
+        "absolute blur-[100px] rounded-full will-change-transform pointer-events-none",
+        color,
+        size
+      )}
+    />
+  );
+};
