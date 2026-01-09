@@ -24,16 +24,19 @@ export function TypingEffect({ text = 'Typing Effect', as: Component = "span", c
             ref={ref}
             className={cn("font-black tracking-tighter", className)}
         >
-            {text.split('').map((letter, index) => (
-                <motion.span
-                    key={index}
-                    initial={{ opacity: 0 }}
-                    animate={isInView ? { opacity: 1 } : {}}
-                    transition={{ duration: 0.2, delay: index * 0.03 }}
-                >
-                    {letter}
-                </motion.span>
-            ))}
+            <span className="sr-only">{text}</span>
+            <span aria-hidden="true">
+                {text.split('').map((letter, index) => (
+                    <motion.span
+                        key={index}
+                        initial={{ opacity: 0 }}
+                        animate={isInView ? { opacity: 1 } : {}}
+                        transition={{ duration: 0.2, delay: index * 0.03 }}
+                    >
+                        {letter}
+                    </motion.span>
+                ))}
+            </span>
         </MotionComponent>
     );
 }
