@@ -1,0 +1,37 @@
+# QA + Proof (DoD) — REQUIRED
+**Status:** REQUIRED — a PR is not accepted without these proofs.
+
+---
+
+## A) Alignment Proof (Container)
+### Manual checks
+- Compare left edge of:
+  - nav links
+  - section titles
+  - card grids
+They must align on:
+- mobile
+- tablet
+- desktop
+
+---
+
+## B) Overflow Proof (No Horizontal Scroll)
+### DevTools console script (required)
+```js
+const offenders = [...document.querySelectorAll("*")]
+  .filter(el => el.scrollWidth > el.clientWidth)
+  .map(el => ({
+    el,
+    scrollWidth: el.scrollWidth,
+    clientWidth: el.clientWidth,
+    className: el.className
+  }));
+
+console.table(offenders.map(o => ({
+  scrollWidth: o.scrollWidth,
+  clientWidth: o.clientWidth,
+  className: (o.className || "").toString().slice(0, 120)
+})));
+
+offenders;

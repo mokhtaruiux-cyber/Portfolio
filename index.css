@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 /* Hide scrollbars for horizontal tab scrollers */
 .no-scrollbar {
   -ms-overflow-style: none;
