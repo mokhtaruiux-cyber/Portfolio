@@ -4,10 +4,9 @@ module.exports = {
     "./App.tsx",
     "./index.tsx",
     "./components/**/*.{ts,tsx}",
-    "./lib/**/*.{ts,tsx}",
     "./hooks/**/*.{ts,tsx}",
+    "./lib/**/*.{ts,tsx}",
     "./data/**/*.{ts,tsx}",
-    "./constants.tsx",
   ],
   theme: {
     extend: {},

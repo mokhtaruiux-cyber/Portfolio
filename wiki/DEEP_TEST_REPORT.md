@@ -81,7 +81,7 @@ Date: 2026-01-09
 
 ## Proof
 - Build log (Phase 6): `npm run build` succeeded after commits 6A–6I.
-- Latest build: `npm run build` — success (2026-01-09 21:36).
+- Latest build: `npm run build` — success (2026-01-09 21:54).
 - Preview: `npm run preview -- --port 3000` — started successfully (2026-01-09 21:36).
 - Lint: `npm run lint` — success (warnings only; no errors) (2026-01-09 21:36).
 - Overflow check (boolean):
