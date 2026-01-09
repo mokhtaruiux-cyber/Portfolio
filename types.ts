@@ -49,13 +49,6 @@ export interface Testimonial {
   avatar: string;
 }
 
-export interface Service {
-  id: string;
-  title: string;
-  description: string;
-  icon: string;
-}
-
 export type BlogContentBlock =
   | { type: "heading"; text: string }
   | { type: "paragraph"; text: string }

@@ -1,5 +1,5 @@
 
-import { Experience, Testimonial, Service } from './types';
+import { Experience, Testimonial } from './types';
 
 const assetPath = (path: string) => {
   const base = import.meta.env.BASE_URL || "/";
@@ -87,13 +87,6 @@ export const TESTIMONIALS: Testimonial[] = [
     content: 'His ability to navigate stakeholder requirements and produce a unified design vision saved us months of development time.',
     avatar: 'https://i.pravatar.cc/150?u=marcus'
   }
-];
-
-export const SERVICES: Service[] = [
-  { id: '1', title: 'Product Design', description: 'End-to-end design for complex digital products.', icon: 'Layout' },
-  { id: '2', title: 'Design Systems', description: 'Scalable UI libraries that bridge design and code.', icon: 'Layers' },
-  { id: '3', title: 'Motion Design', description: 'Interactive micro-interactions that feel alive.', icon: 'Zap' },
-  { id: '4', title: 'Frontend Dev', description: 'Pixel-perfect React and Framer implementations.', icon: 'Monitor' }
 ];
 
 export { PROJECTS } from "./data/projects";

@@ -633,7 +633,6 @@ const BlogArticlePage = ({ post, darkMode, onBack }: { post: BlogPost; darkMode:
 // --- HERO LAYOUT (Centered) ---
 
 const Hero = ({ darkMode, onWorkClick }: { darkMode: boolean, onWorkClick: () => void }) => {
-  const [headlineDone, setHeadlineDone] = useState(false);
   const parallaxY = useParallax(60);
 
   return (
