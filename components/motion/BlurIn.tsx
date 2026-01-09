@@ -5,12 +5,20 @@ import * as React from 'react';
 import { cn } from '../../lib/utils';
 import { durations, easing, viewportDefaults } from '../../lib/motionTokens';
 
-export const BlurIn = ({ children, className, delay = 0 }: { children: React.ReactNode, className?: string, delay?: number }) => {
-    const ref = React.useRef(null);
+type BlurInProps = {
+    as?: React.ElementType;
+    children: React.ReactNode;
+    className?: string;
+    delay?: number;
+};
+
+export const BlurIn = ({ as: Component = "h2", children, className, delay = 0 }: BlurInProps) => {
+    const ref = React.useRef<HTMLElement | null>(null);
     const isInView = useInView(ref, viewportDefaults);
+    const MotionComponent = motion(Component);
 
     return (
-        <motion.h2
+        <MotionComponent
             ref={ref}
             initial={{ filter: 'blur(20px)', opacity: 0, y: 20 }}
             animate={isInView ? { filter: 'blur(0px)', opacity: 1, y: 0 } : {}}
@@ -18,6 +26,6 @@ export const BlurIn = ({ children, className, delay = 0 }: { children: React.Rea
             className={cn("tracking-tighter", className)}
         >
             {children}
-        </motion.h2>
+        </MotionComponent>
     );
 };
