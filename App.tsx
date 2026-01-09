@@ -5,9 +5,11 @@ import {
   Sun, Moon, ArrowUpRight, Zap, Menu, X, ArrowLeft, Mail, Link as LinkIcon, MessageSquare, Calendar, Clock
 } from 'lucide-react';
 
-import { PROJECTS, TESTIMONIALS, BLOG_POSTS } from './constants';
-import { Project, Testimonial, BlogPost } from './types';
-import { transitions, variants } from './lib/motion';
+import { TESTIMONIALS } from './constants';
+import { PROJECTS } from './data/projects';
+import { BLOG_POSTS } from './data/blog';
+import { BlogContentBlock, BlogPost, Project, Testimonial } from './types';
+import { transitions, variants } from './lib/motionTokens';
 import { useParallax } from './hooks/useParallax';
 import { typography } from './lib/typography';
 import { cn } from './lib/utils';
@@ -17,6 +19,66 @@ const assetPath = (path: string) => {
   const normalizedBase = base.endsWith("/") ? base.slice(0, -1) : base;
   const normalizedPath = path.startsWith("/") ? path.slice(1) : path;
   return `${normalizedBase}/${normalizedPath}`;
+};
+
+type PageKey = "home" | "work" | "blog" | "project-details" | "blog-details" | "about" | "contact";
+
+const basePath = import.meta.env.BASE_URL || "/";
+const normalizedBasePath = basePath.endsWith("/") ? basePath.slice(0, -1) : basePath;
+
+const stripBasePath = (pathname: string) => {
+  if (!normalizedBasePath) return pathname;
+  if (pathname.startsWith(normalizedBasePath)) {
+    const stripped = pathname.slice(normalizedBasePath.length);
+    return stripped.length ? stripped : "/";
+  }
+  return pathname;
+};
+
+const getRouteFromPath = (pathname: string) => {
+  const cleanPath = stripBasePath(pathname).replace(/^\/+|\/+$/g, "");
+  if (!cleanPath) return { page: "home" as PageKey, slug: "" };
+  const [segment, slug] = cleanPath.split("/");
+
+  if (segment === "projects") {
+    if (slug && PROJECTS.some((project) => project.slug === slug)) {
+      return { page: "project-details" as PageKey, slug };
+    }
+    return { page: "work" as PageKey, slug: "" };
+  }
+
+  if (segment === "blog") {
+    if (slug && BLOG_POSTS.some((post) => post.slug === slug)) {
+      return { page: "blog-details" as PageKey, slug };
+    }
+    return { page: "blog" as PageKey, slug: "" };
+  }
+
+  if (segment === "about") return { page: "about" as PageKey, slug: "" };
+  if (segment === "contact") return { page: "contact" as PageKey, slug: "" };
+
+  return { page: "home" as PageKey, slug: "" };
+};
+
+const buildPath = (page: PageKey, slug = "") => {
+  const withBase = (path: string) => (normalizedBasePath ? `${normalizedBasePath}${path}` : path);
+  switch (page) {
+    case "work":
+      return withBase("/projects");
+    case "project-details":
+      return withBase(`/projects/${slug}`);
+    case "blog":
+      return withBase("/blog");
+    case "blog-details":
+      return withBase(`/blog/${slug}`);
+    case "about":
+      return withBase("/about");
+    case "contact":
+      return withBase("/contact");
+    case "home":
+    default:
+      return withBase("/");
+  }
 };
 
 // Motion Components
@@ -90,7 +152,7 @@ const ContactSection = ({ darkMode }: { darkMode: boolean }) => {
         <BlurIn as="h2" delay={0.1} className={cn(typography.h2, "font-black mb-4 max-w-[24ch]", darkMode ? "text-white" : "text-blue-600")}>Let's Talk</BlurIn>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 items-start">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 items-start">
         <div className="lg:col-span-2">
           <Reveal delay={0.1}>
             <div className={cn(
@@ -170,16 +232,16 @@ type FooterColumn = {
   links: FooterLink[];
 };
 
-const Footer = ({ darkMode, setCurrentPage }: { darkMode: boolean, setCurrentPage: (p: string) => void }) => {
+const Footer = ({ darkMode, onNavigate }: { darkMode: boolean, onNavigate: (page: PageKey) => void }) => {
   const footerLinks: FooterColumn[] = [
-    { title: "Navigation", links: [{ label: "Work", action: () => setCurrentPage('work') }, { label: "Blog", action: () => setCurrentPage('blog') }, { label: "About", action: () => setCurrentPage('about') }, { label: "Contact", action: () => setCurrentPage('contact') }] },
+    { title: "Navigation", links: [{ label: "Work", action: () => onNavigate("work") }, { label: "Blog", action: () => onNavigate("blog") }, { label: "About", action: () => onNavigate("about") }, { label: "Contact", action: () => onNavigate("contact") }] },
     { title: "Links", links: [{ label: "LinkedIn", href: "https://www.linkedin.com/in/mokhtaruiux/" }, { label: "Twitter", href: "#" }, { label: "Behance", href: "#" }] }
   ];
 
   return (
     <footer className={cn("pt-24 pb-12 sm:pt-48 border-t border-white/5 relative z-10", darkMode ? "bg-[#030303]" : "bg-[#fafafa]")}>
       <Container>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 md:gap-8 lg:gap-10 mb-24">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-24">
           <div className="lg:col-span-2 text-left">
             <div className="flex items-center gap-4 mb-8">
               <div className="w-12 h-12 flex items-center justify-center">
@@ -230,12 +292,12 @@ const ProjectCardWrapper: React.FC<ProjectCardWrapperProps> = ({ project, index,
             darkMode ? 'bg-black/90 border-white/10 shadow-[0_0_100px_-20px_rgba(37,99,235,0.1)]' : 'bg-white/90 border-black/5 shadow-2xl'
           )}
         >
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 lg:gap-10 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-10 items-center">
             <div className="order-2 lg:order-1 flex flex-col justify-between h-full text-left">
               <Reveal staggerChildren>
                 <h4 className={cn(typography.h1, "font-black mb-4 sm:mb-8 group-hover:text-blue-500 transition-colors duration-500 max-w-[18ch]", darkMode ? 'text-white' : 'text-black')}>{project.title}</h4>
                 <p className={cn(typography.body, "font-medium mb-6 sm:mb-10 opacity-60 max-w-3xl", darkMode ? 'text-gray-300' : 'text-gray-600')}>{project.description}</p>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-6 md:gap-8 mb-8 sm:mb-12">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 md:gap-6 mb-8 sm:mb-12">
                   {project.metrics.map(m => (
                     <div key={m.label}>
                       <span className={cn(typography.labelXs, "opacity-40 mb-1 sm:mb-2 block")}>{m.label}</span>
@@ -280,7 +342,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ post, darkMode, onClick }) => {
           )}
         >
           <div className="relative aspect-[16/10] overflow-hidden">
-            <img src={post.image} alt={post.title} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
+            <img src={post.coverImage} alt={post.title} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
             <div className={cn("absolute top-6 left-6 px-4 py-2 rounded-full glass border border-white/10 bg-black/40 text-white", typography.labelSm)}>
               {post.category}
             </div>
@@ -330,75 +392,235 @@ const BlogSection = ({ darkMode, onPostClick }: { darkMode: boolean, onPostClick
   );
 };
 
-// --- Project & Blog Detail Generic View ---
+// --- Project Detail Page ---
 
-type DetailItem = {
-  title: string;
-  image: string;
-  tags: string[];
-  excerpt?: string;
-  description?: string;
-  content?: string;
-  category?: string;
-  date?: string;
-  readTime?: string;
+const ProjectMetaItem = ({ label, value, darkMode }: { label: string; value: string; darkMode: boolean }) => {
+  return (
+    <div
+      className={cn(
+        "p-6 sm:p-8 rounded-[2rem] glass border",
+        darkMode ? "bg-black/40 border-white/5" : "bg-white/60 border-black/5"
+      )}
+    >
+      <span className={cn(typography.labelXs, "opacity-40 mb-2 block")}>{label}</span>
+      <span className={cn(typography.body, "font-semibold", darkMode ? "text-white" : "text-black")}>{value}</span>
+    </div>
+  );
 };
 
-const DetailView = ({ item, type, darkMode, onBack }: { item: DetailItem, type: 'project' | 'blog', darkMode: boolean, onBack: () => void }) => {
+const ProjectGalleryItem = ({ item, darkMode }: { item: Project["gallery"][number]; darkMode: boolean }) => {
   return (
-    <div className="pt-32 sm:pt-40 pb-24 sm:pb-32">
-      <Container>
-        <motion.div initial={{ opacity: 0, x: -10 }} animate={{ opacity: 1, x: 0 }} className="mb-16 sm:mb-20 text-left">
+    <div
+      className={cn(
+        "relative aspect-[16/10] rounded-[2rem] overflow-hidden glass border",
+        darkMode ? "bg-black/40 border-white/5" : "bg-white/60 border-black/5"
+      )}
+    >
+      <img src={item.src} alt={item.alt} className="w-full h-full object-cover" />
+      {item.type === "video" && (
+        <div className="absolute inset-0 bg-black/45 flex items-center justify-center">
+          <span className={cn(typography.labelXs, "tracking-[0.3em] text-white")}>VIDEO</span>
+        </div>
+      )}
+    </div>
+  );
+};
+
+const ProjectDetailPage = ({
+  project,
+  nextProject,
+  darkMode,
+  onBack,
+  onNextProject
+}: {
+  project: Project;
+  nextProject?: Project;
+  darkMode: boolean;
+  onBack: () => void;
+  onNextProject: (slug: string) => void;
+}) => {
+  return (
+    <>
+      <Section>
+        <div className="text-left space-y-10">
           <button onClick={onBack} className={cn("flex items-center gap-2 opacity-60 hover:opacity-100 hover:text-blue-500 transition-all font-medium group", typography.body)}>
             <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-            Back to {type === 'project' ? 'Work' : 'Blog'}
+            Back to Work
           </button>
-        </motion.div>
 
-        <Reveal staggerChildren className="text-left">
-          <div className={cn(
-            "relative w-full aspect-[16/9] md:aspect-[21/9] rounded-[2.5rem] md:rounded-[4rem] overflow-hidden mb-20 glass border bg-gradient-to-br",
-            darkMode ? "border-white/10" : "border-black/5"
-          )}>
-            <img src={item.image} alt={item.title} className="w-full h-full object-cover mix-blend-overlay opacity-60" />
-            <div className="absolute inset-0 p-8 sm:p-16 lg:p-24 flex flex-col justify-end bg-gradient-to-t from-black/90 via-black/20 to-transparent">
-              {type === 'blog' && (
-                <div className={cn("flex items-center gap-4 mb-6 text-white/60", typography.labelXs, "tracking-[0.2em]")}>
-                  <span className="px-3 py-1 rounded-full bg-blue-600/20 border border-blue-600/30 text-blue-400">{item.category}</span>
-                  <span>{item.date}</span>
-                  <span>{item.readTime}</span>
-                </div>
-              )}
-              <h1 className={cn(typography.h1Display, "font-black mb-8 text-white max-w-[18ch]")}>{item.title}</h1>
-            </div>
+          <div className="space-y-4">
+            <span className={cn(typography.labelXs, "tracking-[0.3em] text-blue-500")}>{project.category}</span>
+            <h1 className={cn(typography.h1Display, "font-black max-w-[18ch]", darkMode ? "text-white" : "text-black")}>{project.title}</h1>
+            <p className={cn(typography.body, "opacity-60 max-w-[60ch] font-medium", darkMode ? "text-white" : "text-black")}>{project.description}</p>
           </div>
-        </Reveal>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8 lg:gap-10 text-left">
-          <div className="lg:col-span-2 space-y-12">
-            <Reveal>
-              <p className={cn(typography.body, "font-medium mb-12 max-w-3xl")}>{item.excerpt || item.description}</p>
-              <div className={cn(typography.body, "opacity-60 font-medium prose prose-invert max-w-none")}>
-                {item.content}
-              </div>
-            </Reveal>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            <ProjectMetaItem label="Role" value={project.role} darkMode={darkMode} />
+            <ProjectMetaItem label="Year" value={project.year} darkMode={darkMode} />
+            <ProjectMetaItem label="Tools" value={project.tools.join(" • ")} darkMode={darkMode} />
           </div>
-          <aside className="space-y-12">
-            <Reveal>
-              <h3 className={cn(typography.labelXs, "tracking-[0.3em] mb-8 opacity-40")}>Keywords</h3>
-              <div className="flex flex-wrap gap-3">
-                {item.tags.map((tag: string) => (
-                  <span key={tag} className={cn("px-5 py-2.5 rounded-full glass border border-white/5 bg-white/5", typography.labelXs)}>{tag}</span>
-                ))}
-              </div>
-            </Reveal>
-            <GlowButton darkMode={darkMode} onClick={() => document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' })}>
-              Inquiry
-            </GlowButton>
-          </aside>
         </div>
-      </Container>
-    </div>
+      </Section>
+
+      <Section eyebrow="Gallery">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+          {project.gallery.map((item, index) => (
+            <ProjectGalleryItem key={`${project.slug}-gallery-${index}`} item={item} darkMode={darkMode} />
+          ))}
+        </div>
+      </Section>
+
+      <Section eyebrow="Case Study">
+        <div className="space-y-12 text-left">
+          {project.caseStudySections.map((section) => (
+            <div key={section.title} className="space-y-3">
+              <h3 className={cn(typography.h3, "font-black", darkMode ? "text-white" : "text-black")}>{section.title}</h3>
+              <p className={cn(typography.body, "opacity-60 max-w-[60ch] font-medium", darkMode ? "text-white" : "text-black")}>{section.content}</p>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      <Section eyebrow="Metrics">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 md:gap-6 text-left">
+          {project.metrics.map((metric) => (
+            <div key={metric.label}>
+              <span className={cn(typography.labelXs, "opacity-40 mb-2 block")}>{metric.label}</span>
+              <span className={cn(typography.h3, "font-black", darkMode ? "text-white" : "text-black")}>{metric.value}</span>
+            </div>
+          ))}
+        </div>
+      </Section>
+
+      {nextProject && (
+        <Section>
+          <div
+            className={cn(
+              "p-8 sm:p-12 rounded-[2.5rem] glass border flex flex-col items-start gap-6",
+              darkMode ? "bg-black/40 border-white/10" : "bg-white/60 border-black/10"
+            )}
+          >
+            <span className={cn(typography.labelXs, "opacity-40")}>Next Project</span>
+            <h3 className={cn(typography.h2, "font-black max-w-[24ch]", darkMode ? "text-white" : "text-black")}>
+              {nextProject.title}
+            </h3>
+            <GlowButton darkMode={darkMode} size="cta" onClick={() => onNextProject(nextProject.slug)}>
+              View Project <ArrowUpRight size={20} />
+            </GlowButton>
+          </div>
+        </Section>
+      )}
+    </>
+  );
+};
+
+// --- Blog Pages ---
+
+const BlogIndexPage = ({ darkMode, onPostClick }: { darkMode: boolean; onPostClick: (s: string) => void }) => {
+  return (
+    <Section eyebrow="Blog">
+      <div className="mb-16 text-left">
+        <BlurIn as="h2" className={cn(typography.h2, "font-black mb-6 max-w-[24ch]", darkMode ? "text-white" : "text-black")}>
+          Latest Articles.
+        </BlurIn>
+        <Reveal delay={0.2}>
+          <p className={cn(typography.body, "opacity-60 max-w-2xl font-medium", darkMode ? "text-white" : "text-black")}>
+            Deep dives into product design, motion, and systems thinking for real-world teams.
+          </p>
+        </Reveal>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+        {BLOG_POSTS.map(post => (
+          <BlogCard key={post.id} post={post} darkMode={darkMode} onClick={onPostClick} />
+        ))}
+      </div>
+    </Section>
+  );
+};
+
+const BlogBlock = ({ block, darkMode }: { block: BlogContentBlock; darkMode: boolean }) => {
+  switch (block.type) {
+    case "heading":
+      return (
+        <h3 className={cn(typography.h3, "font-black", darkMode ? "text-white" : "text-black")}>
+          {block.text}
+        </h3>
+      );
+    case "image":
+      return (
+        <figure className="space-y-3">
+          <img
+            src={block.src}
+            alt={block.alt}
+            className={cn(
+              "w-full h-auto rounded-[2rem] border",
+              darkMode ? "border-white/10" : "border-black/10"
+            )}
+          />
+          {block.caption && (
+            <figcaption className={cn(typography.labelXs, "opacity-40 text-center")}>{block.caption}</figcaption>
+          )}
+        </figure>
+      );
+    case "quote":
+      return (
+        <p className={cn(typography.body, "italic opacity-70", darkMode ? "text-white" : "text-black")}>
+          {block.text}
+        </p>
+      );
+    case "list":
+      return (
+        <ul className={cn(typography.body, "list-disc pl-6 space-y-2 opacity-70", darkMode ? "text-white" : "text-black")}>
+          {block.items.map((item) => (
+            <li key={item}>{item}</li>
+          ))}
+        </ul>
+      );
+    case "paragraph":
+    default:
+      return (
+        <p className={cn(typography.body, "opacity-70", darkMode ? "text-white" : "text-black")}>
+          {block.text}
+        </p>
+      );
+  }
+};
+
+const BlogArticlePage = ({ post, darkMode, onBack }: { post: BlogPost; darkMode: boolean; onBack: () => void }) => {
+  return (
+    <>
+      <Section>
+        <div className="text-left space-y-10">
+          <button onClick={onBack} className={cn("flex items-center gap-2 opacity-60 hover:opacity-100 hover:text-blue-500 transition-all font-medium group", typography.body)}>
+            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+            Back to Blog
+          </button>
+
+          <div className="space-y-4 max-w-[60ch]">
+            <div className={cn("flex items-center gap-4 opacity-60", typography.labelXs)}>
+              <span className="px-3 py-1 rounded-full bg-blue-600/20 border border-blue-600/30 text-blue-400">{post.category}</span>
+              <span>{post.date}</span>
+              <span>{post.readTime}</span>
+            </div>
+            <h1 className={cn(typography.h1, "font-black max-w-[18ch]", darkMode ? "text-white" : "text-black")}>{post.title}</h1>
+            <p className={cn(typography.body, "opacity-60 font-medium", darkMode ? "text-white" : "text-black")}>{post.excerpt}</p>
+          </div>
+
+          <div className={cn("w-full max-w-[60ch] rounded-[2.5rem] overflow-hidden border", darkMode ? "border-white/10" : "border-black/10")}>
+            <img src={post.coverImage} alt={post.title} className="w-full h-full object-cover" />
+          </div>
+        </div>
+      </Section>
+
+      <Section>
+        <div className="max-w-[60ch] mx-auto space-y-8 text-left">
+          {post.contentBlocks.map((block, index) => (
+            <BlogBlock key={`${post.slug}-block-${index}`} block={block} darkMode={darkMode} />
+          ))}
+        </div>
+      </Section>
+    </>
   );
 };
 
@@ -485,11 +707,11 @@ const Hero = ({ darkMode, onWorkClick }: { darkMode: boolean, onWorkClick: () =>
 interface NavbarProps {
   darkMode: boolean;
   setDarkMode: React.Dispatch<React.SetStateAction<boolean>>;
-  currentPage: string;
-  setCurrentPage: React.Dispatch<React.SetStateAction<string>>;
+  currentPage: PageKey;
+  onNavigate: (page: PageKey) => void;
 }
 
-const Navbar = ({ darkMode, setDarkMode, currentPage, setCurrentPage }: NavbarProps) => {
+const Navbar = ({ darkMode, setDarkMode, currentPage, onNavigate }: NavbarProps) => {
   const [scrolled, setScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -499,17 +721,27 @@ const Navbar = ({ darkMode, setDarkMode, currentPage, setCurrentPage }: NavbarPr
     return () => window.removeEventListener('scroll', s);
   }, []);
 
-  const navItems = ['Work', 'Blog', 'About', 'Contact'];
+  const navItems: { label: string; page: PageKey }[] = [
+    { label: "Work", page: "work" },
+    { label: "Blog", page: "blog" },
+    { label: "About", page: "about" },
+    { label: "Contact", page: "contact" }
+  ];
 
-  const handleNavClick = (page: string) => {
-    setCurrentPage(page.toLowerCase());
+  const handleNavClick = (page: PageKey) => {
+    onNavigate(page);
     setIsMenuOpen(false);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const isActive = (page: PageKey) => {
+    if (page === "work") return currentPage === "work" || currentPage === "project-details";
+    if (page === "blog") return currentPage === "blog" || currentPage === "blog-details";
+    return currentPage === page;
   };
 
   return (
     <nav className={cn("fixed top-0 left-0 right-0 z-[100] transition-all", scrolled ? 'py-4' : 'py-6 sm:py-10')}>
-      <div className="mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-10">
+      <Container>
         <motion.div
           layout
           className={cn(
@@ -518,37 +750,39 @@ const Navbar = ({ darkMode, setDarkMode, currentPage, setCurrentPage }: NavbarPr
           )}
         >
           <div className="h-full flex items-center justify-between px-5 sm:px-8">
-            <div className="flex items-center gap-4 cursor-pointer group" onClick={() => handleNavClick('home')}>
+            <div className="flex items-center gap-4 cursor-pointer group" onClick={() => handleNavClick("home")}>
               <div className="h-10 w-10 flex items-center justify-center">
                 <img src={assetPath('assets/images/Logo@4x.webp')} alt="Mokhtar" className="w-full h-full object-contain" />
               </div>
-              <span className={cn("text-3xl font-semibold tracking-tight", darkMode ? "text-white" : "text-black")}>Mokhtar.</span>
+              <span className={cn(typography.brand, darkMode ? "text-white" : "text-black")}>Mokhtar.</span>
             </div>
             <div className="flex items-center gap-4">
               <button
                 onClick={() => setDarkMode(!darkMode)}
                 className={cn(
-                  "w-14 h-14 rounded-full border border-white/35 text-white/90 flex items-center justify-center hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30",
+                  typography.navControl,
+                  "rounded-full border border-white/35 text-white/90 flex items-center justify-center hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30",
                   !darkMode && "border-black/10 text-black"
                 )}
                 aria-label="Toggle theme"
               >
-                {darkMode ? <Sun size={22} /> : <Moon size={22} />}
+                {darkMode ? <Sun className={typography.navIcon} /> : <Moon className={typography.navIcon} />}
               </button>
               <button
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className={cn(
-                  "w-14 h-14 rounded-2xl border border-white/35 text-white/90 flex items-center justify-center hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30",
+                  typography.navControl,
+                  "rounded-2xl border border-white/35 text-white/90 flex items-center justify-center hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30",
                   !darkMode && "border-black/10 text-black"
                 )}
                 aria-label="Open menu"
               >
-                {isMenuOpen ? <X size={22} /> : <Menu size={22} />}
+                {isMenuOpen ? <X className={typography.navIcon} /> : <Menu className={typography.navIcon} />}
               </button>
             </div>
           </div>
         </motion.div>
-      </div>
+      </Container>
 
       <AnimatePresence>
         {isMenuOpen && (
@@ -574,21 +808,21 @@ const Navbar = ({ darkMode, setDarkMode, currentPage, setCurrentPage }: NavbarPr
               >
                 {navItems.map(item => (
                     <button
-                    key={item}
-                    onClick={() => handleNavClick(item)}
+                    key={item.label}
+                    onClick={() => handleNavClick(item.page)}
                     className={cn(
                       typography.menuItem,
                       "transition-all w-full text-center",
-                      currentPage.startsWith(item.toLowerCase()) ? "opacity-100 text-blue-500" : "opacity-40"
+                      isActive(item.page) ? "opacity-100 text-blue-500" : "opacity-40"
                     )}
                   >
-                    {item}
+                    {item.label}
                   </button>
                 ))}
                 <div className="w-full h-px bg-current opacity-10" />
                 <GlowButton
                   darkMode={darkMode}
-                  onClick={() => handleNavClick('contact')}
+                  onClick={() => handleNavClick("contact")}
                   size="cta"
                   fullWidth
                   className="w-full"
@@ -606,10 +840,10 @@ const Navbar = ({ darkMode, setDarkMode, currentPage, setCurrentPage }: NavbarPr
 
 export default function App() {
   const [darkMode, setDarkMode] = useState(true);
-  const [currentPage, setCurrentPage] = useState('home');
-  const [activeSlug, setActiveSlug] = useState('');
+  const [currentPage, setCurrentPage] = useState<PageKey>("home");
+  const [activeSlug, setActiveSlug] = useState("");
 
-  const [filter, setFilter] = useState('All Projects');
+  const [filter, setFilter] = useState("All Projects");
 
   useEffect(() => {
     // toggle dark mode without wiping other classes (like overflow-x-hidden)
@@ -621,6 +855,31 @@ export default function App() {
       document.body.classList.add('light');
     }
   }, [darkMode]);
+
+  useEffect(() => {
+    const handleRoute = () => {
+      const { page, slug } = getRouteFromPath(window.location.pathname);
+      setCurrentPage(page);
+      setActiveSlug(slug);
+    };
+    handleRoute();
+    window.addEventListener("popstate", handleRoute);
+    return () => window.removeEventListener("popstate", handleRoute);
+  }, []);
+
+  const navigate = (page: PageKey, slug = "") => {
+    const isProjectDetail = page === "project-details";
+    const isBlogDetail = page === "blog-details";
+    const targetPage = (isProjectDetail && !slug) ? "work" : (isBlogDetail && !slug) ? "blog" : page;
+    const targetSlug = (targetPage === "project-details" || targetPage === "blog-details") ? slug : "";
+    setCurrentPage(targetPage);
+    setActiveSlug(targetSlug);
+    const nextPath = buildPath(targetPage, targetSlug);
+    if (window.location.pathname !== nextPath) {
+      window.history.pushState({ page: targetPage, slug: targetSlug }, "", nextPath);
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   const filteredProjects = useMemo(() => {
     if (filter === 'All Projects') return PROJECTS;
@@ -635,12 +894,18 @@ export default function App() {
 
   const activeProject = useMemo(() => PROJECTS.find(p => p.slug === activeSlug), [activeSlug]);
   const activePost = useMemo(() => BLOG_POSTS.find(p => p.slug === activeSlug), [activeSlug]);
+  const nextProject = useMemo(() => {
+    if (!activeProject) return undefined;
+    const index = PROJECTS.findIndex((project) => project.slug === activeProject.slug);
+    if (index === -1) return undefined;
+    return PROJECTS[(index + 1) % PROJECTS.length];
+  }, [activeProject]);
 
   return (
     <div className={cn("min-h-screen transition-colors duration-1000 selection:bg-blue-600 selection:text-white pb-[env(safe-area-inset-bottom)]", darkMode ? 'bg-[#030303] text-white' : 'bg-[#fafafa] text-black')}>
       <ScrollProgress />
       <LivingBackground darkMode={darkMode} />
-      <Navbar darkMode={darkMode} setDarkMode={setDarkMode} currentPage={currentPage} setCurrentPage={setCurrentPage} />
+      <Navbar darkMode={darkMode} setDarkMode={setDarkMode} currentPage={currentPage} onNavigate={navigate} />
 
       <main className="relative">
         <AnimatePresence mode="wait">
@@ -674,44 +939,48 @@ export default function App() {
                         project={project}
                         index={index}
                         darkMode={darkMode}
-                        onClick={(slug) => { setActiveSlug(slug); setCurrentPage('project-details') }}
+                        onClick={(slug) => navigate("project-details", slug)}
                       />
                     )}
                   />
                 </Section>
-                <BlogSection darkMode={darkMode} onPostClick={(slug) => { setActiveSlug(slug); setCurrentPage('blog-details') }} />
+                <BlogSection darkMode={darkMode} onPostClick={(slug) => navigate("blog-details", slug)} />
                 <TestimonialsSection darkMode={darkMode} />
                 <ContactSection darkMode={darkMode} />
               </>
             )}
 
             {currentPage === 'work' && (
-              <Section className="min-h-screen pt-32 sm:pt-40" eyebrow="All Projects">
+              <Section className="min-h-screen" eyebrow="All Projects">
                 <div className="mb-16 text-left">
                   <BlurIn as="h3" className={cn(typography.h2, "font-black max-w-[24ch]", darkMode ? 'text-white' : 'text-black')}>The Archive.</BlurIn>
                 </div>
                 <div className="space-y-24">
-                  {PROJECTS.map((p, idx) => <ProjectCardWrapper key={p.id} project={p} index={idx} darkMode={darkMode} onClick={(slug) => { setActiveSlug(slug); setCurrentPage('project-details') }} />)}
+                  {PROJECTS.map((p, idx) => <ProjectCardWrapper key={p.id} project={p} index={idx} darkMode={darkMode} onClick={(slug) => navigate("project-details", slug)} />)}
                 </div>
               </Section>
             )}
 
             {currentPage === 'blog' && (
-              <div className="pt-24">
-                <BlogSection darkMode={darkMode} onPostClick={(slug) => { setActiveSlug(slug); setCurrentPage('blog-details') }} />
-              </div>
+              <BlogIndexPage darkMode={darkMode} onPostClick={(slug) => navigate("blog-details", slug)} />
             )}
 
             {currentPage === 'project-details' && activeProject && (
-              <DetailView item={activeProject} type="project" darkMode={darkMode} onBack={() => setCurrentPage('work')} />
+              <ProjectDetailPage
+                project={activeProject}
+                nextProject={nextProject}
+                darkMode={darkMode}
+                onBack={() => navigate("work")}
+                onNextProject={(slug) => navigate("project-details", slug)}
+              />
             )}
 
             {currentPage === 'blog-details' && activePost && (
-              <DetailView item={activePost} type="blog" darkMode={darkMode} onBack={() => setCurrentPage('blog')} />
+              <BlogArticlePage post={activePost} darkMode={darkMode} onBack={() => navigate("blog")} />
             )}
 
             {currentPage === 'about' && (
-              <div className="pt-32 sm:pt-40">
+              <div>
                 <Section eyebrow="About Me">
                   <div className="text-left mb-24">
                     <BlurIn as="h2" className={cn(typography.h2, "font-black mb-8 max-w-[24ch]", darkMode ? 'text-white' : 'text-black')}>Designing <br />Systems.</BlurIn>
@@ -727,7 +996,7 @@ export default function App() {
           </motion.div>
         </AnimatePresence>
       </main>
-      <Footer darkMode={darkMode} setCurrentPage={setCurrentPage} />
+      <Footer darkMode={darkMode} onNavigate={navigate} />
     </div>
   );
 }
@@ -784,7 +1053,7 @@ const TestimonialsSection = ({ darkMode }: { darkMode: boolean }) => {
   const row2 = TESTIMONIALS.slice(3, 6);
   const row3 = TESTIMONIALS.slice(6, 9);
   return (
-    <section id="testimonials" className="py-24 sm:py-48 relative z-10 overflow-hidden">
+    <section id="testimonials" className="py-16 md:py-24 relative z-10 overflow-hidden">
       <FadeInUp>
         <Container className="relative z-20 mb-16 sm:mb-24">
           <div className="flex flex-col items-start text-left">

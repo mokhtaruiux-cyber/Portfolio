@@ -23,7 +23,14 @@ export const StackedCards: React.FC<StackedCardsProps> = ({ items, renderItem })
     });
 
     return (
-        <div ref={containerRef} className="relative w-full pb-[25vh] sm:pb-[35vh]">
+        <div
+            ref={containerRef}
+            className="relative w-full"
+            style={{
+                height: `calc(${items.length} * 100svh)`,
+                minHeight: `calc(${items.length} * 100dvh)`,
+            }}
+        >
             {items.map((item, i) => {
                 // Calculate scale/opacity based on the single scrollYProgress
                 // This assumes equal height items for perfect math, but works reasonably for variable too.

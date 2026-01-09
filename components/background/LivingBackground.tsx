@@ -20,7 +20,7 @@ export const LivingBackground: React.FC<{ darkMode: boolean }> = ({ darkMode }) 
     <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden select-none">
       {/* 1. Base Gradient Glow (Hero anchor) */}
       <div className={cn(
-        "absolute top-0 left-1/2 -translate-x-1/2 w-[140vw] h-screen blur-[120px] rounded-full opacity-40 will-change-[filter,opacity]",
+        "absolute top-0 left-1/2 -translate-x-1/2 w-full h-screen scale-[1.4] blur-[120px] rounded-full opacity-40 will-change-[filter,opacity]",
         darkMode ? 'bg-blue-600/20' : 'bg-blue-400/10'
       )} />
 
@@ -28,7 +28,7 @@ export const LivingBackground: React.FC<{ darkMode: boolean }> = ({ darkMode }) 
       <div className="absolute inset-0 overflow-hidden">
         <Blob
           color={darkMode ? "bg-blue-500/15" : "bg-blue-300/10"}
-          size="w-[80vw] h-[80vw]"
+          size="w-full h-full scale-[0.8]"
           initial={{ top: "-10%", left: "10%" }}
           animate={{
             x: [0, 60, -20, 0],
@@ -40,7 +40,7 @@ export const LivingBackground: React.FC<{ darkMode: boolean }> = ({ darkMode }) 
         />
         <Blob
           color={darkMode ? "bg-indigo-500/10" : "bg-indigo-200/5"}
-          size="w-[70vw] h-[70vw]"
+          size="w-full h-full scale-[0.7]"
           initial={{ top: "20%", right: "-10%" }}
           animate={{
             x: [0, -40, 50, 0],
@@ -57,7 +57,7 @@ export const LivingBackground: React.FC<{ darkMode: boolean }> = ({ darkMode }) 
       <div className="absolute inset-0">
         <Blob
           color={darkMode ? "bg-blue-600/15" : "bg-blue-400/10"}
-          size="w-[50vw] h-[50vw]"
+          size="w-full h-full scale-[0.5]"
           initial={{ top: "10%", left: "-10%" }}
           animate={{
             x: [0, 40, -20, 0],
@@ -69,7 +69,7 @@ export const LivingBackground: React.FC<{ darkMode: boolean }> = ({ darkMode }) 
         />
         <Blob
           color={darkMode ? "bg-fuchsia-600/10" : "bg-fuchsia-200/5"}
-          size="w-[45vw] h-[45vw]"
+          size="w-full h-full scale-[0.45]"
           initial={{ bottom: "10%", right: "10%" }}
           animate={{
             x: [0, -50, 30, 0],

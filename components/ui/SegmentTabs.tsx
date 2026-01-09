@@ -13,7 +13,7 @@ interface SegmentTabsProps {
 
 export const SegmentTabs: React.FC<SegmentTabsProps> = ({ tabs, activeTab, onChange, darkMode }) => {
     return (
-        <div className="relative w-full max-w-full">
+        <div className="relative w-full max-w-full overflow-hidden">
             <div
                 className={cn(
                     "flex items-center gap-1 h-11 p-1 rounded-full border overflow-x-auto whitespace-nowrap no-scrollbar backdrop-blur-xl",
