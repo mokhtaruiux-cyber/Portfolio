@@ -90,6 +90,7 @@ At the end of **every task**, the Agent MUST run:
 ```bash
 npm run build
 npm run preview -- --port 3000
+```
 
 ---
 
