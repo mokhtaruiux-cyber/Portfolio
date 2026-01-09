@@ -7,6 +7,12 @@ Date: 2026-01-08
 - Focused on mobile/tablet gutters, hero height, sticky elements, and scroll affordances.
 - No live viewport testing or automated checks were run.
 
+## Wiki Artifacts (System Documentation)
+- `wiki/01_UI_SYSTEM_RULES.md` — system contracts enforced in Phase 1 and Phase 1.5.
+- `wiki/02_IMPLEMENTATION_PLAYBOOK.md` — phase sequencing and refactor steps applied in Phase 1 and Phase 1.5.
+- `wiki/03_QA_AND_PROOF` — proof requirements referenced in Phase 1 and Phase 1.5.
+- `wiki/04_ATHOS_REFERENCE_PROTOCOL.md` — measurement reference used for Phase 1 and Phase 1.5 validation.
+
 ## ✅ Fixes Applied
 1) **Nav alignment with page container**
 - **Location**: `App.tsx:482`, `components/layout/Container.tsx`
