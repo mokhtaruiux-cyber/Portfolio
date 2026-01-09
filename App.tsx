@@ -659,9 +659,9 @@ const Hero = ({ darkMode, onWorkClick }: { darkMode: boolean, onWorkClick: () =>
             </Reveal>
 
             <motion.div style={{ y: parallaxY }} className="relative z-10 w-full">
-              <div className={cn(typography.h1, "font-black max-w-[18ch] block mx-auto !text-center", darkMode ? 'text-white' : 'text-black')}>
-                <TypingEffect text="Designing Digital Products That Feel Effortless." />
-              </div>
+              <h1 className={cn(typography.h1, "font-black max-w-[18ch] block mx-auto !text-center", darkMode ? 'text-white' : 'text-black')}>
+                <TypingEffect as="span" text="Designing Digital Products That Feel Effortless." />
+              </h1>
             </motion.div>
 
             <Reveal delay={1.5} className="w-full">
