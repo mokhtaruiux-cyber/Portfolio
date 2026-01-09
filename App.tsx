@@ -285,11 +285,14 @@ const ProjectCardWrapper: React.FC<ProjectCardWrapperProps> = ({ project, index,
   return (
     <div className="w-full flex flex-col items-center">
       <TiltCard className="w-full h-full" intensity={5}>
-        <div
+        <button
+          type="button"
           onClick={() => onClick(project.slug)}
           className={cn(
-            "relative w-full rounded-[2.5rem] sm:rounded-[3.5rem] md:rounded-[4.5rem] p-6 sm:p-10 md:p-16 lg:p-20 overflow-hidden glass border transition-shadow duration-700 cursor-pointer group",
-            darkMode ? 'bg-black/90 border-white/10 shadow-[0_0_100px_-20px_rgba(37,99,235,0.1)]' : 'bg-white/90 border-black/5 shadow-2xl'
+            "relative w-full text-left rounded-[2.5rem] sm:rounded-[3.5rem] md:rounded-[4.5rem] p-6 sm:p-10 md:p-16 lg:p-20 overflow-hidden glass border transition-shadow duration-700 cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 focus-visible:ring-offset-2",
+            darkMode
+              ? 'bg-black/90 border-white/10 shadow-[0_0_100px_-20px_rgba(37,99,235,0.1)] focus-visible:ring-offset-[#030303]'
+              : 'bg-white/90 border-black/5 shadow-2xl focus-visible:ring-offset-[#fafafa]'
           )}
         >
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-10 items-center">
@@ -316,7 +319,7 @@ const ProjectCardWrapper: React.FC<ProjectCardWrapperProps> = ({ project, index,
               <motion.img whileHover={{ scale: 1.04 }} transition={transitions.smooth} src={project.image} alt={project.title} className="w-full h-full object-cover" />
             </div>
           </div>
-        </div>
+        </button>
       </TiltCard>
     </div>
   );
@@ -334,11 +337,14 @@ const BlogCard: React.FC<BlogCardProps> = ({ post, darkMode, onClick }) => {
   return (
     <Reveal>
       <TiltCard intensity={8}>
-        <div
+        <button
+          type="button"
           onClick={() => onClick(post.slug)}
           className={cn(
-            "group flex flex-col rounded-[2.5rem] glass border overflow-hidden transition-all duration-700 cursor-pointer h-full",
-            darkMode ? "bg-black/40 border-white/5 hover:border-blue-500/30" : "bg-white/60 border-black/5 hover:border-blue-500/30 shadow-xl"
+            "group w-full text-left flex flex-col rounded-[2.5rem] glass border overflow-hidden transition-all duration-700 cursor-pointer h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 focus-visible:ring-offset-2",
+            darkMode
+              ? "bg-black/40 border-white/5 hover:border-blue-500/30 focus-visible:ring-offset-[#030303]"
+              : "bg-white/60 border-black/5 hover:border-blue-500/30 shadow-xl focus-visible:ring-offset-[#fafafa]"
           )}
         >
           <div className="relative aspect-[16/10] overflow-hidden">
@@ -362,7 +368,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ post, darkMode, onClick }) => {
               Read Article <ArrowUpRight size={16} />
             </div>
           </div>
-        </div>
+        </button>
       </TiltCard>
     </Reveal>
   );
