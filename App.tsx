@@ -229,7 +229,7 @@ type FooterColumn = {
 const Footer = ({ darkMode, onNavigate }: { darkMode: boolean, onNavigate: (page: PageKey) => void }) => {
   const footerLinks: FooterColumn[] = [
     { title: "Navigation", links: [{ label: "Work", action: () => onNavigate("work") }, { label: "Blog", action: () => onNavigate("blog") }, { label: "About", action: () => onNavigate("about") }, { label: "Contact", action: () => onNavigate("contact") }] },
-    { title: "Links", links: [{ label: "LinkedIn", href: "https://www.linkedin.com/in/mokhtaruiux/" }, { label: "Twitter", href: "#" }, { label: "Behance", href: "#" }] }
+    { title: "Links", links: [{ label: "LinkedIn", href: "https://www.linkedin.com/in/mokhtaruiux/" }] }
   ];
 
   return (
