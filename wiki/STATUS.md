@@ -94,10 +94,11 @@ npm run preview -- --port 3000
 
 ---
 
-### Latest Status — Phase 6 (Completed) — 2026-01-09 21:08
+### Latest Status — Phase 6 (Completed) — 2026-01-09 21:36
 - Light-mode contrast tokens, BlurIn polymorphism, H1 semantics, card accessibility, and TypingEffect SR handling are fixed.
 - Dead code cleanup, assetPath unification, and footer link cleanup are complete.
-- ESLint baseline added (`npm run lint`), build/preview and overflow checks recorded in `wiki/DEEP_TEST_REPORT.md`.
+- ESLint baseline added (`npm run lint` warnings only), build/preview and overflow checks recorded in `wiki/DEEP_TEST_REPORT.md`.
+- Tailwind content globs tightened; prior node_modules scan warning no longer appears in build output.
 - Remaining: none.
 
 ## Latest Verification (Phase 5.2)
