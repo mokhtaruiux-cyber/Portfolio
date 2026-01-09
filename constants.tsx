@@ -1,12 +1,6 @@
 
+import { assetPath } from './lib/assetPath';
 import { Experience, Testimonial } from './types';
-
-const assetPath = (path: string) => {
-  const base = import.meta.env.BASE_URL || "/";
-  const normalizedBase = base.endsWith("/") ? base.slice(0, -1) : base;
-  const normalizedPath = path.startsWith("/") ? path.slice(1) : path;
-  return `${normalizedBase}/${normalizedPath}`;
-};
 
 export const EXPERIENCES: Experience[] = [
   { id: '1', role: 'Lead Product Designer', company: 'Zain KSA', period: '2021 - Present', logo: assetPath('assets/images/Zain-color@4x.webp') },
