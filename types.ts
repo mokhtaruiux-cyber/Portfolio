@@ -1,4 +1,15 @@
 
+export type GalleryItem = {
+  type: "image" | "video";
+  src: string;
+  alt: string;
+};
+
+export type CaseStudySection = {
+  title: string;
+  content: string;
+};
+
 export interface Project {
   id: string;
   slug: string;
@@ -12,16 +23,13 @@ export interface Project {
   role: string;
   tools: string[];
   coverGradient: string;
-  gallery: string[];
+  gallery: GalleryItem[];
   metrics: {
     label: string;
     value: string;
   }[];
   tags: string[];
-  caseStudySections?: {
-    title: string;
-    content: string;
-  }[];
+  caseStudySections: CaseStudySection[];
 }
 
 export interface Experience {
@@ -48,15 +56,22 @@ export interface Service {
   icon: string;
 }
 
+export type BlogContentBlock =
+  | { type: "heading"; text: string }
+  | { type: "paragraph"; text: string }
+  | { type: "image"; src: string; alt: string; caption?: string }
+  | { type: "quote"; text: string }
+  | { type: "list"; items: string[] };
+
 export interface BlogPost {
   id: string;
   slug: string;
   title: string;
   excerpt: string;
-  content: string;
   category: string;
   date: string;
   readTime: string;
-  image: string;
+  coverImage: string;
   tags: string[];
+  contentBlocks: BlogContentBlock[];
 }
