@@ -13,7 +13,7 @@ export const typography = {
     labelSm: "text-[9px] font-black uppercase tracking-[0.3em]",
     button: "text-sm sm:text-base font-black uppercase tracking-widest",
     menuItem: "text-2xl font-black uppercase tracking-widest",
-    body: "text-base md:text-lg text-white/70 leading-relaxed",
-    bodyLarge: "text-base md:text-lg text-white/70 leading-relaxed",
-    bodyMuted: "text-base md:text-lg text-white/70 leading-relaxed"
+    body: "text-base md:text-lg leading-relaxed",
+    bodyLarge: "text-base md:text-lg leading-relaxed",
+    bodyMuted: "text-base md:text-lg leading-relaxed"
 };
