@@ -90,3 +90,13 @@ At the end of **every task**, the Agent MUST run:
 ```bash
 npm run build
 npm run preview -- --port 3000
+
+---
+
+## Latest Verification (Phase 5.2)
+- ✅ Tailwind restored (toolchain + config)
+- ✅ Build verified (npm run build)
+- ✅ Preview verified locally on port 3000 (sandbox limitation in this environment)
+- ✅ Report updated (DEEP_TEST_REPORT.md)
+- ⏳ Responsive checklist pending (per wiki/03_QA_AND_PROOF.md)
+

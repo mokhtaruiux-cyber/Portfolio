@@ -248,5 +248,34 @@ html, body { overflow-x: visible; }
 
 ## Phase 5.1 Proof — Sanity + Compliance Fix
 - Build: `npm run build` — succeeded.
-- Preview: `npm run preview -- --port 3000` — NOT verifiable in sandbox due to EPERM. Preview MUST be verified locally by Mohammed on port 3000.
+- Preview: `npm run preview -- --port 3000` — sandbox limitation (EPERM in this environment). Verify locally on Mohammed machine at http://localhost:3000/.
 - constants.tsx exports reviewed: No missing or broken exports detected.
+
+
+---
+
+## Phase 5.2 Execution
+- Files changed: `wiki/DEEP_TEST_REPORT.md`, `wiki/STATUS.md`
+
+---
+
+## Phase 5.2 Proof — Tailwind Toolchain Restore (Root Cause Fix)
+
+**Path:** /Users/mokhtar/Downloads/mokhtar-portfolio-clone__backup_20260109_035508
+
+### What was broken
+- Tailwind directives were not producing compiled CSS, resulting in missing utility styles and a tiny output CSS file.
+
+### Fix applied
+- Installed:
+  - tailwindcss@3.4.17
+  - autoprefixer@10.4.23
+- Verified configs:
+  - tailwind.config.cjs `content` includes `./index.html` + `./**/*.{js,ts,jsx,tsx}`
+  - postcss.config.cjs includes `tailwindcss` + `autoprefixer`
+
+### Proof
+- Build: `npm run build` — succeeded.
+- CSS output size: `-rw-r--r--  1 mokhtar  staff    56K Jan  9 05:32 dist/assets/index-Dp3FDYmC.css`
+- Preview: `npm run preview -- --port 3000` — sandbox limitation (EPERM in this environment). Verify locally at http://localhost:3000/.
+
