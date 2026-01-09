@@ -49,7 +49,7 @@ Date: 2026-01-09
 - Impact: Regressions and type issues may go unnoticed.
 
 ## Notes
-- Initial Phase 6 audit was static-only; Phase 6 closure adds build, preview, and overflow verification.
+- Initial Phase 6 audit was static-only; Phase 6 closure adds build, preview, lint, and overflow verification.
 
 ---
 
@@ -69,32 +69,40 @@ Date: 2026-01-09
 - Light mode contrast regressions
 
 ## Phase 6 Findings Status
-- A) Light mode text contrast regressions — FIXED. Evidence: `lib/typography.ts:16`
-- B) `BlurIn` polymorphism — FIXED. Evidence: `components/motion/BlurIn.tsx:8`, `components/motion/BlurIn.tsx:15`
-- C) Home hero H1 semantics — FIXED. Evidence: `App.tsx:661`
-- D) Clickable cards keyboard accessibility — FIXED. Evidence: `App.tsx:282`, `App.tsx:334`
-- E) TypingEffect screen reader output — FIXED. Evidence: `components/motion/TypingEffect.tsx:27`, `components/motion/TypingEffect.tsx:28`
-- F) Dead code and unused files — FIXED. Evidence: `App.tsx:629`, `constants.tsx:2`, `components/motion/Typewriter.tsx` (deleted), `App.tsx.bak` (deleted), `App.tsx.bak2` (deleted)
-- G) Duplicate `assetPath` helper — FIXED. Evidence: `lib/assetPath.ts:1`, `App.tsx:14`, `constants.tsx:2`, `data/companies.ts:2`
-- H) Placeholder footer links — FIXED. Evidence: `App.tsx:232`
-- I) Lint/test coverage — FIXED (minimal lint added). Evidence: `eslint.config.js:1`, `package.json:10`
+- A) Light mode text contrast regressions — FIXED. Evidence: `lib/typography.ts:16-18`
+- B) `BlurIn` polymorphism — FIXED. Evidence: `components/motion/BlurIn.tsx:8-29`
+- C) Home hero H1 semantics — FIXED. Evidence: `App.tsx:660-663`
+- D) Clickable cards keyboard accessibility — FIXED. Evidence: `App.tsx:282-316`, `App.tsx:334-358`
+- E) TypingEffect screen reader output — FIXED. Evidence: `components/motion/TypingEffect.tsx:17-40`
+- F) Dead code and unused files — FIXED. Evidence: `constants.tsx:1-4`, `components/motion/Typewriter.tsx` (deleted), `App.tsx.bak` (deleted), `App.tsx.bak2` (deleted)
+- G) Duplicate `assetPath` helper — FIXED. Evidence: `lib/assetPath.ts:1-5`, `App.tsx:14-15`, `constants.tsx:1-3`, `data/companies.ts:2`
+- H) Placeholder footer links — FIXED. Evidence: `App.tsx:230-233`
+- I) Lint/test coverage — FIXED (minimal lint added). Evidence: `eslint.config.js:1-37`, `package.json:6-11`
 
 ## Proof
 - Build log (Phase 6): `npm run build` succeeded after commits 6A–6I.
-- Latest build: `npm run build` — success (2026-01-09 21:08).
-- Preview: `npm run preview -- --port 3000` — started successfully (2026-01-09 21:08).
-- Overflow check (console):
+- Latest build: `npm run build` — success (2026-01-09 21:36).
+- Preview: `npm run preview -- --port 3000` — started successfully (2026-01-09 21:36).
+- Lint: `npm run lint` — success (warnings only; no errors) (2026-01-09 21:36).
+- Overflow check (boolean):
+```js
+document.documentElement.scrollWidth === document.documentElement.clientWidth
+  && document.body.scrollWidth === document.body.clientWidth
+```
+Expected output:
+```
+true
+```
+- Overflow check (numbers):
 ```js
 ({
-  docScrollWidth: document.documentElement.scrollWidth,
-  docClientWidth: document.documentElement.clientWidth,
-  bodyScrollWidth: document.body.scrollWidth,
-  bodyClientWidth: document.body.clientWidth
+  doc: [document.documentElement.scrollWidth, document.documentElement.clientWidth],
+  body: [document.body.scrollWidth, document.body.clientWidth],
 })
 ```
-Output:
+Expected output:
 ```
-{ docScrollWidth: 430, docClientWidth: 430, bodyScrollWidth: 430, bodyClientWidth: 430 }
+{ doc: [430, 430], body: [430, 430] }
 ```
 
 ## Phase 6 Closure
