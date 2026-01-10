@@ -29,13 +29,13 @@ const rowVariants = {
 export const ExperienceSection: React.FC<{ darkMode: boolean }> = ({ darkMode }) => {
   return (
     <Section>
-      <div className="text-left mb-16">
+      <div className="text-left mb-10">
         <BlurIn as="h2" className={cn(typography.h2, "font-black max-w-[24ch]", darkMode ? 'text-white' : 'text-black')}>
           My <br /> <span className="text-blue-600">Experience.</span>
         </BlurIn>
       </div>
       <motion.div
-        className="mt-10 divide-y"
+        className="divide-y"
         variants={listVariants}
         initial="initial"
         whileInView="animate"

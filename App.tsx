@@ -104,6 +104,7 @@ interface GlowButtonProps {
   type?: "button" | "submit" | "reset";
   size?: "default" | "cta";
   fullWidth?: boolean;
+  glow?: boolean;
 }
 
 const GlowButton: React.FC<GlowButtonProps> = ({
@@ -113,28 +114,54 @@ const GlowButton: React.FC<GlowButtonProps> = ({
   onClick,
   type = "button",
   size = "default",
-  fullWidth = false
-}) => (
-  <div className={cn("glow-border-container", !darkMode && "light-glow-button", fullWidth && "w-full", className)}>
-    <div className="glow-border-bg"></div>
-    <button
-      type={type}
-      className={cn(
-        "glow-button-inner group w-full transition-all duration-300 active:scale-[0.98]",
-        size === "cta" ? "h-12 !py-0 !px-6" : "px-8 py-4 sm:px-10 sm:py-5"
-      )}
-      onClick={onClick}
-    >
-      <motion.span
-        className={cn("flex items-center justify-center gap-3", typography.button)}
-        whileHover={{ x: 3 }}
-        transition={transitions.spring}
+  fullWidth = false,
+  glow = true
+}) => {
+  if (!glow) {
+    return (
+      <div className={cn(fullWidth && "w-full", !darkMode && "light-glow-button", className)}>
+        <button
+          type={type}
+          className={cn(
+            "glow-button-inner group w-full transition-all duration-300 active:scale-[0.98]",
+            size === "cta" ? "h-12 !py-0 !px-6" : "px-8 py-4 sm:px-10 sm:py-5"
+          )}
+          onClick={onClick}
+        >
+          <motion.span
+            className={cn("flex items-center justify-center gap-3", typography.button)}
+            whileHover={{ x: 3 }}
+            transition={transitions.spring}
+          >
+            {children}
+          </motion.span>
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <div className={cn("glow-border-container", !darkMode && "light-glow-button", fullWidth && "w-full", className)}>
+      <div className="glow-border-bg"></div>
+      <button
+        type={type}
+        className={cn(
+          "glow-button-inner group w-full transition-all duration-300 active:scale-[0.98]",
+          size === "cta" ? "h-12 !py-0 !px-6" : "px-8 py-4 sm:px-10 sm:py-5"
+        )}
+        onClick={onClick}
       >
-        {children}
-      </motion.span>
-    </button>
-  </div>
-);
+        <motion.span
+          className={cn("flex items-center justify-center gap-3", typography.button)}
+          whileHover={{ x: 3 }}
+          transition={transitions.spring}
+        >
+          {children}
+        </motion.span>
+      </button>
+    </div>
+  );
+};
 
 // --- SECTIONS ---
 
@@ -371,7 +398,7 @@ const BlogCard: React.FC<BlogCardProps> = ({ post, darkMode, onClick }) => {
 const BlogSection = ({ darkMode, onPostClick }: { darkMode: boolean, onPostClick: (s: string) => void }) => {
   return (
     <Section id="blog">
-      <div className="mb-24 text-left">
+      <div className="mb-10 text-left">
         <BlurIn as="span" className={cn(typography.labelXs, "text-blue-500 mb-4 block")}>Insights</BlurIn>
         <BlurIn as="h2" delay={0.1} className={cn(typography.h2, "font-black mb-6 max-w-[24ch]", darkMode ? "text-white" : "text-black")}>
           Thoughts & <br /><span className="text-blue-600">Perspectives.</span>
@@ -633,14 +660,14 @@ const Hero = ({ darkMode, onWorkClick }: { darkMode: boolean, onWorkClick: () =>
     <section className="relative pt-24 pb-12 md:pt-32 md:pb-16 overflow-hidden min-h-[70vh] sm:min-h-[75vh] flex flex-col justify-center">
       <Container className="text-center relative z-10">
         <FadeInUp>
-          <div className="flex flex-col items-center gap-6 sm:gap-8">
-            <Reveal delay={0.2} className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-blue-500/20 bg-blue-500/5">
+          <div className="flex flex-col items-center gap-0">
+            <Reveal delay={0.2} className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-blue-500/20 bg-blue-500/5 mt-8">
               <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
               <span className={cn(typography.labelXs, "text-blue-500")}>Available for new projects</span>
             </Reveal>
 
             {/* Improved Hero Layout: Badge + Portrait + H1 + CTA in one view */}
-            <Reveal delay={0.3} className="relative z-0">
+            <Reveal delay={0.3} className="relative z-0 mt-6">
               <div className="relative w-32 h-32 sm:w-56 sm:h-56 md:w-72 md:h-72">
                 <motion.img
                   initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -657,13 +684,13 @@ const Hero = ({ darkMode, onWorkClick }: { darkMode: boolean, onWorkClick: () =>
               </div>
             </Reveal>
 
-            <motion.div style={{ y: parallaxY }} className="relative z-10 w-full">
+            <motion.div style={{ y: parallaxY }} className="relative z-10 w-full mt-8">
               <h1 className={cn(typography.h1, "font-black max-w-[18ch] block mx-auto !text-center", darkMode ? 'text-white' : 'text-black')}>
                 <TypingEffect as="span" text="Designing Digital Products That Feel Effortless." />
               </h1>
             </motion.div>
 
-            <Reveal delay={1.5} className="w-full">
+            <Reveal delay={1.5} className="w-full mt-4">
               <div
                 className={cn("max-w-2xl font-medium mx-auto !text-center", typography.body, darkMode ? 'text-gray-300' : 'text-gray-600')}
               >
@@ -675,7 +702,7 @@ const Hero = ({ darkMode, onWorkClick }: { darkMode: boolean, onWorkClick: () =>
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.8, duration: 0.5 }}
-              className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-[360px] sm:max-w-none mx-auto relative z-10"
+              className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full max-w-[360px] sm:max-w-none mx-auto relative z-10 mt-8"
             >
               <GlowButton
                 darkMode={darkMode}
@@ -692,6 +719,7 @@ const Hero = ({ darkMode, onWorkClick }: { darkMode: boolean, onWorkClick: () =>
                 size="cta"
                 fullWidth
                 className="w-full sm:w-auto"
+                glow={false}
               >
                 Let's Talk
               </GlowButton>
@@ -915,12 +943,12 @@ export default function App() {
                 <CompaniesLogos darkMode={darkMode} />
                 <ExperienceSection darkMode={darkMode} />
                 <Section id="work" eyebrow="Portfolio">
-                  <div className="mb-16 text-left">
+                  <div className="mb-10 text-left">
                     <BlurIn as="h3" className={cn(typography.h2, "font-black max-w-[24ch]", darkMode ? 'text-white' : 'text-black')}>Featured <br /> <span className="text-blue-600">Works.</span></BlurIn>
                   </div>
 
                   {/* Segmented Tabs for Filtering - Sticky */}
-                  <div className="sticky top-24 sm:top-28 z-40 mb-16 py-4 pointer-events-none">
+                  <div className="sticky top-24 sm:top-28 z-40 mb-6 py-4 pointer-events-none">
                     <Reveal delay={0.2} className="pointer-events-auto flex justify-start">
                       <SegmentTabs
                         tabs={['All Projects', 'Websites', 'Dashboards', 'Apps', 'Design Systems']}
@@ -1031,7 +1059,7 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({ testimonial, darkMode
 const TestimonialMarqueeRow = ({ items, direction, darkMode }: { items: Testimonial[], direction: 'left' | 'right', darkMode: boolean }) => {
   const marqueeItems = [...items, ...items, ...items];
   return (
-    <div className="flex overflow-hidden py-10">
+    <div className="flex overflow-hidden py-8">
       <motion.div
         className="flex gap-12 sm:gap-16 transform-gpu"
         animate={{ x: direction === 'left' ? [0, '-33.33%'] : ['-33.33%', 0] }}
@@ -1054,7 +1082,7 @@ const TestimonialsSection = ({ darkMode }: { darkMode: boolean }) => {
   return (
     <section id="testimonials" className="py-16 md:py-24 relative z-10 overflow-hidden">
       <FadeInUp>
-        <Container className="relative z-20 mb-16 sm:mb-24">
+        <Container className="relative z-20 mb-10">
           <div className="flex flex-col items-start text-left">
             <BlurIn as="span" className={cn(typography.labelXs, "text-blue-600 mb-4 sm:mb-6")}>Client Stories</BlurIn>
             <BlurIn as="h3" delay={0.1} className={cn(typography.h2, "font-black mb-6 max-w-[24ch]", darkMode ? 'text-white' : 'text-black')}>Voices of Impact.</BlurIn>
@@ -1070,7 +1098,7 @@ const TestimonialsSection = ({ darkMode }: { darkMode: boolean }) => {
             "absolute inset-y-0 right-0 w-32 sm:w-64 z-10 bg-gradient-to-l pointer-events-none",
             darkMode ? "from-[#030303] via-[#030303]/40 to-transparent" : "from-[#fafafa] via-[#fafafa]/40 to-transparent"
           )} />
-          <div className="space-y-4">
+          <div className="space-y-3">
             <TestimonialMarqueeRow items={row1} direction="left" darkMode={darkMode} />
             <TestimonialMarqueeRow items={row2} direction="right" darkMode={darkMode} />
             <TestimonialMarqueeRow items={row3} direction="left" darkMode={darkMode} />
