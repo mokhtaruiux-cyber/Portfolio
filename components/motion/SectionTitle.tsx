@@ -1,8 +1,7 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { BlurIn } from './BlurIn';
 import { cn } from '@/lib/utils';
 import { typography } from '@/lib/typography';
-import { titleRevealVariants, viewportDefaults } from '@/lib/motionTokens';
 
 interface SectionTitleProps {
   eyebrow?: string;
@@ -34,25 +33,20 @@ export const SectionTitle: React.FC<SectionTitleProps> = ({
   }[align];
 
   return (
-    <motion.div
-      className={cn('flex flex-col gap-4', alignment, className)}
-      initial="initial"
-      whileInView="animate"
-      viewport={viewportDefaults}
-    >
+    <div className={cn('flex flex-col gap-4', alignment, className)}>
       {eyebrow && (
-        <motion.span
+        <BlurIn
+          as="span"
           className={cn(typography.eyebrow, eyebrowClassName)}
-          variants={titleRevealVariants}
-          custom={delay}
+          delay={delay}
         >
           {eyebrow}
-        </motion.span>
+        </BlurIn>
       )}
-      <motion.h2
+      <BlurIn
+        as="h2"
         className={cn(typography.h2, 'font-black max-w-[24ch]')}
-        variants={titleRevealVariants}
-        custom={delay + 0.1}
+        delay={delay + 0.1}
       >
         {prefix && <span className="inline-flex mr-3 align-middle">{prefix}</span>}
         {title}
@@ -62,7 +56,7 @@ export const SectionTitle: React.FC<SectionTitleProps> = ({
             <span className="text-[#2f6bff]">{highlight}</span>
           </>
         )}
-      </motion.h2>
-    </motion.div>
+      </BlurIn>
+    </div>
   );
 };

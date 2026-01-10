@@ -15,7 +15,7 @@ type BlurInProps = {
 export const BlurIn = ({ as: Component = "h2", children, className, delay = 0 }: BlurInProps) => {
     const ref = React.useRef<HTMLElement | null>(null);
     const isInView = useInView(ref, viewportDefaults);
-    const MotionComponent = motion(Component);
+    const MotionComponent = React.useMemo(() => motion(Component), [Component]);
 
     return (
         <MotionComponent
