@@ -1,0 +1,67 @@
+import React from 'react';
+import { ArrowUpRight } from 'lucide-react';
+import { siteContent } from '../../content';
+import { useTheme } from '../../context/ThemeContext';
+import { Section } from '../layout/Section';
+import { Reveal } from '../motion/Reveal';
+import { BlurIn } from '../motion/BlurIn';
+import { typography } from '../../lib/typography';
+import { cn } from '../../lib/utils';
+import { GlowButton } from '../ui/GlowButton';
+
+export const CTASection = () => {
+  const { darkMode } = useTheme();
+  return (
+    <Section>
+      <div
+        className={cn(
+          'relative overflow-hidden rounded-[16px] glass border p-8 sm:p-12 md:p-16',
+          darkMode ? 'bg-black/40 border-white/10' : 'bg-white/60 border-black/5'
+        )}
+      >
+        <div className="flex flex-col items-start text-left gap-6">
+          <Reveal delay={0.05} className="inline-flex items-center gap-2 px-4 py-2 rounded-[4px] border border-blue-500/20 bg-blue-500/5">
+            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
+            <span className={cn(typography.labelXs, 'text-blue-500')}>{siteContent.finalCta.badge}</span>
+          </Reveal>
+          <BlurIn
+            as="h2"
+            delay={0.1}
+            aria-label={siteContent.finalCta.title}
+            className={cn(typography.h2, 'font-black max-w-[24ch]', darkMode ? 'text-white' : 'text-black')}
+          >
+            {(siteContent.finalCta.titleLines ?? [siteContent.finalCta.title]).map((line) => (
+              <span key={line} className="block">
+                {line}
+              </span>
+            ))}
+          </BlurIn>
+          <Reveal delay={0.2}>
+            <p className={cn(typography.body, 'max-w-[60ch] font-medium', typography.textSubtle, darkMode ? 'text-gray-300' : 'text-gray-600')}>
+              {siteContent.finalCta.description}
+            </p>
+          </Reveal>
+          <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <GlowButton
+              size="cta"
+              href={siteContent.bookingUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {siteContent.finalCta.primaryLabel} <ArrowUpRight size={20} />
+            </GlowButton>
+            <a
+              href={siteContent.finalCta.secondaryHref}
+              className={cn(
+                'text-blue-500 hover:text-blue-600 transition-colors font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 rounded-[4px] px-1',
+                typography.body
+              )}
+            >
+              {siteContent.finalCta.secondaryLabel}
+            </a>
+          </div>
+        </div>
+      </div>
+    </Section>
+  );
+};

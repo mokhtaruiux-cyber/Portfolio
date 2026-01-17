@@ -1,6 +1,6 @@
 
 import React, { useRef } from 'react';
-import { motion, useReducedMotion, useScroll, useTransform, MotionValue } from 'framer-motion';
+import { motion, useReducedMotion, useScroll, useSpring, useTransform, MotionValue } from 'framer-motion';
 import { Project } from '../../types';
 
 // GPU-friendly stacked card animation
@@ -16,19 +16,24 @@ interface StackedCardsProps {
 export const StackedCards: React.FC<StackedCardsProps> = ({ items, renderItem }) => {
     // For a true "one useScroll" implementation as requested:
     const containerRef = useRef<HTMLDivElement>(null);
-    const reduceMotion = useReducedMotion();
+    const reduceMotion = useReducedMotion() ?? false;
     const { scrollYProgress } = useScroll({
         target: containerRef,
         offset: ['start start', 'end end']
     });
+    const smoothProgress = useSpring(scrollYProgress, { stiffness: 120, damping: 30, mass: 0.8 });
+    const gapRem = 6;
+    const tailRem = 6;
+    const gapCount = Math.max(items.length - 1, 0);
+    const extraRem = gapCount * gapRem + tailRem;
 
     return (
         <div
             ref={containerRef}
             className="relative w-full"
             style={{
-                height: `calc(${items.length} * 100svh)`,
-                minHeight: `calc(${items.length} * 100dvh)`,
+                height: `calc(${items.length} * 100svh + ${extraRem}rem)`,
+                minHeight: `calc(${items.length} * 100dvh + ${extraRem}rem)`,
             }}
         >
             {items.map((item, i) => {
@@ -41,7 +46,7 @@ export const StackedCards: React.FC<StackedCardsProps> = ({ items, renderItem })
                         total={items.length}
                         item={item}
                         renderItem={renderItem}
-                        scrollProgress={scrollYProgress}
+                        scrollProgress={smoothProgress}
                         reduceMotion={reduceMotion}
                     />
                 );
@@ -82,13 +87,14 @@ const CardWithTransform = ({ index, total, item, renderItem, scrollProgress, red
                 zIndex: index
             }}
         >
-            <motion.div
-                style={{
-                    scale,
-                    opacity,
-                }}
-                className="w-full origin-top transform-gpu will-change-transform bg-transparent"
-            >
+                <motion.div
+                    style={{
+                        scale,
+                        opacity,
+                        willChange: 'transform, opacity'
+                    }}
+                    className="w-full origin-top transform-gpu bg-transparent"
+                >
                 {renderItem(item, index)}
             </motion.div>
         </div>

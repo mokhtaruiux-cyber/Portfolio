@@ -1,19 +1,19 @@
 import { Transition, Variants } from "framer-motion";
 
 export const easing = {
-  smooth: [0.22, 1, 0.36, 1] as const,
+  smooth: [0.16, 1, 0.3, 1] as const,
 };
 
 export const durations = {
   fast: 0.25,
-  medium: 0.5,
-  slow: 0.9,
+  medium: 0.65,
+  slow: 0.8,
 };
 
 export const viewportDefaults = {
   once: true,
   margin: "-120px",
-};
+} as const;
 
 export const titleRevealVariants = {
   initial: { opacity: 0, y: 18 },

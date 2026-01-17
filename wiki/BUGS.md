@@ -1,15 +1,34 @@
-# Bugs & Fixes Tracker
+# QA Bug Report
 
-## Fixed
-- **[RE-FIXED] Hero Image Order**: Swapped the hero images to match the design request: `Pic-v1.png` for Dark mode and `Pic-v2-Dark.png` (the black background portrait) for Light mode.
-- **[FIXED] Project Card Stacking**: Restored the premium stacking effect by aligning `sticky` positions and ensuring correct `zIndex` layering on the filtered project list.
-- **[FIXED] Sticky Category Tabs**: Segmented tabs now remain pinned during project scroll and smoothly exit when the section ends.
-- **[FIXED] Filter Integrity**: Restored 'All Projects' as the default selection and ensured every category (Apps, Design Systems, etc.) has active content.
-- **[FIXED] Navbar Canvas Alignment**: Nav pill and mobile menu now use container-consistent gutters (`px-4 sm:px-6 lg:px-10`) to prevent edge overflow and keep alignment with sections.
-- **[FIXED] Hero CTA Centering**: Hero spacing is normalized and CTA group width reduced so both buttons stay centered with equal left/right padding.
-- **[FIXED] Featured Works Scroll Fidelity**: Added bottom buffer and adjusted sticky offsets in stacked cards so the scroll stacking behavior mirrors the web reference.
-- **[RE-FIXED] Mobile Nav Width**: Nav container now overrides the global max-width on small screens so the pill spans the full viewport width while keeping desktop constraints.
+Date: 2026-01-10
 
-## Performance Notes
-- Applied `transform-gpu` to stacking card containers to maintain 60FPS during overlapping scroll animations.
-- Verified `AnimatePresence` orchestration to prevent layout shifts during category switching.
+## Scope
+- Static QA pass focused on navigation, section transitions, marquee animations, and performance risks.
+- Code review only (no live device testing, no runtime profiling).
+
+## Findings
+
+### Medium
+1) CompaniesLogos has duplicate focus targets and inconsistent keyboard handling.
+- Impact: Keyboard users can tab to a focusable wrapper that does not respond to Enter/Space; tooltip toggle only works on the inner element.
+- Evidence: `components/sections/CompaniesLogos.tsx:57-93` (outer `tabIndex` + `role="button"` with no key handler; inner `tabIndex` + key handler).
+
+2) Scroll-to-section does not account for fixed nav height.
+- Impact: Section headings can be partially hidden under the fixed navbar after scrollIntoView.
+- Evidence: `App.tsx:790-808` (`scrollIntoView({ behavior: "smooth" })` without offset handling).
+
+3) Testimonials marquee likely to cause animation jank on low-end devices.
+- Impact: Three infinite marquee rows with large cards, shadows, and hover transforms can cause continuous GPU work during scroll.
+- Evidence: `App.tsx:1117-1154` (three marquee rows + heavy shadows + hover scale).
+
+4) HeroGlow uses large, animated blurred layers that may be costly on mobile.
+- Impact: Blurred, animated backgrounds can drop frames on constrained GPUs.
+- Evidence: `index.css:15-58` (blurred `.hero-blob` layers + continuous keyframes).
+
+### Low
+5) Desktop nav does not indicate active section for in-page links.
+- Impact: Users cannot see current section state in the nav while scrolling.
+- Evidence: `App.tsx:842-851` (active styling only when `item.page` exists).
+
+## Tests Run
+- Static QA only (no runtime UI tests executed).

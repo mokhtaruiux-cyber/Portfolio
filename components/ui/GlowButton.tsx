@@ -1,0 +1,88 @@
+import React from 'react';
+import { motion } from 'framer-motion';
+import { useTheme } from '../../context/ThemeContext';
+import { cn } from '../../lib/utils';
+import { typography } from '../../lib/typography';
+import { transitions } from '../../lib/motionTokens';
+
+export interface GlowButtonProps {
+  children: React.ReactNode;
+  className?: string;
+  onClick?: React.MouseEventHandler<HTMLButtonElement | HTMLAnchorElement>;
+  href?: string;
+  target?: string;
+  rel?: string;
+  type?: 'button' | 'submit' | 'reset';
+  size?: 'default' | 'cta';
+  fullWidth?: boolean;
+  glow?: boolean;
+}
+
+export const GlowButton: React.FC<GlowButtonProps> = ({
+  children,
+  className = '',
+  onClick,
+  href,
+  target,
+  rel,
+  type = 'button',
+  size = 'default',
+  fullWidth = false,
+  glow = true,
+}) => {
+  const { darkMode } = useTheme();
+  const Element = href ? 'a' : 'button';
+  const elementProps = href ? { href, target, rel } : { type };
+
+  if (!glow) {
+    return (
+      <div className={cn(fullWidth && 'w-full', !darkMode && 'light-glow-button', className)}>
+        <Element
+          {...elementProps}
+          className={cn(
+            'glow-button-inner group w-full items-center justify-center transition-all duration-300 active:scale-[0.98]',
+            size === 'cta' ? 'h-12 !py-0 !px-4 sm:!px-6' : 'px-8 py-4 sm:px-10 sm:py-5'
+          )}
+          onClick={onClick}
+        >
+          <motion.span
+            className={cn('flex items-center justify-center gap-3', typography.button)}
+            whileHover={{ x: 3 }}
+            transition={transitions.spring}
+          >
+            {children}
+          </motion.span>
+        </Element>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className={cn(
+        'glow-border-container',
+        !darkMode && 'light-glow-button',
+        fullWidth ? 'w-full flex' : 'inline-flex',
+        className
+      )}
+    >
+      <div className="glow-border-bg"></div>
+      <Element
+        {...elementProps}
+        className={cn(
+          'glow-button-inner group w-full items-center justify-center transition-all duration-300 active:scale-[0.98]',
+          size === 'cta' ? 'h-12 !py-0 !px-4 sm:!px-6' : 'px-8 py-4 sm:px-10 sm:py-5'
+        )}
+        onClick={onClick}
+      >
+        <motion.span
+          className={cn('flex items-center justify-center gap-3', typography.button)}
+          whileHover={{ x: 3 }}
+          transition={transitions.spring}
+        >
+          {children}
+        </motion.span>
+      </Element>
+    </div>
+  );
+};

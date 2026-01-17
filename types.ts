@@ -10,12 +10,24 @@ export type CaseStudySection = {
   content: string;
 };
 
+export type PageKey = "home" | "work" | "blog" | "project-details" | "blog-details" | "about";
+
+export type ProcessStep = {
+  id: string;
+  index: number;
+  title: string;
+  description: string;
+  why: string;
+};
+
 export interface Project {
   id: string;
   slug: string;
   title: string;
   category: string;
+  type: string;
   description: string;
+  impact: string;
   image: string;
   industry: string;
   platform: string;
@@ -38,6 +50,13 @@ export interface Experience {
   company: string;
   period: string;
   logo: string;
+}
+
+export interface Company {
+  name: string;
+  subtitle: string;
+  logoSrc: string;
+  href?: string;
 }
 
 export interface Testimonial {

@@ -1,6 +1,7 @@
 
 import React from "react";
 import { motion, useReducedMotion } from "framer-motion";
+import { useTheme } from "../../context/ThemeContext";
 
 /**
  * LivingBackground: A high-end atmospheric background system.
@@ -12,9 +13,9 @@ import { motion, useReducedMotion } from "framer-motion";
  */
 const cn = (...classes: (string | boolean | undefined)[]) => classes.filter(Boolean).join(' ');
 
-export const LivingBackground: React.FC<{ darkMode: boolean }> = ({ darkMode }) => {
-
-  const reduce = useReducedMotion();
+export const LivingBackground = () => {
+  const { darkMode } = useTheme();
+  const reduce = useReducedMotion() ?? false;
 
   return (
     <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden select-none">
@@ -94,14 +95,7 @@ export const LivingBackground: React.FC<{ darkMode: boolean }> = ({ darkMode }) 
         }}
       />
 
-      {/* 5. CSS Noise Grain Overlay */}
-      <div className="absolute inset-0 opacity-[0.1] pointer-events-none mix-blend-soft-light"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E")`,
-        }}
-      />
-
-      {/* 6. Vignette Depth */}
+      {/* 5. Vignette Depth */}
       <div className={cn(
         "absolute inset-0 will-change-opacity",
         darkMode

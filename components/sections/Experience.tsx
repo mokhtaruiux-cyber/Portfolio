@@ -1,8 +1,10 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { EXPERIENCES } from '../../constants';
+import { siteContent } from '../../content';
+import { useTheme } from '../../context/ThemeContext';
 import { Section } from '../layout/Section';
 import { BlurIn } from '../motion/BlurIn';
+import { Reveal } from '../motion/Reveal';
 import { durations, easing, viewportDefaults } from '../../lib/motionTokens';
 import { cn } from '../../lib/utils';
 import { typography } from '../../lib/typography';
@@ -26,13 +28,19 @@ const rowVariants = {
   },
 };
 
-export const ExperienceSection: React.FC<{ darkMode: boolean }> = ({ darkMode }) => {
+export const ExperienceSection: React.FC = () => {
+  const { darkMode } = useTheme();
   return (
-    <Section>
+    <Section id="experience" eyebrow={siteContent.experience.eyebrow}>
       <div className="text-left mb-10">
         <BlurIn as="h2" className={cn(typography.h2, "font-black max-w-[24ch]", darkMode ? 'text-white' : 'text-black')}>
-          My <br /> <span className="text-blue-600">Experience.</span>
+          {siteContent.experience.title} <br /> <span className="text-blue-600">{siteContent.experience.highlight}</span>
         </BlurIn>
+        <Reveal delay={0.15}>
+          <p className={cn(typography.body, "font-medium max-w-[60ch] mt-4", typography.textSubtle, darkMode ? 'text-gray-300' : 'text-gray-600')}>
+            {siteContent.experience.intro}
+          </p>
+        </Reveal>
       </div>
       <motion.div
         className="divide-y"
@@ -41,7 +49,7 @@ export const ExperienceSection: React.FC<{ darkMode: boolean }> = ({ darkMode })
         whileInView="animate"
         viewport={viewportDefaults}
       >
-        {EXPERIENCES.map((item, idx) => (
+        {siteContent.experience.items.map((item, idx) => (
           <motion.div
             key={item.id}
             variants={rowVariants}
@@ -49,7 +57,7 @@ export const ExperienceSection: React.FC<{ darkMode: boolean }> = ({ darkMode })
               'py-8 sm:py-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4',
               darkMode ? 'border-white/10' : 'border-black/10'
             )}
-            style={{ borderBottomWidth: idx === EXPERIENCES.length - 1 ? 0 : 1 }}
+            style={{ borderBottomWidth: idx === siteContent.experience.items.length - 1 ? 0 : 1 }}
           >
             <div className={cn(typography.h3Display, "font-black", darkMode ? 'text-white' : 'text-black')}>
               {item.role}

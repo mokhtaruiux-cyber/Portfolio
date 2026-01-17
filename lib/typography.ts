@@ -15,5 +15,7 @@ export const typography = {
     menuItem: "text-2xl font-black uppercase tracking-widest",
     body: "text-base md:text-lg leading-relaxed",
     bodyLarge: "text-base md:text-lg leading-relaxed",
-    bodyMuted: "text-base md:text-lg leading-relaxed"
+    bodyMuted: "text-base md:text-lg leading-relaxed",
+    textMuted: "opacity-60",
+    textSubtle: "opacity-80"
 };

@@ -10,9 +10,9 @@
 - Hero images are currently served from the root directory.
 
 ## Unsplash Fallbacks
-Project images are currently mapped to Unsplash URLs in `constants.tsx`. To replace them:
+Project images are currently mapped to Unsplash URLs in `content.ts`. To replace them:
 1. Upload your image to an `assets/` folder (standard) or keep in root.
-2. Update the `image` field in `PROJECTS` array in `constants.tsx`.
+2. Update the `image` field in `PROJECTS` array in `content.ts`.
 
 ## Known Issues (Fixed/Pending)
 - **Company Logos**: Issues with visibility were reported. Adjusted opacity (0.6 base -> 1.0 hover) and removed aggressive grayscale filters to ensure they appear.

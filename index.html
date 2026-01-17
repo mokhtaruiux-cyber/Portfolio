@@ -67,11 +67,12 @@
     .glow-border-container {
       position: relative;
       padding: 1.5px;
-      border-radius: 9999px;
+      border-radius: 4px;
       overflow: hidden;
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      box-sizing: border-box;
       transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       box-shadow: 0 0 60px -15px rgba(59, 130, 246, 0.3);
     }
@@ -101,12 +102,13 @@
       background: rgba(10, 10, 10, 0.85);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
-      border-radius: 9999px;
-      padding: 16px 40px;
+      border-radius: 4px;
+      box-sizing: border-box;
       font-weight: 800;
       color: white;
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 12px;
       white-space: nowrap;
       font-size: 1.125rem;

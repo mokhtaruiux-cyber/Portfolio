@@ -11,13 +11,14 @@ interface SectionProps {
     id?: string;
     eyebrow?: string;
     darkMode?: boolean;
+    motion?: "lift" | "fade";
 }
 
-export const Section: React.FC<SectionProps> = ({ children, className, id, eyebrow, darkMode }) => {
+export const Section: React.FC<SectionProps> = ({ children, className, id, eyebrow, darkMode, motion = "lift" }) => {
     return (
         <section id={id} className={cn("py-16 md:py-24 relative z-10", className)}>
             <Container>
-                <FadeInUp>
+                <FadeInUp disableTransform={motion === "fade"}>
                     {eyebrow && (
                         <span className={cn(
                             typography.labelXs,
