@@ -1,5 +1,5 @@
 
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion, useMotionValue, useSpring, useTransform, useReducedMotion } from 'framer-motion';
 import { transitions } from '../../lib/motionTokens';
 
@@ -16,6 +16,19 @@ export const TiltCard: React.FC<TiltCardProps> = ({
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const shouldReduceMotion = useReducedMotion();
+  const [canHover, setCanHover] = useState(() => {
+    if (typeof window === 'undefined') return true;
+    return window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+  });
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const media = window.matchMedia('(hover: hover) and (pointer: fine)');
+    const update = () => setCanHover(media.matches);
+    update();
+    media.addEventListener('change', update);
+    return () => media.removeEventListener('change', update);
+  }, []);
 
   const x = useMotionValue(0);
   const y = useMotionValue(0);
@@ -30,7 +43,7 @@ export const TiltCard: React.FC<TiltCardProps> = ({
   const shineY = useTransform(mouseY, [-0.5, 0.5], ["0%", "100%"]);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!ref.current || shouldReduceMotion) return;
+    if (!ref.current || shouldReduceMotion || !canHover) return;
     const rect = ref.current.getBoundingClientRect();
     const width = rect.width;
     const height = rect.height;
@@ -49,11 +62,11 @@ export const TiltCard: React.FC<TiltCardProps> = ({
   return (
     <motion.div
       ref={ref}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
+      onMouseMove={canHover ? handleMouseMove : undefined}
+      onMouseLeave={canHover ? handleMouseLeave : undefined}
       style={{
-        rotateX: shouldReduceMotion ? 0 : rotateX,
-        rotateY: shouldReduceMotion ? 0 : rotateY,
+        rotateX: shouldReduceMotion || !canHover ? 0 : rotateX,
+        rotateY: shouldReduceMotion || !canHover ? 0 : rotateY,
         transformStyle: "preserve-3d",
       }}
       className={`relative group ${className}`}
@@ -62,7 +75,7 @@ export const TiltCard: React.FC<TiltCardProps> = ({
         {children}
       </div>
       
-      {!shouldReduceMotion && (
+      {!shouldReduceMotion && canHover && (
         <motion.div 
           style={{
             background: `radial-gradient(circle at ${shineX} ${shineY}, rgba(255,255,255,0.12) 0%, transparent 80%)`,
