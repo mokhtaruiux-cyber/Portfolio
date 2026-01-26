@@ -88,7 +88,7 @@ export const CompaniesLogos: React.FC = () => {
                       animate={{ opacity: 1, y: 0, scale: 1, x: '-50%' }}
                       exit={{ opacity: 0, y: 6, scale: 0.95, x: '-50%' }}
                       className={cn(
-                        'absolute -top-10 left-1/2 z-30 px-4 py-2 rounded-mini glass border whitespace-nowrap shadow-2xl pointer-events-none',
+                        'absolute -top-10 left-1/2 z-30 px-3 py-1 rounded-mini glass border whitespace-nowrap shadow-2xl pointer-events-none',
                         darkMode ? 'bg-black/90 border-white/10' : 'bg-white/90 border-black/10'
                       )}
                     >

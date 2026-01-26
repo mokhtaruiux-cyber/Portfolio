@@ -39,7 +39,7 @@ const BlogCardComponent: React.FC<BlogCardProps> = ({ post, onClick }) => {
               sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
               className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
             />
-            <div className={cn('absolute top-6 left-6 px-4 py-2 rounded-mini glass border border-white/10 bg-black/40 text-white', typography.labelSm)}>
+            <div className={cn('absolute top-6 left-6 px-3 py-1 rounded-mini glass border border-white/10 bg-black/40 text-white', typography.labelSm)}>
               {post.category}
             </div>
           </div>
