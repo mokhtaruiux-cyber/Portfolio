@@ -136,7 +136,7 @@ export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
                   className={cn(
                     typography.labelSm,
                     'transition-colors',
-                    item.page && isActive(item.page) ? 'text-blue-500' : darkMode ? 'text-white/70 hover:text-white' : 'text-black/70 hover:text-black'
+                    item.page && isActive(item.page) ? 'text-accent' : darkMode ? 'text-white/70 hover:text-white' : 'text-black/70 hover:text-black'
                   )}
                 >
                   {item.label}
@@ -216,7 +216,7 @@ export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
                     className={cn(
                       typography.menuItem,
                       'transition-all w-full text-center',
-                      item.page && isActive(item.page) ? 'opacity-100 text-blue-500' : typography.textMuted
+                      item.page && isActive(item.page) ? 'opacity-100 text-accent' : typography.textMuted
                     )}
                   >
                     {item.label}

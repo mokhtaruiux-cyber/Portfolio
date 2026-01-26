@@ -33,9 +33,9 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({ testimonial, darkMode
         <img
           src={testimonial.avatar}
           alt={testimonial.name}
-          className="w-12 h-12 sm:w-16 sm:h-16 rounded-full border-2 border-blue-600/30 group-hover:scale-110 transition-transform duration-500"
+          className="w-12 h-12 sm:w-16 sm:h-16 rounded-full border-2 border-accent/30 group-hover:scale-110 transition-transform duration-500"
         />
-        <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center border-2 border-black">
+        <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-accent rounded-full flex items-center justify-center border-2 border-black">
           <Zap size={10} className="text-white fill-current" />
         </div>
       </div>
@@ -109,10 +109,10 @@ export const TestimonialsSection = () => {
       <FadeInUp>
         <Container className="relative z-20 mb-10">
           <div className="flex flex-col items-start text-left">
-            <BlurIn as="span" className={cn(typography.labelXs, 'text-blue-600 mb-4 sm:mb-6')}>{siteContent.testimonials.eyebrow}</BlurIn>
+            <BlurIn as="span" className={cn(typography.labelXs, 'text-accent mb-4 sm:mb-6')}>{siteContent.testimonials.eyebrow}</BlurIn>
             <BlurIn as="h3" delay={0.1} className={cn(typography.h2, 'font-black mb-6 max-w-[24ch]', darkMode ? 'text-white' : 'text-black')}>
               {siteContent.testimonials.title} <br />
-              <span className="text-blue-600">{siteContent.testimonials.highlight}</span>
+              <span className="text-accent">{siteContent.testimonials.highlight}</span>
             </BlurIn>
             <Reveal delay={0.2}>
               <p className={cn(typography.body, 'max-w-xl font-medium', typography.textSubtle, darkMode ? 'text-gray-300' : 'text-gray-600')}>

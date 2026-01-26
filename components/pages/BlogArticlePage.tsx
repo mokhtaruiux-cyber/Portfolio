@@ -69,7 +69,7 @@ export const BlogArticlePage = ({ post, onBack }: { post: BlogPost; onBack: () =
           <button
             onClick={onBack}
             className={cn(
-              'flex items-center gap-2 hover:opacity-100 hover:text-blue-500 transition-all font-medium group',
+              'flex items-center gap-2 hover:opacity-100 hover:text-accent transition-all font-medium group',
               typography.body,
               typography.textSubtle
             )}
@@ -80,7 +80,7 @@ export const BlogArticlePage = ({ post, onBack }: { post: BlogPost; onBack: () =
 
           <div className="space-y-4">
             <div className={cn('flex items-center gap-4', typography.labelXs, typography.textSubtle)}>
-              <span className="px-3 py-1 rounded-[4px] bg-blue-600/20 border border-blue-600/30 text-blue-400">{post.category}</span>
+              <span className="px-3 py-1 rounded-[4px] bg-accent/20 border border-accent/30 text-accent">{post.category}</span>
               <span>{post.date}</span>
               <span>{post.readTime}</span>
             </div>

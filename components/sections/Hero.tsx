@@ -43,7 +43,7 @@ export const Hero = ({ onWorkClick }: { onWorkClick: () => void }) => {
                 <div
                   className={cn(
                     'absolute inset-0 blur-[100px] opacity-30 scale-125 -z-10 transition-all duration-1000',
-                    darkMode ? 'bg-blue-500/40' : 'bg-blue-400/30'
+                    darkMode ? 'bg-accent/40' : 'bg-accent/30'
                   )}
                 />
               </div>
@@ -93,7 +93,7 @@ export const Hero = ({ onWorkClick }: { onWorkClick: () => void }) => {
                   key={item}
                   className={cn(
                     typography.labelXs,
-                    'px-3 py-1 rounded-[4px] border border-blue-500/20 bg-blue-500/5 text-blue-500'
+                    'px-3 py-1 rounded-[4px] border border-accent/20 bg-accent/5 text-accent'
                   )}
                 >
                   {item}

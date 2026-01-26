@@ -24,8 +24,8 @@ const BlogCardComponent: React.FC<BlogCardProps> = ({ post, onClick }) => {
           className={cn(
             'group w-full text-left flex flex-col rounded-[16px] glass border overflow-hidden transition-all duration-700 cursor-pointer h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 focus-visible:ring-offset-2',
             darkMode
-              ? 'bg-black/40 border-white/5 hover:border-blue-500/30 focus-visible:ring-offset-[#030303]'
-              : 'bg-white/60 border-black/5 hover:border-blue-500/30 shadow-xl focus-visible:ring-offset-[#fafafa]'
+              ? 'bg-black/40 border-white/5 hover:border-accent/30 focus-visible:ring-offset-[#030303]'
+              : 'bg-white/60 border-black/5 hover:border-accent/30 shadow-xl focus-visible:ring-offset-[#fafafa]'
           )}
         >
           <div className="relative aspect-[16/10] overflow-hidden">
@@ -48,13 +48,13 @@ const BlogCardComponent: React.FC<BlogCardProps> = ({ post, onClick }) => {
               <span className="flex items-center gap-1.5"><Calendar size={12} /> {post.date}</span>
               <span className="flex items-center gap-1.5"><Clock size={12} /> {post.readTime}</span>
             </div>
-            <h3 className={cn(typography.h3Display, 'mb-4 group-hover:text-blue-500 transition-colors', darkMode ? 'text-white' : 'text-black')}>
+            <h3 className={cn(typography.h3Display, 'mb-4 group-hover:text-accent transition-colors', darkMode ? 'text-white' : 'text-black')}>
               {post.title}
             </h3>
             <p className={cn(typography.body, 'font-medium mb-8 line-clamp-3', typography.textSubtle)}>
               {post.excerpt}
             </p>
-            <div className={cn('mt-auto flex items-center gap-2 text-blue-500 group-hover:gap-4 transition-all duration-300', typography.labelXs, 'tracking-[0.2em]')}>
+            <div className={cn('mt-auto flex items-center gap-2 text-accent group-hover:gap-4 transition-all duration-300', typography.labelXs, 'tracking-[0.2em]')}>
               {siteContent.writing.readArticleLabel} <ArrowUpRight size={16} />
             </div>
           </div>

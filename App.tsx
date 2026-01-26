@@ -217,7 +217,7 @@ export default function App() {
       <Section id="work" eyebrow={siteContent.featuredWork.eyebrow} motion="fade">
         <div className="mb-10 text-left">
           <BlurIn as="h3" className={cn(typography.h2, 'font-black max-w-[24ch]', darkMode ? 'text-white' : 'text-black')}>
-            {siteContent.featuredWork.title} <br /> <span className="text-blue-600">{siteContent.featuredWork.highlight}</span>
+            {siteContent.featuredWork.title} <br /> <span className="text-accent">{siteContent.featuredWork.highlight}</span>
           </BlurIn>
         </div>
 

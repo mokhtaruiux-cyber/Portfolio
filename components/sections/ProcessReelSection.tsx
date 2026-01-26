@@ -124,7 +124,7 @@ export const ProcessReelSection: React.FC<ProcessReelSectionProps> = ({
       <div ref={containerRef}>
         <div className="text-left mb-10">
           <BlurIn as="h2" className={cn(typography.h2, "font-black max-w-[28ch]", darkMode ? "text-white" : "text-black")}>
-            {siteContent.process.title} <br /> <span className="text-blue-600">{siteContent.process.highlight}</span>
+            {siteContent.process.title} <br /> <span className="text-accent">{siteContent.process.highlight}</span>
           </BlurIn>
           <Reveal delay={0.2} className="mt-4">
             <p className={cn(typography.body, "max-w-[60ch] font-medium", typography.textSubtle, darkMode ? "text-gray-300" : "text-gray-600")}>
@@ -175,14 +175,14 @@ export const ProcessReelSection: React.FC<ProcessReelSectionProps> = ({
                   className="w-full text-left focus-visible:outline-none"
                 >
                   <div className="flex items-center justify-between mb-4">
-                    <span className={cn(typography.labelXs, "tracking-[0.3em] text-blue-500")}>
+                    <span className={cn(typography.labelXs, "tracking-[0.3em] text-accent")}>
                       {String(step.index).padStart(2, '0')}
                     </span>
                     <span className={cn(typography.labelXs, typography.textMuted)}>{step.id.toUpperCase()}</span>
                   </div>
                   <div className="h-1 w-full rounded-[4px] bg-black/10 dark:bg-white/10 overflow-hidden mb-4">
                     <div
-                      className="h-full bg-blue-500 origin-left"
+                      className="h-full bg-accent origin-left"
                       style={{
                         transform: isActive && isAutoPlayEnabled ? `scaleX(${Math.min(progress, 1)})` : 'scaleX(0)',
                         willChange: 'transform',

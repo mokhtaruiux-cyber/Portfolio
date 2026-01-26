@@ -35,10 +35,10 @@ const ProjectCardWrapperComponent: React.FC<ProjectCardWrapperProps> = ({ projec
               <div className="order-2 lg:order-1 flex flex-col justify-between h-full text-left">
                 <Reveal staggerChildren>
                   <div className={cn('flex flex-wrap items-center gap-3 mb-4', typography.labelXs)}>
-                    <span className="tracking-[0.3em] text-blue-500">{project.category}</span>
+                    <span className="tracking-[0.3em] text-accent">{project.category}</span>
                     <span className={cn(typography.textMuted, darkMode ? 'text-white' : 'text-black')}>{project.type}</span>
                   </div>
-                  <h4 className={cn(typography.h1, 'font-black mb-4 sm:mb-8 group-hover:text-blue-500 transition-colors duration-500 max-w-[18ch]', darkMode ? 'text-white' : 'text-black')}>
+                  <h4 className={cn(typography.h1, 'font-black mb-4 sm:mb-8 group-hover:text-accent transition-colors duration-500 max-w-[18ch]', darkMode ? 'text-white' : 'text-black')}>
                     {project.title}
                   </h4>
                   <p className={cn(typography.body, 'font-medium mb-6 sm:mb-10 max-w-3xl', typography.textSubtle, darkMode ? 'text-gray-300' : 'text-gray-600')}>
@@ -50,7 +50,7 @@ const ProjectCardWrapperComponent: React.FC<ProjectCardWrapperProps> = ({ projec
                         key={tag}
                         className={cn(
                           typography.labelXs,
-                          'px-3 py-1 rounded-[4px] border border-blue-500/20 text-blue-500'
+                          'px-3 py-1 rounded-[4px] border border-accent/20 text-accent'
                         )}
                       >
                         {tag}
@@ -70,7 +70,7 @@ const ProjectCardWrapperComponent: React.FC<ProjectCardWrapperProps> = ({ projec
                     {project.impact}
                   </p>
                   <div className="flex flex-wrap gap-4 items-center">
-                    <div className={cn('flex items-center gap-2 group-hover:opacity-100 group-hover:text-blue-500 transition-all duration-500', typography.button, typography.textMuted)}>
+                    <div className={cn('flex items-center gap-2 group-hover:opacity-100 group-hover:text-accent transition-all duration-500', typography.button, typography.textMuted)}>
                       {siteContent.featuredWork.viewProjectLabel} <ArrowUpRight size={16} />
                     </div>
                   </div>

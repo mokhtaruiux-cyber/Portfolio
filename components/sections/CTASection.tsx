@@ -20,9 +20,9 @@ export const CTASection = () => {
         )}
       >
         <div className="flex flex-col items-start text-left gap-6">
-          <Reveal delay={0.05} className="inline-flex items-center gap-2 px-4 py-2 rounded-[4px] border border-blue-500/20 bg-blue-500/5">
-            <span className="w-2 h-2 rounded-full bg-blue-500 animate-pulse" />
-            <span className={cn(typography.labelXs, 'text-blue-500')}>{siteContent.finalCta.badge}</span>
+          <Reveal delay={0.05} className="inline-flex items-center gap-2 px-4 py-2 rounded-[4px] border border-accent/20 bg-accent/5">
+            <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
+            <span className={cn(typography.labelXs, 'text-accent')}>{siteContent.finalCta.badge}</span>
           </Reveal>
           <BlurIn
             as="h2"
@@ -53,7 +53,7 @@ export const CTASection = () => {
             <a
               href={siteContent.finalCta.secondaryHref}
               className={cn(
-                'text-blue-500 hover:text-blue-600 transition-colors font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 rounded-[4px] px-1',
+                'text-accent hover:text-accent/90 transition-colors font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 rounded-[4px] px-1',
                 typography.body
               )}
             >

@@ -35,13 +35,13 @@ export const LivingBackground = () => {
       <div className={cn(
         "absolute top-0 left-1/2 -translate-x-1/2 w-full h-screen scale-[1.4] blur-[120px] rounded-full will-change-[filter,opacity]",
         reduce ? "opacity-25" : "opacity-40",
-        darkMode ? 'bg-blue-600/20' : 'bg-blue-400/10'
+        darkMode ? 'bg-accent/20' : 'bg-accent/10'
       )} />
 
       {/* 2. Athos-style Hero Blobs (Larger, softer) */}
       <div className="absolute inset-0 overflow-hidden">
         <Blob
-          color={darkMode ? "bg-blue-500/15" : "bg-blue-300/10"}
+          color={darkMode ? "bg-accent/15" : "bg-accent/10"}
           size="w-full h-full scale-[0.8]"
           initial={{ top: "-10%", left: "10%" }}
           animate={{
@@ -72,7 +72,7 @@ export const LivingBackground = () => {
       {/* 3. Three Animated Morphing Blobs (General atmospheric) */}
       <div className="absolute inset-0">
         <Blob
-          color={darkMode ? "bg-blue-600/15" : "bg-blue-400/10"}
+          color={darkMode ? "bg-accent/15" : "bg-accent/10"}
           size="w-full h-full scale-[0.5]"
           initial={{ top: "10%", left: "-10%" }}
           animate={{

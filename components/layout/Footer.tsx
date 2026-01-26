@@ -59,7 +59,7 @@ export const Footer = ({
           </div>
           {footerColumns.map((column) => (
             <div key={column.title} className="text-left">
-              <h5 className={cn(typography.labelXs, 'tracking-[0.3em] mb-8 text-blue-500')}>{column.title}</h5>
+              <h5 className={cn(typography.labelXs, 'tracking-[0.3em] mb-8 text-accent')}>{column.title}</h5>
               <ul className="space-y-4">
                 {column.links.map((link) => (
                   <li key={link.label}>

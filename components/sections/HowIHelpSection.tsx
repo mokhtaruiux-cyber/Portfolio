@@ -65,13 +65,13 @@ export const HowIHelpSection: React.FC = () => {
             <ul className={cn(typography.body, "font-medium space-y-2", typography.textSubtle, darkMode ? "text-gray-300" : "text-gray-600")}>
               {card.bullets.map((bullet) => (
                 <li key={bullet} className="flex items-start gap-2">
-                  <span className="mt-2 h-1.5 w-1.5 rounded-full bg-blue-500" aria-hidden="true" />
+                  <span className="mt-2 h-1.5 w-1.5 rounded-full bg-accent" aria-hidden="true" />
                   <span>{bullet}</span>
                 </li>
               ))}
             </ul>
             <div className="mt-6">
-              <span className={cn(typography.labelXs, "tracking-[0.3em] text-blue-500 block mb-2")}>
+              <span className={cn(typography.labelXs, "tracking-[0.3em] text-accent block mb-2")}>
                 {howIHelp.outcomeLabel}
               </span>
               <p className={cn(typography.body, "font-medium", darkMode ? "text-gray-200" : "text-gray-700")}>
@@ -88,7 +88,7 @@ export const HowIHelpSection: React.FC = () => {
           target="_blank"
           rel="noopener noreferrer"
           className={cn(
-            "inline-flex items-center gap-2 text-blue-500 hover:text-blue-600 transition-colors font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 rounded-[4px] px-1",
+            "inline-flex items-center gap-2 text-accent hover:text-accent/90 transition-colors font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 rounded-[4px] px-1",
             typography.body
           )}
         >

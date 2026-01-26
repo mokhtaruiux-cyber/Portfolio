@@ -34,7 +34,7 @@ export const ExperienceSection: React.FC = () => {
     <Section id="experience" eyebrow={siteContent.experience.eyebrow}>
       <div className="text-left mb-10">
         <BlurIn as="h2" className={cn(typography.h2, "font-black max-w-[24ch]", darkMode ? 'text-white' : 'text-black')}>
-          {siteContent.experience.title} <br /> <span className="text-blue-600">{siteContent.experience.highlight}</span>
+          {siteContent.experience.title} <br /> <span className="text-accent">{siteContent.experience.highlight}</span>
         </BlurIn>
         <Reveal delay={0.15}>
           <p className={cn(typography.body, "font-medium max-w-[60ch] mt-4", typography.textSubtle, darkMode ? 'text-gray-300' : 'text-gray-600')}>

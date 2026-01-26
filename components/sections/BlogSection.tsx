@@ -13,9 +13,9 @@ export const BlogSection = ({ onPostClick }: { onPostClick: (slug: string) => vo
   return (
     <Section id="blog">
       <div className="mb-10 text-left">
-        <BlurIn as="span" className={cn(typography.labelXs, 'text-blue-500 mb-4 block')}>{siteContent.writing.eyebrow}</BlurIn>
+        <BlurIn as="span" className={cn(typography.labelXs, 'text-accent mb-4 block')}>{siteContent.writing.eyebrow}</BlurIn>
         <BlurIn as="h2" delay={0.1} className={cn(typography.h2, 'font-black mb-6 max-w-[24ch]', darkMode ? 'text-white' : 'text-black')}>
-          {siteContent.writing.title} <br /><span className="text-blue-600">{siteContent.writing.highlight}</span>
+          {siteContent.writing.title} <br /><span className="text-accent">{siteContent.writing.highlight}</span>
         </BlurIn>
         <Reveal delay={0.2}>
           <p className={cn(typography.body, 'max-w-2xl font-medium', typography.textSubtle)}>

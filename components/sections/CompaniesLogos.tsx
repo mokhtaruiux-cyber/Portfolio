@@ -27,7 +27,7 @@ export const CompaniesLogos: React.FC = () => {
         align="left"
         delay={0}
         stackHighlight
-        eyebrowClassName="text-blue-500/80"
+        eyebrowClassName="text-accent/80"
       />
       <Reveal delay={0.1}>
         <div className="mt-10 relative overflow-x-hidden overflow-y-visible">

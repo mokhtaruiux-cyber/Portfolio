@@ -78,13 +78,13 @@ export const ProjectDetailPage = ({
       </button>
       <Section>
         <div className="text-left space-y-10">
-          <button onClick={onBack} className={cn('flex items-center gap-2 hover:opacity-100 hover:text-blue-500 transition-all font-medium group', typography.body, typography.textSubtle)}>
+          <button onClick={onBack} className={cn('flex items-center gap-2 hover:opacity-100 hover:text-accent transition-all font-medium group', typography.body, typography.textSubtle)}>
             <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
             {siteContent.projectDetail.backToWorkLabel}
           </button>
 
           <div className="space-y-4">
-            <span className={cn(typography.labelXs, 'tracking-[0.3em] text-blue-500')}>{project.category}</span>
+            <span className={cn(typography.labelXs, 'tracking-[0.3em] text-accent')}>{project.category}</span>
             <h1 className={cn(typography.h1Display, 'font-black max-w-[18ch]', darkMode ? 'text-white' : 'text-black')}>{project.title}</h1>
             <p className={cn(typography.body, 'max-w-[60ch] font-medium', typography.textSubtle, darkMode ? 'text-white' : 'text-black')}>{project.description}</p>
           </div>

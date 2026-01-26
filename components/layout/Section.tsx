@@ -23,7 +23,7 @@ export const Section: React.FC<SectionProps> = ({ children, className, id, eyebr
                         <span className={cn(
                             typography.labelXs,
                             "mb-4 sm:mb-6 block",
-                            darkMode === false ? "text-blue-600" : "text-blue-500"
+                            "text-accent"
                         )}>
                             {eyebrow}
                         </span>
