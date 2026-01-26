@@ -64,7 +64,7 @@ export const BlogArticlePage = ({ post, onBack }: { post: BlogPost; onBack: () =
   const { darkMode } = useTheme();
   return (
     <>
-      <Section className="pt-28 md:pt-32">
+      <Section>
         <div className="mx-auto flex w-full max-w-[60ch] flex-col items-start text-left space-y-10">
           <button
             onClick={onBack}
