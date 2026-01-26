@@ -2,12 +2,20 @@ import { writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 const raw = process.env.VITE_SITE_URL;
-if (!raw || raw.includes('%VITE_SITE_URL%')) {
-  console.error('VITE_SITE_URL is required to generate sitemap.xml');
-  process.exit(1);
+const isPlaceholder = !raw || raw.includes('%VITE_SITE_URL%');
+const isCi = process.env.CI === 'true' || process.env.NODE_ENV === 'production';
+
+let baseUrl = raw;
+if (isPlaceholder) {
+  if (isCi) {
+    console.error('VITE_SITE_URL is required to generate sitemap.xml in CI/production.');
+    process.exit(1);
+  }
+  baseUrl = 'http://localhost:3000';
+  console.warn('VITE_SITE_URL is missing; defaulting sitemap base to http://localhost:3000.');
 }
 
-const siteUrl = raw.replace(/\/+$/, '');
+const siteUrl = baseUrl.replace(/\/+$/, '');
 
 const routes = [
   '/',
