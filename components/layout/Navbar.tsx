@@ -115,17 +115,21 @@ export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
           transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
         >
           <div className="flex items-center justify-between h-full px-4 sm:px-6">
-            <div
-              className="flex items-center gap-3 cursor-pointer"
+            <button
+              type="button"
               onClick={() => {
                 onNavigate('home');
               }}
+              className={cn(
+                'flex items-center gap-3 cursor-pointer bg-transparent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 focus-visible:ring-offset-2',
+                darkMode ? 'focus-visible:ring-offset-[#030303]' : 'focus-visible:ring-offset-[#fafafa]'
+              )}
             >
               <div className="h-10 w-10 flex items-center justify-center">
                 <img src={siteContent.brand.logoSrc} alt={siteContent.brand.logoAlt} className="w-full h-full object-contain" />
               </div>
               <span className={cn(typography.brand, darkMode ? 'text-white' : 'text-black')}>{siteContent.brand.name}</span>
-            </div>
+            </button>
             <div className="hidden md:flex flex-1 items-center justify-center gap-6">
               {navItems.map((item) => (
                 <button

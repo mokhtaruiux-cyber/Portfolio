@@ -150,18 +150,10 @@ export const ProcessReelSection: React.FC<ProcessReelSectionProps> = ({
             const tabId = `process-tab-${step.id}`;
             const panelId = `process-panel-${step.id}`;
             return (
-              <button
+              <div
                 key={step.id}
-                ref={(el) => { tabRefs.current[index] = el; }}
-                type="button"
-                role="tab"
-                id={tabId}
-                aria-selected={isActive}
-                aria-controls={panelId}
-                tabIndex={isActive ? 0 : -1}
-                onClick={() => handleSelect(index)}
                 className={cn(
-                  "snap-center min-w-[240px] md:min-w-0 text-left p-6 sm:p-8 rounded-[16px] glass border transition-all duration-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40",
+                  "snap-center min-w-[240px] md:min-w-0 text-left p-6 sm:p-8 rounded-[16px] glass border transition-all duration-700 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500/40",
                   isActive
                     ? darkMode
                       ? "bg-white/5 border-white/15"
@@ -171,29 +163,39 @@ export const ProcessReelSection: React.FC<ProcessReelSectionProps> = ({
                       : "bg-white/50 border-black/5 opacity-70 hover:opacity-100"
                 )}
               >
-                <div className="flex items-center justify-between mb-4">
-                  <span className={cn(typography.labelXs, "tracking-[0.3em] text-blue-500")}>
-                    {String(step.index).padStart(2, '0')}
-                  </span>
-                  <span className={cn(typography.labelXs, typography.textMuted)}>{step.id.toUpperCase()}</span>
-                </div>
-                <div className="h-1 w-full rounded-[4px] bg-black/10 dark:bg-white/10 overflow-hidden mb-4">
-                  <div
-                    className="h-full bg-blue-500 origin-left"
-                    style={{
-                      transform: isActive && isAutoPlayEnabled ? `scaleX(${Math.min(progress, 1)})` : 'scaleX(0)',
-                      willChange: 'transform',
-                    }}
-                  />
-                </div>
-                <h3 className={cn(typography.h3, "font-black mb-3", darkMode ? "text-white" : "text-black")}>{step.title}</h3>
-                {isActive && (
-                  <div id={panelId} role="tabpanel" aria-labelledby={tabId}>
-                    <p className={cn(typography.body, "font-medium mb-3", typography.textSubtle, darkMode ? "text-gray-300" : "text-gray-600")}>{step.description}</p>
-                    <p className={cn(typography.labelSm, typography.textSubtle, darkMode ? "text-gray-400" : "text-gray-500")}>{step.why}</p>
+                <button
+                  ref={(el) => { tabRefs.current[index] = el; }}
+                  type="button"
+                  role="tab"
+                  id={tabId}
+                  aria-selected={isActive}
+                  aria-controls={panelId}
+                  tabIndex={isActive ? 0 : -1}
+                  onClick={() => handleSelect(index)}
+                  className="w-full text-left focus-visible:outline-none"
+                >
+                  <div className="flex items-center justify-between mb-4">
+                    <span className={cn(typography.labelXs, "tracking-[0.3em] text-blue-500")}>
+                      {String(step.index).padStart(2, '0')}
+                    </span>
+                    <span className={cn(typography.labelXs, typography.textMuted)}>{step.id.toUpperCase()}</span>
                   </div>
-                )}
-              </button>
+                  <div className="h-1 w-full rounded-[4px] bg-black/10 dark:bg-white/10 overflow-hidden mb-4">
+                    <div
+                      className="h-full bg-blue-500 origin-left"
+                      style={{
+                        transform: isActive && isAutoPlayEnabled ? `scaleX(${Math.min(progress, 1)})` : 'scaleX(0)',
+                        willChange: 'transform',
+                      }}
+                    />
+                  </div>
+                  <h3 className={cn(typography.h3, "font-black mb-3", darkMode ? "text-white" : "text-black")}>{step.title}</h3>
+                </button>
+                <div id={panelId} role="tabpanel" aria-labelledby={tabId} hidden={!isActive}>
+                  <p className={cn(typography.body, "font-medium mb-3", typography.textSubtle, darkMode ? "text-gray-300" : "text-gray-600")}>{step.description}</p>
+                  <p className={cn(typography.labelSm, typography.textSubtle, darkMode ? "text-gray-400" : "text-gray-500")}>{step.why}</p>
+                </div>
+              </div>
             );
           })}
         </div>

@@ -272,12 +272,18 @@ export default function App() {
   return (
     <ThemeProvider value={{ darkMode, setDarkMode }}>
       <div className={cn('min-h-screen transition-colors duration-1000 selection:bg-blue-600 selection:text-white pb-[env(safe-area-inset-bottom)]', darkMode ? 'bg-[#030303] text-white' : 'bg-[#fafafa] text-black')}>
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[1000] focus:rounded-[4px] focus:bg-blue-600 focus:px-4 focus:py-2 focus:text-white focus:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40"
+        >
+          Skip to main content
+        </a>
         <span className="sr-only" aria-live="polite">{routeAnnouncement}</span>
         <ScrollProgress />
         <LivingBackground />
         <Navbar currentPage={currentPage} onNavigate={navigateTo} />
 
-        <main className="relative">
+        <main id="main-content" className="relative">
           <AnimatePresence mode="wait">
             <motion.div key={currentPage} variants={variants.fadeIn} initial="initial" animate="animate" exit="exit" transition={transitions.smooth}>
               <Routes location={location}>

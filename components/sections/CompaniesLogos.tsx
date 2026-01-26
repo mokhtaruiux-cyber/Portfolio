@@ -78,13 +78,9 @@ export const CompaniesLogos: React.FC = () => {
                   )}
                 </AnimatePresence>
 
-                <button
-                  type="button"
-                  aria-label={company.name}
+                <div
                   onMouseEnter={() => setHoveredIndex(idx)}
                   onMouseLeave={() => setHoveredIndex(null)}
-                  onFocus={() => setHoveredIndex(idx)}
-                  onBlur={() => setHoveredIndex(null)}
                   className={cn(
                     'w-20 h-20 sm:w-24 sm:h-24 rounded-[16px] border flex items-center justify-center transition-transform duration-300 hover:scale-105',
                     darkMode ? 'bg-black/40 border-white/10' : 'bg-white border-black/10'
@@ -95,7 +91,7 @@ export const CompaniesLogos: React.FC = () => {
                     alt={company.name}
                     className="w-full h-full object-contain p-2 opacity-95"
                   />
-                </button>
+                </div>
               </div>
             ))}
           </motion.div>
