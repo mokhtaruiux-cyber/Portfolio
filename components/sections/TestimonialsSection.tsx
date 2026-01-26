@@ -1,5 +1,5 @@
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { useEffect, useRef, useState } from 'react';
+import { motion, useInView, useReducedMotion } from 'framer-motion';
 import { Zap } from 'lucide-react';
 import { Testimonial } from '../../types';
 import { siteContent } from '../../content';
@@ -47,15 +47,32 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({ testimonial, darkMode
   </div>
 );
 
-const TestimonialMarqueeRow = ({ items, direction, darkMode }: { items: Testimonial[]; direction: 'left' | 'right'; darkMode: boolean }) => {
+const TestimonialMarqueeRow = ({
+  items,
+  direction,
+  darkMode,
+  shouldAnimate,
+}: {
+  items: Testimonial[];
+  direction: 'left' | 'right';
+  darkMode: boolean;
+  shouldAnimate: boolean;
+}) => {
   const marqueeItems = [...items, ...items, ...items];
+  const marqueeAnimation = shouldAnimate
+    ? { x: direction === 'left' ? [0, '-33.33%'] : ['-33.33%', 0] }
+    : { x: 0 };
+  const marqueeTransition = shouldAnimate
+    ? { duration: 45, repeat: Infinity, ease: 'linear' }
+    : { duration: 0 };
+  const marqueeStyle = shouldAnimate ? { width: 'fit-content', willChange: 'transform' } : { width: 'fit-content' };
   return (
     <div className="flex overflow-hidden py-4">
       <motion.div
         className="flex gap-4 sm:gap-6 transform-gpu"
-        animate={{ x: direction === 'left' ? [0, '-33.33%'] : ['-33.33%', 0] }}
-        transition={{ duration: 45, repeat: Infinity, ease: 'linear' }}
-        style={{ width: 'fit-content', willChange: 'transform' }}
+        animate={marqueeAnimation}
+        transition={marqueeTransition}
+        style={marqueeStyle}
       >
         {marqueeItems.map((item, idx) => (
           <TestimonialCard key={`${item.id}-${idx}`} testimonial={item} darkMode={darkMode} />
@@ -67,12 +84,28 @@ const TestimonialMarqueeRow = ({ items, direction, darkMode }: { items: Testimon
 
 export const TestimonialsSection = () => {
   const { darkMode } = useTheme();
+  const reduceMotion = useReducedMotion() ?? false;
+  const sectionRef = useRef<HTMLElement | null>(null);
+  const isInView = useInView(sectionRef, { amount: 0.2 });
+  const [isPageVisible, setIsPageVisible] = useState(true);
   const row1 = siteContent.testimonials.items.slice(0, 3);
   const row2 = siteContent.testimonials.items.slice(3, 6);
   const row3 = siteContent.testimonials.items.slice(6, 9);
+  const shouldAnimate = !reduceMotion && isInView && isPageVisible;
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      setIsPageVisible(!document.hidden);
+    };
+    handleVisibilityChange();
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
 
   return (
-    <section id="testimonials" className="py-16 md:py-24 relative z-10 overflow-hidden">
+    <section ref={sectionRef} id="testimonials" className="py-16 md:py-24 relative z-10 overflow-hidden">
       <FadeInUp>
         <Container className="relative z-20 mb-10">
           <div className="flex flex-col items-start text-left">
@@ -99,13 +132,13 @@ export const TestimonialsSection = () => {
           )} />
           <div className="space-y-2">
             <Reveal delay={0.1}>
-              <TestimonialMarqueeRow items={row1} direction="left" darkMode={darkMode} />
+              <TestimonialMarqueeRow items={row1} direction="left" darkMode={darkMode} shouldAnimate={shouldAnimate} />
             </Reveal>
             <Reveal delay={0.2}>
-              <TestimonialMarqueeRow items={row2} direction="right" darkMode={darkMode} />
+              <TestimonialMarqueeRow items={row2} direction="right" darkMode={darkMode} shouldAnimate={shouldAnimate} />
             </Reveal>
             <Reveal delay={0.3}>
-              <TestimonialMarqueeRow items={row3} direction="left" darkMode={darkMode} />
+              <TestimonialMarqueeRow items={row3} direction="left" darkMode={darkMode} shouldAnimate={shouldAnimate} />
             </Reveal>
           </div>
         </div>
