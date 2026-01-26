@@ -1,5 +1,5 @@
-import React, { useMemo, useState } from 'react';
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
+import { AnimatePresence, motion, useAnimation, useInView, useReducedMotion } from 'framer-motion';
 import { siteContent } from '../../content';
 import { useTheme } from '../../context/ThemeContext';
 import { Section } from '../layout/Section';
@@ -12,11 +12,43 @@ export const CompaniesLogos: React.FC = () => {
   const { darkMode } = useTheme();
   const reduceMotion = useReducedMotion();
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const marqueeControls = useAnimation();
+  const isInView = useInView(containerRef, { amount: 0.2 });
+  const [isPageVisible, setIsPageVisible] = useState(true);
 
   const marqueeItems = useMemo(() => {
     const items = siteContent.socialProof.companies;
     return [...items, ...items, ...items];
   }, []);
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      setIsPageVisible(!document.hidden);
+    };
+    handleVisibilityChange();
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
+  }, []);
+
+  useEffect(() => {
+    if (reduceMotion) {
+      marqueeControls.set({ x: 0 });
+      return;
+    }
+    if (isInView && isPageVisible) {
+      marqueeControls.start({
+        x: [0, '-33.33%'],
+        transition: {
+          duration: 45,
+          repeat: Infinity,
+          ease: 'linear',
+        },
+      });
+    } else {
+      marqueeControls.stop();
+    }
+  }, [reduceMotion, isInView, isPageVisible, marqueeControls]);
 
   return (
     <Section>
@@ -30,7 +62,7 @@ export const CompaniesLogos: React.FC = () => {
         eyebrowClassName="text-accent/80"
       />
       <Reveal delay={0.1}>
-        <div className="mt-10 relative overflow-x-hidden overflow-y-visible">
+        <div ref={containerRef} className="mt-10 relative overflow-x-hidden overflow-y-visible">
           <div className={cn(
             "pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r",
             darkMode ? "from-[#030303] to-transparent" : "from-[#fafafa] to-transparent"
@@ -41,18 +73,7 @@ export const CompaniesLogos: React.FC = () => {
           )} />
           <motion.div
             className="flex whitespace-nowrap gap-6 sm:gap-10 md:gap-12 items-center"
-            animate={
-              reduceMotion
-                ? { x: 0 }
-                : {
-                  x: [0, '-33.33%'],
-                }
-            }
-            transition={{
-              duration: 45,
-              repeat: reduceMotion ? 0 : Infinity,
-              ease: 'linear',
-            }}
+            animate={marqueeControls}
             style={{ width: 'fit-content' }}
           >
             {marqueeItems.map((company, idx) => (
