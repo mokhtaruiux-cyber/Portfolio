@@ -1,5 +1,5 @@
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { useTheme } from "../../context/ThemeContext";
 
@@ -16,12 +16,25 @@ const cn = (...classes: (string | boolean | undefined)[]) => classes.filter(Bool
 export const LivingBackground = () => {
   const { darkMode } = useTheme();
   const reduce = useReducedMotion() ?? false;
+  const [isVisible, setIsVisible] = useState(true);
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      setIsVisible(document.visibilityState === "visible");
+    };
+    handleVisibilityChange();
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, []);
+
+  const animateBackground = !reduce && isVisible;
 
   return (
     <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden select-none">
       {/* 1. Base Gradient Glow (Hero anchor) */}
       <div className={cn(
-        "absolute top-0 left-1/2 -translate-x-1/2 w-full h-screen scale-[1.4] blur-[120px] rounded-full opacity-40 will-change-[filter,opacity]",
+        "absolute top-0 left-1/2 -translate-x-1/2 w-full h-screen scale-[1.4] blur-[120px] rounded-full will-change-[filter,opacity]",
+        reduce ? "opacity-25" : "opacity-40",
         darkMode ? 'bg-blue-600/20' : 'bg-blue-400/10'
       )} />
 
@@ -37,6 +50,7 @@ export const LivingBackground = () => {
             scale: [1, 1.1, 0.95, 1],
           }}
           duration={30}
+          animateEnabled={animateBackground}
           reduce={reduce}
         />
         <Blob
@@ -50,6 +64,7 @@ export const LivingBackground = () => {
           }}
           duration={40}
           delay={2}
+          animateEnabled={animateBackground}
           reduce={reduce}
         />
       </div>
@@ -66,6 +81,7 @@ export const LivingBackground = () => {
             borderRadius: ["30% 70% 70% 30% / 30% 30% 70% 70%", "60% 40% 30% 70% / 50% 50% 30% 70%", "30% 70% 70% 30% / 30% 30% 70% 70%"]
           }}
           duration={25}
+          animateEnabled={animateBackground}
           reduce={reduce}
         />
         <Blob
@@ -79,6 +95,7 @@ export const LivingBackground = () => {
           }}
           duration={35}
           delay={1}
+          animateEnabled={animateBackground}
           reduce={reduce}
         />
       </div>
@@ -86,7 +103,9 @@ export const LivingBackground = () => {
       {/* 4. Soft Grid Overlay */}
       <div
         className={cn(
-          "absolute inset-0 opacity-[0.02] animate-grid will-change-[background-position]",
+          "absolute inset-0 opacity-[0.02]",
+          animateBackground && "animate-grid will-change-[background-position]",
+          reduce && "opacity-[0.01]",
           darkMode ? 'invert opacity-[0.04]' : ''
         )}
         style={{
@@ -117,21 +136,27 @@ interface BlobProps {
   duration: number;
   delay?: number;
   reduce: boolean;
+  animateEnabled: boolean;
 }
 
-const Blob = ({ color, size, initial, animate, duration, delay = 0, reduce }: BlobProps) => {
+const Blob = ({ color, size, initial, animate, duration, delay = 0, reduce, animateEnabled }: BlobProps) => {
+  const shouldAnimate = animateEnabled && !reduce;
+
   return (
     <motion.div
       initial={initial}
-      animate={reduce ? { opacity: 0.6 } : animate}
-      transition={{
+      animate={shouldAnimate ? animate : undefined}
+      transition={shouldAnimate ? {
         duration,
         repeat: Infinity,
         ease: "linear",
         delay
-      }}
+      } : undefined}
+      style={!shouldAnimate ? (initial as React.CSSProperties) : undefined}
       className={cn(
-        "absolute blur-[100px] rounded-full will-change-transform pointer-events-none",
+        "absolute blur-[100px] rounded-full pointer-events-none",
+        shouldAnimate && "will-change-transform",
+        reduce && "opacity-60",
         color,
         size
       )}
