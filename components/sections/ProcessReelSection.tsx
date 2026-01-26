@@ -135,10 +135,10 @@ export const ProcessReelSection: React.FC<ProcessReelSectionProps> = ({
     <Section id="process" eyebrow={siteContent.process.eyebrow}>
       <div ref={containerRef}>
         <div className="text-left mb-10">
-          <BlurIn as="h2" className={cn(typography.h2, "font-black max-w-[28ch]", darkMode ? "text-white" : "text-black")}>
+          <BlurIn as="h2" className={cn(typography.h2, "font-black max-w-[28ch] mb-6", darkMode ? "text-white" : "text-black")}>
             {siteContent.process.title} <br /> <span className="text-accent">{siteContent.process.highlight}</span>
           </BlurIn>
-          <Reveal delay={0.2} className="mt-4">
+          <Reveal delay={0.2}>
             <p className={cn(typography.body, "max-w-[60ch] font-medium", typography.textSubtle, darkMode ? "text-gray-300" : "text-gray-600")}>
               {siteContent.process.description}
             </p>

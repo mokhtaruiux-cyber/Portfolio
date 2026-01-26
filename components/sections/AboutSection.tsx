@@ -13,7 +13,7 @@ export const AboutSection: React.FC = () => {
   const { darkMode } = useTheme();
   return (
     <Section id="about" eyebrow={siteContent.about.eyebrow}>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-10 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 items-start">
         <div className="text-left space-y-6">
           <BlurIn as="h2" className={cn(typography.h2, "font-black max-w-[24ch]", darkMode ? "text-white" : "text-black")}>
             {siteContent.about.title} <br /> <span className="text-accent">{siteContent.about.highlight}</span>

@@ -21,7 +21,7 @@ export const HowIHelpSection: React.FC = () => {
         <BlurIn
           as="h2"
           aria-label={titleLabel}
-          className={cn(typography.h2, "font-black max-w-[24ch]", darkMode ? "text-white" : "text-black")}
+          className={cn(typography.h2, "font-black max-w-[24ch] mb-6", darkMode ? "text-white" : "text-black")}
         >
           {howIHelp.titleLines.map((line) => (
             <span key={line} className="block">

@@ -33,11 +33,11 @@ export const ExperienceSection: React.FC = () => {
   return (
     <Section id="experience" eyebrow={siteContent.experience.eyebrow}>
       <div className="text-left mb-10">
-        <BlurIn as="h2" className={cn(typography.h2, "font-black max-w-[24ch]", darkMode ? 'text-white' : 'text-black')}>
+        <BlurIn as="h2" className={cn(typography.h2, "font-black max-w-[24ch] mb-6", darkMode ? 'text-white' : 'text-black')}>
           {siteContent.experience.title} <br /> <span className="text-accent">{siteContent.experience.highlight}</span>
         </BlurIn>
         <Reveal delay={0.15}>
-          <p className={cn(typography.body, "font-medium max-w-[60ch] mt-4", typography.textSubtle, darkMode ? 'text-gray-300' : 'text-gray-600')}>
+          <p className={cn(typography.body, "font-medium max-w-[60ch]", typography.textSubtle, darkMode ? 'text-gray-300' : 'text-gray-600')}>
             {siteContent.experience.intro}
           </p>
         </Reveal>
