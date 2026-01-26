@@ -69,5 +69,21 @@ Skills referenced: web-quality-audit, accessibility, performance, core-web-vital
 2) Pause or soften LivingBackground animation when reduced motion is enabled (fixing-motion-performance).
 3) Consider replacing remaining `text-blue-*` accent highlights with `text-accent` for a single-token accent (baseline-ui).
 
+## Mobile motion performance audit (read-only)
+
+### Recent mitigations in this branch
+- Marquee animations pause offscreen/hidden. Evidence: `components/sections/CompaniesLogos.tsx`, `components/sections/TestimonialsSection.tsx`. Skill: fixing-motion-performance.
+- Process reel rAF loop pauses when the tab is hidden. Evidence: `components/sections/ProcessReelSection.tsx`. Skill: fixing-motion-performance.
+- Tilt interactions disabled on coarse pointers. Evidence: `components/motion/TiltCard.tsx`. Skill: fixing-motion-performance.
+- Scroll-reveal animations simplified to opacity-only on mobile/coarse pointer. Evidence: `components/motion/Reveal.tsx`, `components/motion/FadeInUp.tsx`, `components/motion/BlurIn.tsx`, `hooks/useMobileMotionGate.ts`. Skill: fixing-motion-performance.
+
+### Top 5 mobile jank risks + suggestions
+- P1 | Full-screen blurred hero blobs animate continuously, triggering heavy paint on mobile GPUs. Evidence: `components/background/HeroGlow.tsx`, `index.css`. Skill: fixing-motion-performance. Mobile verification: DevTools Performance (mobile throttling) for long paint tasks while scrolling the hero. Ultra-safe mobile tweak: reduce blur/opacity only under `max-width: 640px`. Optional tweak: pause blob animation when hero is offscreen.
+- P1 | Multiple full-viewport blurred blobs animate in LivingBackground, which can still be expensive on low-end phones even when visible. Evidence: `components/background/LivingBackground.tsx`. Skill: fixing-motion-performance. Mobile verification: watch FPS drops + paint flashing in Rendering while scrolling sections with the background. Ultra-safe mobile tweak: reduce blur/scale on mobile only. Optional tweak: freeze transforms and keep a static background composition on coarse pointer.
+- P2 | Per-letter TypingEffect animates dozens of spans; on mobile this can add main-thread overhead. Evidence: `components/motion/TypingEffect.tsx`. Skill: performance. Mobile verification: Performance panel shows many small animations during hero entry. Ultra-safe mobile tweak: swap to single opacity-only fade on coarse pointer. Optional tweak: render static text (no per-letter animation) on mobile.
+- P2 | ScrollProgress updates every frame via `useScroll` + spring; constant updates can contribute to scroll jank on mobile. Evidence: `components/motion/ScrollProgress.tsx`. Skill: performance. Mobile verification: check for long tasks during scroll with the progress bar visible. Ultra-safe mobile tweak: disable the bar on coarse pointer. Optional tweak: keep it but replace spring with a direct transform update for mobile.
+- P2 | Testimonials marquee still runs continuously while in view; on mobile, long-running transforms can compete with scroll. Evidence: `components/sections/TestimonialsSection.tsx`. Skill: fixing-motion-performance. Mobile verification: inspect FPS dips during marquee section scroll. Ultra-safe mobile tweak: increase duration to slow movement on coarse pointer. Optional tweak: reduce duplicate items or pause after a few cycles on mobile.
+- P2 | layoutId/layout animations can be expensive on mobile when combined with blur/glass. Evidence: `components/ui/SegmentTabs.tsx` (`layoutId="activeTab"`). Skill: fixing-motion-performance. Mobile verification: check for extra layout work when switching tabs on mobile. Ultra-safe mobile tweak: keep layoutId on desktop only and use opacity-only highlight on coarse pointer. Optional tweak: replace layoutId with a simple transform or opacity transition for mobile.
+
 ## Action needed
 - None. All verification commands pass.
