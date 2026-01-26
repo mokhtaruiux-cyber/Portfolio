@@ -34,10 +34,22 @@ export const ProcessReelSection: React.FC<ProcessReelSectionProps> = ({
   const [progress, setProgress] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [isUserInteracting, setIsUserInteracting] = useState(false);
+  const [isPageVisible, setIsPageVisible] = useState(true);
   const touchStartX = useRef<number | null>(null);
   const interactionTimeout = useRef<number | null>(null);
 
-  const isAutoPlayEnabled = autoPlay && !reduceMotion;
+  const isAutoPlayEnabled = autoPlay && !reduceMotion && isPageVisible;
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      setIsPageVisible(document.visibilityState === 'visible');
+    };
+    handleVisibilityChange();
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
 
   useEffect(() => {
     if (!isAutoPlayEnabled || !inView || isPaused || isUserInteracting) return;
