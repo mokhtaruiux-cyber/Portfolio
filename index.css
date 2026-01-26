@@ -102,18 +102,3 @@
     animation: none !important;
   }
 }
-
-:root {
-  --squircle-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'><path fill='white' d='M0 50C0 18 18 0 50 0C82 0 100 18 100 50C100 82 82 100 50 100C18 100 0 82 0 50Z'/></svg>");
-}
-
-.smooth-corners :where([class*="rounded-"]) {
-  -webkit-mask-image: var(--squircle-mask);
-  mask-image: var(--squircle-mask);
-  -webkit-mask-size: 100% 100%;
-  mask-size: 100% 100%;
-  -webkit-mask-repeat: no-repeat;
-  mask-repeat: no-repeat;
-  -webkit-mask-position: center;
-  mask-position: center;
-}
