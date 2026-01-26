@@ -59,27 +59,21 @@ export const BlogArticlePage = ({ post, onBack }: { post: BlogPost; onBack: () =
   const { darkMode } = useTheme();
   return (
     <>
-      <button
-        type="button"
-        onClick={onBack}
-        className={cn(
-          'fixed bottom-6 right-6 md:bottom-8 md:right-8 z-[70] px-4 py-2 rounded-[4px] glass border shadow-lg transition-all',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40',
-          darkMode ? 'bg-black/70 border-white/10 text-white hover:border-white/30' : 'bg-white/80 border-black/10 text-black hover:border-black/30',
-          typography.labelSm
-        )}
-        aria-label={siteContent.writing.backToBlogLabel}
-      >
-        {siteContent.writing.backToBlogLabel}
-      </button>
-      <Section>
-        <div className="text-left space-y-10">
-          <button onClick={onBack} className={cn('flex items-center gap-2 hover:opacity-100 hover:text-blue-500 transition-all font-medium group', typography.body, typography.textSubtle)}>
+      <Section className="pt-28 md:pt-32">
+        <div className="mx-auto flex w-full max-w-[60ch] flex-col items-start text-left space-y-10">
+          <button
+            onClick={onBack}
+            className={cn(
+              'flex items-center gap-2 hover:opacity-100 hover:text-blue-500 transition-all font-medium group',
+              typography.body,
+              typography.textSubtle
+            )}
+          >
             <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
             {siteContent.writing.backToBlogLabel}
           </button>
 
-          <div className="space-y-4 max-w-[60ch]">
+          <div className="space-y-4">
             <div className={cn('flex items-center gap-4', typography.labelXs, typography.textSubtle)}>
               <span className="px-3 py-1 rounded-[4px] bg-blue-600/20 border border-blue-600/30 text-blue-400">{post.category}</span>
               <span>{post.date}</span>
@@ -89,7 +83,7 @@ export const BlogArticlePage = ({ post, onBack }: { post: BlogPost; onBack: () =
             <p className={cn(typography.body, 'font-medium', typography.textSubtle, darkMode ? 'text-white' : 'text-black')}>{post.excerpt}</p>
           </div>
 
-          <div className={cn('w-full max-w-[60ch] rounded-[16px] overflow-hidden border', darkMode ? 'border-white/10' : 'border-black/10')}>
+          <div className={cn('w-full rounded-[16px] overflow-hidden border', darkMode ? 'border-white/10' : 'border-black/10')}>
             <img src={post.coverImage} alt={post.title} className="w-full h-full object-cover" />
           </div>
         </div>

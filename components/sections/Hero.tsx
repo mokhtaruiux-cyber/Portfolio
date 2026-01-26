@@ -66,12 +66,10 @@ export const Hero = ({ onWorkClick }: { onWorkClick: () => void }) => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.8, duration: 0.5 }}
-              className="flex flex-col lg:flex-row items-stretch lg:items-center justify-center gap-4 w-full mx-auto relative z-10 mt-8"
+              className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full mx-auto relative z-10 mt-8"
             >
               <GlowButton
                 size="cta"
-                fullWidth
-                className="w-full lg:w-auto"
                 href={siteContent.bookingUrl}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -81,8 +79,6 @@ export const Hero = ({ onWorkClick }: { onWorkClick: () => void }) => {
               <GlowButton
                 onClick={onWorkClick}
                 size="cta"
-                fullWidth
-                className="w-full lg:w-auto"
                 glow={false}
               >
                 {siteContent.hero.ctaSecondary}

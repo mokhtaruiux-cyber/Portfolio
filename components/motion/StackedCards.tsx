@@ -1,5 +1,5 @@
 
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion, useReducedMotion, useScroll, useSpring, useTransform, MotionValue } from 'framer-motion';
 import { Project } from '../../types';
 
@@ -14,6 +14,36 @@ interface StackedCardsProps {
 }
 
 export const StackedCards: React.FC<StackedCardsProps> = ({ items, renderItem }) => {
+    const [isDesktop, setIsDesktop] = useState(() => {
+        if (typeof window === 'undefined') return true;
+        return window.matchMedia('(min-width: 768px)').matches;
+    });
+
+    useEffect(() => {
+        if (typeof window === 'undefined') return;
+        const media = window.matchMedia('(min-width: 768px)');
+        const update = () => setIsDesktop(media.matches);
+        update();
+        media.addEventListener('change', update);
+        return () => media.removeEventListener('change', update);
+    }, []);
+
+    if (!isDesktop) {
+        return (
+            <div className="space-y-12">
+                {items.map((item, i) => (
+                    <div key={item.id || i} className="w-full">
+                        {renderItem(item, i)}
+                    </div>
+                ))}
+            </div>
+        );
+    }
+
+    return <StackedCardsDesktop items={items} renderItem={renderItem} />;
+};
+
+const StackedCardsDesktop: React.FC<StackedCardsProps> = ({ items, renderItem }) => {
     // For a true "one useScroll" implementation as requested:
     const containerRef = useRef<HTMLDivElement>(null);
     const reduceMotion = useReducedMotion() ?? false;

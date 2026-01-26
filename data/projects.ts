@@ -1,10 +1,13 @@
 import { Project } from '../types';
+import { assetPath } from '../lib/assetPath';
+
+const stockImage = (fileName: string) => assetPath(`assets/images/${fileName}`);
 
 export const projects: Project[] = [
   {
     id: '1',
     slug: 'nodel-restaurant-system',
-    title: 'NODEL Restaurant System',
+    title: 'Nodel Restaurant App',
     category: 'Mobile Apps',
     type: 'B2B Product',
     industry: 'Hospitality',
@@ -16,8 +19,7 @@ export const projects: Project[] = [
     description:
       'A comprehensive smart solution designed to streamline restaurant operations, from order management to high-end customer engagement. Built with performance and scalability in mind.',
     impact: 'Cut order friction and improved on-premise efficiency across peak hours.',
-    image:
-      'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=1200&h=800',
+    image: stockImage('Nodel@4x.webp'),
     tags: ['Product Design', 'Hospitality', 'SaaS'],
     metrics: [
       { label: 'Efficiency', value: '+40%' },
@@ -27,17 +29,17 @@ export const projects: Project[] = [
     gallery: [
       {
         type: 'image',
-        src: 'https://images.unsplash.com/photo-155396273-367ea4eb4db5?auto=format&fit=crop&q=80&w=1200',
+        src: stockImage('Nodel@4x.webp'),
         alt: 'Restaurant operations overview',
       },
       {
         type: 'image',
-        src: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&q=80&w=1200',
+        src: stockImage('unsplash-1517248135467-4c7edcad34c4.jpg'),
         alt: 'Service flow snapshot',
       },
       {
         type: 'video',
-        src: 'https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&q=80&w=1200',
+        src: stockImage('unsplash-1559339352-11d035aa65de.jpg'),
         alt: 'NODEL product walkthrough',
       },
     ],
@@ -66,64 +68,63 @@ export const projects: Project[] = [
   },
   {
     id: '2',
-    slug: 'nexus-fintech-dashboard',
-    title: 'Nexus Fintech Dashboard',
-    category: 'Dashboards',
-    type: 'Fintech Platform',
-    industry: 'Finance',
-    platform: 'Web Platform',
+    slug: 'homecare-medical-app',
+    title: 'Home care Medical App',
+    category: 'Mobile Apps',
+    type: 'Healthcare App',
+    industry: 'Healthcare',
+    platform: 'iOS - Android',
     year: '2022',
-    role: 'Senior UI/UX Designer',
-    tools: ['Figma', 'D3.js', 'Typescript'],
-    coverGradient: 'from-blue-500/20 to-cyan-500/20',
+    role: 'Product Designer',
+    tools: ['Swift', 'Figma', 'After Effects'],
+    coverGradient: 'from-emerald-500/20 to-teal-500/20',
     description:
-      'An institutional-grade financial analytics dashboard simplify complex data streams into actionable insights.',
-    impact: 'Accelerated daily decision-making with signal-first analytics views.',
-    image:
-      'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=1200&h=800',
-    tags: ['FinTech', 'Data Viz', 'SaaS'],
+      'Connecting patients with caregivers through a seamless mobile interface with real-time health monitoring.',
+    impact: 'Improved care coordination and patient transparency across visits.',
+    image: stockImage('Home Care@4x.webp'),
+    tags: ['Healthcare', 'Mobile', 'Design System'],
     metrics: [
-      { label: 'Transactions', value: '2M+' },
-      { label: 'Trust Rate', value: '99.9%' },
-      { label: 'Latency', value: '12ms' },
+      { label: 'Active Users', value: '10k+' },
+      { label: 'Care Quality', value: '4.8' },
+      { label: 'Retention', value: '85%' },
     ],
     gallery: [
       {
         type: 'image',
-        src: 'https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&q=80&w=1200',
-        alt: 'Nexus analytics dashboard',
+        src: stockImage('Home Care@4x.webp'),
+        alt: 'Home care patient dashboard',
       },
       {
         type: 'image',
-        src: 'https://images.unsplash.com/photo-1535320903710-d993d3d77d29?auto=format&fit=crop&q=80&w=1200',
-        alt: 'Portfolio monitoring view',
+        src: stockImage('Home Care@4x.webp'),
+        alt: 'Caregiver scheduling flow',
       },
       {
         type: 'video',
-        src: 'https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&q=80&w=1200',
-        alt: 'Nexus platform overview',
+        src: stockImage('Home Care@4x.webp'),
+        alt: 'Home care app demo',
       },
     ],
     caseStudySections: [
       {
         title: 'Problem',
         content:
-          'Traders needed instant clarity across hundreds of metrics, but the legacy UI was cluttered and slow to parse.',
+          'Patients struggled to coordinate care visits and track progress across multiple providers.',
       },
       {
         title: 'Process',
         content:
-          'We prioritized signal over noise, tested data density thresholds, and simplified the information hierarchy.',
+          'We interviewed patients and caregivers, then prototyped a simplified scheduling and tracking flow.',
       },
       {
         title: 'Solution',
         content:
-          'A modular dashboard with prioritized KPIs, flexible layouts, and real-time visual alerts.',
+          'A mobile companion that centralizes visits, notes, and real-time health updates.',
       },
       {
         title: 'Results',
         content:
-          'Teams reported faster decision cycles and higher confidence in daily portfolio monitoring.',
+          'Care teams reported faster coordination and patients felt more in control of their recovery.',
       },
     ],
   },
@@ -142,8 +143,7 @@ export const projects: Project[] = [
     description:
       'A premium storytelling-driven e-commerce experience for a luxury lifestyle brand focusing on motion-rich interactions.',
     impact: 'Lifted engagement and conversion through immersive product storytelling.',
-    image:
-      'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=1200&h=800',
+    image: stockImage('unsplash-1523275335684-37898b6baf30.jpg'),
     tags: ['E-commerce', 'Motion', 'Retail'],
     metrics: [
       { label: 'Conversion', value: '+18%' },
@@ -153,17 +153,17 @@ export const projects: Project[] = [
     gallery: [
       {
         type: 'image',
-        src: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?auto=format&fit=crop&q=80&w=1200',
+        src: stockImage('unsplash-1483985988355-763728e1935b.jpg'),
         alt: 'Aura product showcase',
       },
       {
         type: 'image',
-        src: 'https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&q=80&w=1200',
+        src: stockImage('unsplash-1490481651871-ab68de25d43d.jpg'),
         alt: 'Lifestyle detail view',
       },
       {
         type: 'video',
-        src: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=1200',
+        src: stockImage('unsplash-1523275335684-37898b6baf30.jpg'),
         alt: 'Aura motion prototype',
       },
     ],
@@ -191,69 +191,6 @@ export const projects: Project[] = [
     ],
   },
   {
-    id: '4',
-    slug: 'homecare-medical-app',
-    title: 'HomeCare Medical App',
-    category: 'Mobile Apps',
-    type: 'Healthcare App',
-    industry: 'Healthcare',
-    platform: 'iOS - Android',
-    year: '2022',
-    role: 'Product Designer',
-    tools: ['Swift', 'Figma', 'After Effects'],
-    coverGradient: 'from-emerald-500/20 to-teal-500/20',
-    description:
-      'Connecting patients with caregivers through a seamless mobile interface with real-time health monitoring.',
-    impact: 'Improved care coordination and patient transparency across visits.',
-    image:
-      'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=1200&h=800',
-    tags: ['Healthcare', 'Mobile', 'Design System'],
-    metrics: [
-      { label: 'Active Users', value: '10k+' },
-      { label: 'Care Quality', value: '4.8' },
-      { label: 'Retention', value: '85%' },
-    ],
-    gallery: [
-      {
-        type: 'image',
-        src: 'https://images.unsplash.com/photo-1584515933487-779824d29309?auto=format&fit=crop&q=80&w=1200',
-        alt: 'HomeCare patient dashboard',
-      },
-      {
-        type: 'image',
-        src: 'https://images.unsplash.com/photo-1516549655169-df83a0774514?auto=format&fit=crop&q=80&w=1200',
-        alt: 'Caregiver scheduling flow',
-      },
-      {
-        type: 'video',
-        src: 'https://images.unsplash.com/photo-1576091160550-2173dba999ef?auto=format&fit=crop&q=80&w=1200',
-        alt: 'HomeCare app demo',
-      },
-    ],
-    caseStudySections: [
-      {
-        title: 'Problem',
-        content:
-          'Patients struggled to coordinate care visits and track progress across multiple providers.',
-      },
-      {
-        title: 'Process',
-        content:
-          'We interviewed patients and caregivers, then prototyped a simplified scheduling and tracking flow.',
-      },
-      {
-        title: 'Solution',
-        content:
-          'A mobile companion that centralizes visits, notes, and real-time health updates.',
-      },
-      {
-        title: 'Results',
-        content:
-          'Care teams reported faster coordination and patients felt more in control of their recovery.',
-      },
-    ],
-  },
-  {
     id: '5',
     slug: 'cosmos-design-system',
     title: 'Cosmos Design System',
@@ -268,8 +205,7 @@ export const projects: Project[] = [
     description:
       'A comprehensive design language and component library powering dozens of products, ensuring consistency at scale.',
     impact: 'Unlocked faster delivery by standardizing shared UI components.',
-    image:
-      'https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&q=80&w=1200&h=800',
+    image: stockImage('unsplash-1556740749-887f6717d7e4.jpg'),
     tags: ['Design Systems', 'Scale', 'Components'],
     metrics: [
       { label: 'Components', value: '120+' },
@@ -279,17 +215,17 @@ export const projects: Project[] = [
     gallery: [
       {
         type: 'image',
-        src: 'https://images.unsplash.com/photo-1551434678-e076c223a692?auto=format&fit=crop&q=80&w=1200',
+        src: stockImage('unsplash-1551434678-e076c223a692.jpg'),
         alt: 'Design system documentation',
       },
       {
         type: 'image',
-        src: 'https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&q=80&w=1200',
+        src: stockImage('unsplash-1521737604893-d14cc237f11d.jpg'),
         alt: 'Component library overview',
       },
       {
         type: 'video',
-        src: 'https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&q=80&w=1200',
+        src: stockImage('unsplash-1556740749-887f6717d7e4.jpg'),
         alt: 'Cosmos system walkthrough',
       },
     ],
@@ -331,8 +267,7 @@ export const projects: Project[] = [
     description:
       'A citizen-first portal enabling secure access to public services with clear navigation and multilingual support.',
     impact: 'Reduced service friction and improved self-service completion rates.',
-    image:
-      'https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&q=80&w=1200&h=800',
+    image: stockImage('unsplash-1489515217757-5fd1be406fef.jpg'),
     tags: ['GovTech', 'Accessibility', 'Service Design'],
     metrics: [
       { label: 'Adoption', value: '+64%' },
@@ -342,17 +277,17 @@ export const projects: Project[] = [
     gallery: [
       {
         type: 'image',
-        src: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=1200',
+        src: stockImage('unsplash-1498050108023-c5249f4df085.jpg'),
         alt: 'Government portal overview',
       },
       {
         type: 'image',
-        src: 'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=1200',
+        src: stockImage('unsplash-1519389950473-47ba0277781c.jpg'),
         alt: 'Citizen service workflow',
       },
       {
         type: 'video',
-        src: 'https://images.unsplash.com/photo-1489515217757-5fd1be406fef?auto=format&fit=crop&q=80&w=1200',
+        src: stockImage('unsplash-1489515217757-5fd1be406fef.jpg'),
         alt: 'Sahab portal prototype',
       },
     ],

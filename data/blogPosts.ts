@@ -1,4 +1,7 @@
 import { BlogPost } from '../types';
+import { assetPath } from '../lib/assetPath';
+
+const stockImage = (fileName: string) => assetPath(`assets/images/${fileName}`);
 
 export const blogPosts: BlogPost[] = [
   {
@@ -10,8 +13,7 @@ export const blogPosts: BlogPost[] = [
     category: 'Future Tech',
     date: 'Oct 12, 2023',
     readTime: '6 min read',
-    coverImage:
-      'https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&q=80&w=1200&h=700',
+    coverImage: stockImage('unsplash-1677442136019-21780ecad995.jpg'),
     tags: ['AI', 'UX', 'Design'],
     contentBlocks: [
       {
@@ -27,7 +29,7 @@ export const blogPosts: BlogPost[] = [
       },
       {
         type: 'image',
-        src: 'https://images.unsplash.com/photo-1487017159836-4e23ece2e4cf?auto=format&fit=crop&q=80&w=1200',
+        src: stockImage('unsplash-1487017159836-4e23ece2e4cf.jpg'),
         alt: 'Designer planning system flows',
         caption: 'AI accelerates exploration but still needs human intent.',
       },
@@ -61,8 +63,7 @@ export const blogPosts: BlogPost[] = [
     category: 'UI Design',
     date: 'Sep 28, 2023',
     readTime: '8 min read',
-    coverImage:
-      'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=1200&h=700',
+    coverImage: stockImage('unsplash-1618005182384-a83a8bd57fbe.jpg'),
     tags: ['Glassmorphism', 'CSS', 'UI'],
     contentBlocks: [
       {
@@ -78,7 +79,7 @@ export const blogPosts: BlogPost[] = [
       },
       {
         type: 'image',
-        src: 'https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&q=80&w=1200',
+        src: stockImage('unsplash-1520607162513-77705c0f0d4a.jpg'),
         alt: 'Glass UI layers',
       },
       { type: 'heading', text: 'Performance Budget' },
@@ -106,8 +107,7 @@ export const blogPosts: BlogPost[] = [
     category: 'Interaction',
     date: 'Aug 15, 2023',
     readTime: '5 min read',
-    coverImage:
-      'https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=1200&h=700',
+    coverImage: stockImage('unsplash-1550745165-9bc0b252726f.jpg'),
     tags: ['Motion', 'UX', 'Framer'],
     contentBlocks: [
       {
@@ -123,7 +123,7 @@ export const blogPosts: BlogPost[] = [
       },
       {
         type: 'image',
-        src: 'https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&q=80&w=1200',
+        src: stockImage('unsplash-1498050108023-c5249f4df085.jpg'),
         alt: 'Motion storyboard',
       },
       {
