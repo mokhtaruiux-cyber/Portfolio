@@ -84,6 +84,9 @@ const ProjectCardWrapperComponent: React.FC<ProjectCardWrapperProps> = ({ projec
                   alt={project.title}
                   loading="lazy"
                   decoding="async"
+                  width={1600}
+                  height={1000}
+                  sizes="(max-width: 1024px) 100vw, 50vw"
                   className="w-full h-full object-cover"
                 />
               </div>

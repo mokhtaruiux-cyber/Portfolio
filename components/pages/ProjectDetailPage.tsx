@@ -35,6 +35,9 @@ const ProjectGalleryItem = ({ item, darkMode }: { item: Project['gallery'][numbe
         alt={item.alt}
         loading="lazy"
         decoding="async"
+        width={1600}
+        height={1000}
+        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
         className="w-full h-full object-cover"
       />
       {item.type === 'video' && (

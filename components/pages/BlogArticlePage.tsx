@@ -23,6 +23,9 @@ const BlogBlock = ({ block, darkMode }: { block: BlogContentBlock; darkMode: boo
             alt={block.alt}
             loading="lazy"
             decoding="async"
+            width={1600}
+            height={1000}
+            sizes="(max-width: 768px) 100vw, 60ch"
             className={cn(
               'w-full h-auto rounded-[16px] border',
               darkMode ? 'border-white/10' : 'border-black/10'
@@ -92,6 +95,9 @@ export const BlogArticlePage = ({ post, onBack }: { post: BlogPost; onBack: () =
               loading="eager"
               decoding="async"
               fetchPriority="high"
+              width={1600}
+              height={1000}
+              sizes="(max-width: 768px) 100vw, 60ch"
               className="w-full h-full object-cover"
             />
           </div>
