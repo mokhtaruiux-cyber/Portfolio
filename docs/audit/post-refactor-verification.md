@@ -69,6 +69,74 @@ Skills referenced: web-quality-audit, accessibility, performance, core-web-vital
 2) Pause or soften LivingBackground animation when reduced motion is enabled (fixing-motion-performance).
 3) Consider replacing remaining `text-blue-*` accent highlights with `text-accent` for a single-token accent (baseline-ui).
 
+## Spacing & Layout Rhythm Refactor Plan
+
+### Inventory (current system)
+- Section wrapper default: `components/layout/Section.tsx` uses `py-16 md:py-24`.
+- Container wrapper: `components/layout/Container.tsx` uses `max-w-[1200px] px-4 sm:px-6 lg:px-10`.
+- Spacing scale used: `0, 1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20, 24, 28, 32, 48`.
+- Gap scale used: `0, 1, 1.5, 2, 3, 4, 5, 6, 8, 10, 12, 24`.
+
+### Target normalized scale
+- Micro: `1, 2, 3, 4`
+- Small: `6, 8`
+- Medium: `10, 12, 16`
+- Large: `20, 24, 32`
+- Extra: `48` (only for intentional hero/feature use)
+
+### Rules
+- Sections: standard rhythm `py-16 md:py-24` via `Section` defaults. Only allow exceptions for Hero and CTA.
+- CTA feature rule: `components/sections/CTASection.tsx` is an intentional feature block and may use larger inner padding (`p-8 sm:p-12 md:p-16`). Keep it visually bigger.
+- Hero rule: if the hero needs custom vertical padding, it should be the only exception besides CTA and must be documented in code.
+- Cards/panels: standardize to `p-6 sm:p-8`; large feature cards can use `p-8 sm:p-10`.
+- Grids: default to `gap-6 md:gap-8` unless a dense grid is explicitly justified.
+- Intro blocks: choose a single pattern (either `mb-10` wrappers or `space-y-6 md:space-y-8` within) and apply consistently.
+- Text widths: short copy uses `max-w-2xl`, long-form uses `max-w-[60ch]`.
+- Chips/badges: standard `px-3 py-1`; CTA badge remains `px-4 py-2` as the only premium exception.
+- Controls: maintain >=44px tap targets; normalize control heights where mismatched.
+
+### File list by phase
+P0 (visible spacing jumps)
+- `components/pages/BlogArticlePage.tsx` (remove Section padding overrides that stack).
+- `components/sections/Hero.tsx` (align with section rhythm or keep as the only documented exception).
+
+P1 (section rhythm + grids + intro spacing)
+- `components/sections/BlogSection.tsx`
+- `components/pages/BlogIndexPage.tsx`
+- `components/sections/AboutSection.tsx`
+- `components/sections/HowIHelpSection.tsx`
+- `components/sections/Experience.tsx`
+- `components/sections/ProcessReelSection.tsx`
+- `components/sections/TestimonialsSection.tsx`
+- `components/pages/ProjectDetailPage.tsx` (section intro spacing + text widths)
+
+P2 (micro-spacing polish)
+- `components/sections/Hero.tsx` (badge sizes)
+- `components/sections/CTASection.tsx` (CTA badge exception retained)
+- `components/blog/BlogCard.tsx`
+- `components/cards/ProjectCardWrapper.tsx`
+- `components/pages/BlogArticlePage.tsx`
+- `components/ui/SegmentTabs.tsx` (control heights)
+
+### Acceptance checks
+- Visual rhythm is consistent across sections; CTA remains intentionally larger.
+- No changes to layout structure, typography styles, colors, or motion.
+- Responsive behavior preserved; tap targets remain >=44px.
+- Tests pass: `npm run build`, `npm run test`, `npx playwright test`.
+
+### Rollback
+- Revert commits by phase (`P0`, `P1`, `P2`) to isolate spacing changes if needed.
+
+### Refactor results (P0–P2)
+- P0: Removed BlogArticlePage top padding override to align with standard section rhythm. Evidence: `components/pages/BlogArticlePage.tsx`.
+- P1: Normalized intro spacing and grid gap in core sections (About, Experience, How I Help, Process). Evidence: `components/sections/AboutSection.tsx`, `components/sections/Experience.tsx`, `components/sections/HowIHelpSection.tsx`, `components/sections/ProcessReelSection.tsx`.
+- P2: Standardized badge padding for non-feature chips. Evidence: `components/blog/BlogCard.tsx`, `components/sections/CompaniesLogos.tsx`.
+- CTA feature rule: CTA remains intentionally larger (premium feature block) by design; no downsizing applied. Evidence: `components/sections/CTASection.tsx`.
+
+### Remaining spacing backlog (optional)
+- Consider aligning SegmentTabs tap target height to >=44px if mobile usability testing shows mis-taps. Evidence: `components/ui/SegmentTabs.tsx`.
+- Review ProjectCard internal grid gap (`gap-8 md:gap-10`) if a tighter rhythm is desired; currently left as a feature layout. Evidence: `components/cards/ProjectCardWrapper.tsx`.
+
 ## Mobile motion performance audit (read-only)
 
 ### Recent mitigations in this branch
