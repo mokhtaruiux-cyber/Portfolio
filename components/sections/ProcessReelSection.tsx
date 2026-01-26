@@ -153,7 +153,7 @@ export const ProcessReelSection: React.FC<ProcessReelSectionProps> = ({
               <div
                 key={step.id}
                 className={cn(
-                  "snap-center min-w-[240px] md:min-w-0 text-left p-6 sm:p-8 rounded-[16px] glass border transition-all duration-700 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500/40",
+                  "snap-center min-w-[240px] md:min-w-0 text-left p-6 sm:p-8 rounded-surface glass border transition-all duration-700 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500/40",
                   isActive
                     ? darkMode
                       ? "bg-white/5 border-white/15"
@@ -180,7 +180,7 @@ export const ProcessReelSection: React.FC<ProcessReelSectionProps> = ({
                     </span>
                     <span className={cn(typography.labelXs, typography.textMuted)}>{step.id.toUpperCase()}</span>
                   </div>
-                  <div className="h-1 w-full rounded-[4px] bg-black/10 dark:bg-white/10 overflow-hidden mb-4">
+                  <div className="h-1 w-full rounded-mini bg-black/10 dark:bg-white/10 overflow-hidden mb-4">
                     <div
                       className="h-full bg-accent origin-left"
                       style={{

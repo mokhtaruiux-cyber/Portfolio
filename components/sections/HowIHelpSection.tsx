@@ -48,7 +48,7 @@ export const HowIHelpSection: React.FC = () => {
             key={card.id}
             variants={stagger.item}
             className={cn(
-              "rounded-[16px] glass border p-6 sm:p-8 transition-colors duration-500",
+              "rounded-surface glass border p-6 sm:p-8 transition-colors duration-500",
               darkMode ? "bg-black/40 border-white/10" : "bg-white/70 border-black/5"
             )}
           >
@@ -88,7 +88,7 @@ export const HowIHelpSection: React.FC = () => {
           target="_blank"
           rel="noopener noreferrer"
           className={cn(
-            "inline-flex items-center gap-2 text-accent hover:text-accent/90 transition-colors font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 rounded-[4px] px-1",
+            "inline-flex items-center gap-2 text-accent hover:text-accent/90 transition-colors font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 rounded-control px-1",
             typography.body
           )}
         >

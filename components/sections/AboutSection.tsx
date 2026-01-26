@@ -41,7 +41,7 @@ export const AboutSection: React.FC = () => {
               key={item}
               variants={stagger.item}
               className={cn(
-                "p-6 sm:p-8 rounded-[16px] glass border",
+                "p-6 sm:p-8 rounded-surface glass border",
                 darkMode ? "bg-black/40 border-white/5" : "bg-white/60 border-black/5"
               )}
             >

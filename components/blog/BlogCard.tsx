@@ -22,7 +22,7 @@ const BlogCardComponent: React.FC<BlogCardProps> = ({ post, onClick }) => {
           type="button"
           onClick={() => onClick(post.slug)}
           className={cn(
-            'group w-full text-left flex flex-col rounded-[16px] glass border overflow-hidden transition-all duration-700 cursor-pointer h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 focus-visible:ring-offset-2',
+            'group w-full text-left flex flex-col rounded-surface glass border overflow-hidden transition-all duration-700 cursor-pointer h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 focus-visible:ring-offset-2',
             darkMode
               ? 'bg-black/40 border-white/5 hover:border-accent/30 focus-visible:ring-offset-[#030303]'
               : 'bg-white/60 border-black/5 hover:border-accent/30 shadow-xl focus-visible:ring-offset-[#fafafa]'
@@ -39,7 +39,7 @@ const BlogCardComponent: React.FC<BlogCardProps> = ({ post, onClick }) => {
               sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
               className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
             />
-            <div className={cn('absolute top-6 left-6 px-4 py-2 rounded-[4px] glass border border-white/10 bg-black/40 text-white', typography.labelSm)}>
+            <div className={cn('absolute top-6 left-6 px-4 py-2 rounded-mini glass border border-white/10 bg-black/40 text-white', typography.labelSm)}>
               {post.category}
             </div>
           </div>

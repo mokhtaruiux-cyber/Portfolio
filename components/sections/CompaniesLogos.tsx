@@ -67,7 +67,7 @@ export const CompaniesLogos: React.FC = () => {
                       animate={{ opacity: 1, y: 0, scale: 1, x: '-50%' }}
                       exit={{ opacity: 0, y: 6, scale: 0.95, x: '-50%' }}
                       className={cn(
-                        'absolute -top-10 left-1/2 z-30 px-4 py-2 rounded-[4px] glass border whitespace-nowrap shadow-2xl pointer-events-none',
+                        'absolute -top-10 left-1/2 z-30 px-4 py-2 rounded-mini glass border whitespace-nowrap shadow-2xl pointer-events-none',
                         darkMode ? 'bg-black/90 border-white/10' : 'bg-white/90 border-black/10'
                       )}
                     >
@@ -82,7 +82,7 @@ export const CompaniesLogos: React.FC = () => {
                   onMouseEnter={() => setHoveredIndex(idx)}
                   onMouseLeave={() => setHoveredIndex(null)}
                   className={cn(
-                    'w-20 h-20 sm:w-24 sm:h-24 rounded-[16px] border flex items-center justify-center transition-transform duration-300 hover:scale-105',
+                    'w-20 h-20 sm:w-24 sm:h-24 rounded-panel border flex items-center justify-center transition-transform duration-300 hover:scale-105',
                     darkMode ? 'bg-black/40 border-white/10' : 'bg-white border-black/10'
                   )}
                 >

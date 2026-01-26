@@ -93,7 +93,7 @@ export const Hero = ({ onWorkClick }: { onWorkClick: () => void }) => {
                   key={item}
                   className={cn(
                     typography.labelXs,
-                    'px-3 py-1 rounded-[4px] border border-accent/20 bg-accent/5 text-accent'
+                    'px-3 py-1 rounded-mini border border-accent/20 bg-accent/5 text-accent'
                   )}
                 >
                   {item}

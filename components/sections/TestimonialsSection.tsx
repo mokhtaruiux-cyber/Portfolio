@@ -19,7 +19,7 @@ interface TestimonialCardProps {
 const TestimonialCard: React.FC<TestimonialCardProps> = ({ testimonial, darkMode }) => (
   <div
     className={cn(
-      'w-[300px] sm:w-[450px] flex-shrink-0 p-8 sm:p-12 rounded-[40px] glass border flex flex-col justify-between transition-transform duration-500 hover:scale-[1.01] group',
+      'w-[300px] sm:w-[450px] flex-shrink-0 p-8 sm:p-12 rounded-surface glass border flex flex-col justify-between transition-transform duration-500 hover:scale-[1.01] group',
       darkMode
         ? 'bg-white/5 border-white/5 hover:border-white/20 shadow-[0_20px_60px_-50px_rgba(0,0,0,0.4)]'
         : 'bg-white/40 border-black/5 hover:border-black/20 shadow-[0_20px_60px_-50px_rgba(0,0,0,0.18)]'

@@ -27,7 +27,7 @@ const BlogBlock = ({ block, darkMode }: { block: BlogContentBlock; darkMode: boo
             height={1000}
             sizes="(max-width: 768px) 100vw, 60ch"
             className={cn(
-              'w-full h-auto rounded-[16px] border',
+              'w-full h-auto rounded-surface border',
               darkMode ? 'border-white/10' : 'border-black/10'
             )}
           />
@@ -80,7 +80,7 @@ export const BlogArticlePage = ({ post, onBack }: { post: BlogPost; onBack: () =
 
           <div className="space-y-4">
             <div className={cn('flex items-center gap-4', typography.labelXs, typography.textSubtle)}>
-              <span className="px-3 py-1 rounded-[4px] bg-accent/20 border border-accent/30 text-accent">{post.category}</span>
+              <span className="px-3 py-1 rounded-mini bg-accent/20 border border-accent/30 text-accent">{post.category}</span>
               <span>{post.date}</span>
               <span>{post.readTime}</span>
             </div>
@@ -88,7 +88,7 @@ export const BlogArticlePage = ({ post, onBack }: { post: BlogPost; onBack: () =
             <p className={cn(typography.body, 'font-medium', typography.textSubtle, darkMode ? 'text-white' : 'text-black')}>{post.excerpt}</p>
           </div>
 
-          <div className={cn('w-full rounded-[16px] overflow-hidden border', darkMode ? 'border-white/10' : 'border-black/10')}>
+          <div className={cn('w-full rounded-surface overflow-hidden border', darkMode ? 'border-white/10' : 'border-black/10')}>
             <img
               src={post.coverImage}
               alt={post.title}

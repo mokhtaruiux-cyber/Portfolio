@@ -17,7 +17,7 @@ export const SegmentTabs: React.FC<SegmentTabsProps> = ({ tabs, activeTab, onCha
         <div className="relative inline-flex max-w-full overflow-hidden">
             <div
                 className={cn(
-                    "flex items-center gap-1 h-11 p-1 rounded-[16px] border overflow-x-auto whitespace-nowrap no-scrollbar backdrop-blur-xl",
+                    "flex items-center gap-1 h-11 p-1 rounded-control border overflow-x-auto whitespace-nowrap no-scrollbar backdrop-blur-xl",
                     darkMode ? "bg-white/[0.06] border-white/10" : "bg-black/[0.04] border-black/10"
                 )}
                 style={{ WebkitOverflowScrolling: "touch" }}
@@ -29,7 +29,7 @@ export const SegmentTabs: React.FC<SegmentTabsProps> = ({ tabs, activeTab, onCha
                             key={tab}
                             onClick={() => onChange(tab)}
                             className={cn(
-                                "relative h-9 px-4 sm:px-5 rounded-[4px] transition-all duration-300 whitespace-nowrap z-10",
+                                "relative h-9 px-4 sm:px-5 rounded-control transition-all duration-300 whitespace-nowrap z-10",
                                 typography.labelXs,
                                 isActive
                                     ? "text-white"
@@ -39,7 +39,7 @@ export const SegmentTabs: React.FC<SegmentTabsProps> = ({ tabs, activeTab, onCha
                             {isActive && (
                                 <motion.div
                                     layoutId="activeTab"
-                                    className="absolute inset-0 rounded-[4px] border bg-accent/20 border-accent/30 -z-10"
+                                    className="absolute inset-0 rounded-control border bg-accent/20 border-accent/30 -z-10"
                                     transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                                 />
                             )}

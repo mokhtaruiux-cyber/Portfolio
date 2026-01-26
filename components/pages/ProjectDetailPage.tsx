@@ -12,7 +12,7 @@ const ProjectMetaItem = ({ label, value, darkMode }: { label: string; value: str
   return (
     <div
       className={cn(
-        'p-6 sm:p-8 rounded-[16px] glass border',
+        'p-6 sm:p-8 rounded-panel glass border',
         darkMode ? 'bg-black/40 border-white/5' : 'bg-white/60 border-black/5'
       )}
     >
@@ -26,7 +26,7 @@ const ProjectGalleryItem = ({ item, darkMode }: { item: Project['gallery'][numbe
   return (
     <div
       className={cn(
-        'relative aspect-[16/10] rounded-[16px] overflow-hidden glass border',
+        'relative aspect-[16/10] rounded-surface overflow-hidden glass border',
         darkMode ? 'bg-black/40 border-white/5' : 'bg-white/60 border-black/5'
       )}
     >
@@ -67,7 +67,7 @@ export const ProjectDetailPage = ({
         type="button"
         onClick={onBack}
         className={cn(
-          'fixed bottom-6 right-6 md:bottom-8 md:right-8 z-floating px-4 py-2 rounded-[4px] glass border shadow-lg transition-all',
+          'fixed bottom-6 right-6 md:bottom-8 md:right-8 z-floating px-4 py-2 rounded-control glass border shadow-lg transition-all',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40',
           darkMode ? 'bg-black/70 border-white/10 text-white hover:border-white/30' : 'bg-white/80 border-black/10 text-black hover:border-black/30',
           typography.labelSm
@@ -131,7 +131,7 @@ export const ProjectDetailPage = ({
         <Section>
           <div
             className={cn(
-              'p-8 sm:p-12 rounded-[16px] glass border flex flex-col items-start gap-6',
+              'p-8 sm:p-12 rounded-surface glass border flex flex-col items-start gap-6',
               darkMode ? 'bg-black/40 border-white/10' : 'bg-white/60 border-black/10'
             )}
           >

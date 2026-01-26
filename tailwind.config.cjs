@@ -10,6 +10,12 @@ module.exports = {
   ],
   theme: {
     extend: {
+      borderRadius: {
+        surface: '24px',
+        panel: '16px',
+        control: '12px',
+        mini: '10px',
+      },
       colors: {
         accent: '#2f6bff',
       },

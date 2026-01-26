@@ -15,12 +15,12 @@ export const CTASection = () => {
     <Section>
       <div
         className={cn(
-          'relative overflow-hidden rounded-[16px] glass border p-8 sm:p-12 md:p-16',
+          'relative overflow-hidden rounded-surface glass border p-8 sm:p-12 md:p-16',
           darkMode ? 'bg-black/40 border-white/10' : 'bg-white/60 border-black/5'
         )}
       >
         <div className="flex flex-col items-start text-left gap-6">
-          <Reveal delay={0.05} className="inline-flex items-center gap-2 px-4 py-2 rounded-[4px] border border-accent/20 bg-accent/5">
+          <Reveal delay={0.05} className="inline-flex items-center gap-2 px-4 py-2 rounded-mini border border-accent/20 bg-accent/5">
             <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
             <span className={cn(typography.labelXs, 'text-accent')}>{siteContent.finalCta.badge}</span>
           </Reveal>
@@ -53,7 +53,7 @@ export const CTASection = () => {
             <a
               href={siteContent.finalCta.secondaryHref}
               className={cn(
-                'text-accent hover:text-accent/90 transition-colors font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 rounded-[4px] px-1',
+                'text-accent hover:text-accent/90 transition-colors font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 rounded-control px-1',
                 typography.body
               )}
             >

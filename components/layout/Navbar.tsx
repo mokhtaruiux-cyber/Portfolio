@@ -107,7 +107,7 @@ export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
       <Container>
         <motion.div
           className={cn(
-            'relative w-full h-20 rounded-[16px] glass border shadow-xl overflow-hidden',
+            'relative w-full h-20 rounded-panel glass border shadow-xl overflow-hidden',
             scrolled && 'shadow-2xl',
             darkMode ? 'bg-black/60 border-white/10' : 'bg-white/70 border-black/10'
           )}
@@ -157,7 +157,7 @@ export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
                 onClick={() => setDarkMode(!darkMode)}
                 className={cn(
                   typography.navControl,
-                  'rounded-[4px] border border-white/35 text-white/90 flex items-center justify-center hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30',
+                  'rounded-control border border-white/35 text-white/90 flex items-center justify-center hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30',
                   !darkMode && 'border-black/10 text-black'
                 )}
                 aria-label={siteContent.nav.toggleThemeLabel}
@@ -168,7 +168,7 @@ export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className={cn(
                   typography.navControl,
-                  'rounded-[4px] border border-white/35 text-white/90 flex items-center justify-center hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 md:hidden',
+                  'rounded-control border border-white/35 text-white/90 flex items-center justify-center hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 md:hidden',
                   !darkMode && 'border-black/10 text-black'
                 )}
                 aria-label={siteContent.nav.openMenuLabel}
@@ -202,7 +202,7 @@ export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: -12, opacity: 0 }}
                 className={cn(
-                  'w-full rounded-[16px] glass border p-6 flex flex-col items-center gap-6 shadow-2xl',
+                  'w-full rounded-surface glass border p-6 flex flex-col items-center gap-6 shadow-2xl',
                   darkMode ? 'bg-black/95 border-white/10 text-white' : 'bg-white/95 border-black/10 text-black'
                 )}
                 role="dialog"

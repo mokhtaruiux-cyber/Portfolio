@@ -25,7 +25,7 @@ const ProjectCardWrapperComponent: React.FC<ProjectCardWrapperProps> = ({ projec
             type="button"
             onClick={() => onClick(project.slug)}
             className={cn(
-              'relative w-full text-left rounded-[16px] p-6 sm:p-10 md:p-16 lg:p-20 overflow-hidden glass border transition-shadow duration-700 cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 focus-visible:ring-offset-2',
+              'relative w-full text-left rounded-surface p-6 sm:p-10 md:p-16 lg:p-20 overflow-hidden glass border transition-shadow duration-700 cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 focus-visible:ring-offset-2',
               darkMode
                 ? 'bg-black/90 border-white/10 shadow-[0_0_100px_-20px_rgba(37,99,235,0.1)] focus-visible:ring-offset-[#030303]'
                 : 'bg-white/90 border-black/5 shadow-2xl focus-visible:ring-offset-[#fafafa]'
@@ -50,7 +50,7 @@ const ProjectCardWrapperComponent: React.FC<ProjectCardWrapperProps> = ({ projec
                         key={tag}
                         className={cn(
                           typography.labelXs,
-                          'px-3 py-1 rounded-[4px] border border-accent/20 text-accent'
+                          'px-3 py-1 rounded-mini border border-accent/20 text-accent'
                         )}
                       >
                         {tag}
@@ -76,7 +76,7 @@ const ProjectCardWrapperComponent: React.FC<ProjectCardWrapperProps> = ({ projec
                   </div>
                 </Reveal>
               </div>
-              <div className="order-1 lg:order-2 relative rounded-[16px] overflow-hidden group aspect-[16/10] lg:aspect-[4/3.2]">
+              <div className="order-1 lg:order-2 relative rounded-surface overflow-hidden group aspect-[16/10] lg:aspect-[4/3.2]">
                 <motion.img
                   whileHover={{ scale: 1.04 }}
                   transition={transitions.smooth}
