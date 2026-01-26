@@ -29,7 +29,13 @@ const BlogCardComponent: React.FC<BlogCardProps> = ({ post, onClick }) => {
           )}
         >
           <div className="relative aspect-[16/10] overflow-hidden">
-            <img src={post.coverImage} alt={post.title} className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" />
+            <img
+              src={post.coverImage}
+              alt={post.title}
+              loading="lazy"
+              decoding="async"
+              className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+            />
             <div className={cn('absolute top-6 left-6 px-4 py-2 rounded-[4px] glass border border-white/10 bg-black/40 text-white', typography.labelSm)}>
               {post.category}
             </div>

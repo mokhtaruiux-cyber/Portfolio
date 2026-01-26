@@ -30,7 +30,13 @@ const ProjectGalleryItem = ({ item, darkMode }: { item: Project['gallery'][numbe
         darkMode ? 'bg-black/40 border-white/5' : 'bg-white/60 border-black/5'
       )}
     >
-      <img src={item.src} alt={item.alt} className="w-full h-full object-cover" />
+      <img
+        src={item.src}
+        alt={item.alt}
+        loading="lazy"
+        decoding="async"
+        className="w-full h-full object-cover"
+      />
       {item.type === 'video' && (
         <div className="absolute inset-0 bg-black/45 flex items-center justify-center">
           <span className={cn(typography.labelXs, 'tracking-[0.3em] text-white')}>{siteContent.projectDetail.videoLabel}</span>

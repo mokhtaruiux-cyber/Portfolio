@@ -77,7 +77,15 @@ const ProjectCardWrapperComponent: React.FC<ProjectCardWrapperProps> = ({ projec
                 </Reveal>
               </div>
               <div className="order-1 lg:order-2 relative rounded-[16px] overflow-hidden group aspect-[16/10] lg:aspect-[4/3.2]">
-                <motion.img whileHover={{ scale: 1.04 }} transition={transitions.smooth} src={project.image} alt={project.title} className="w-full h-full object-cover" />
+                <motion.img
+                  whileHover={{ scale: 1.04 }}
+                  transition={transitions.smooth}
+                  src={project.image}
+                  alt={project.title}
+                  loading="lazy"
+                  decoding="async"
+                  className="w-full h-full object-cover"
+                />
               </div>
             </div>
           </button>

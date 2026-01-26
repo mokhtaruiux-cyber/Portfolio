@@ -35,6 +35,9 @@ export const Hero = ({ onWorkClick }: { onWorkClick: () => void }) => {
                   transition={{ ...transitions.smooth, duration: 1.5, ease: [0.16, 1, 0.3, 1] }}
                   src={darkMode ? siteContent.hero.image.darkSrc : siteContent.hero.image.lightSrc}
                   alt={siteContent.hero.imageAlt}
+                  loading="eager"
+                  decoding="async"
+                  fetchPriority="high"
                   className="w-full h-full object-contain relative z-10 select-none pointer-events-none"
                 />
                 <div

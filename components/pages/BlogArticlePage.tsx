@@ -21,6 +21,8 @@ const BlogBlock = ({ block, darkMode }: { block: BlogContentBlock; darkMode: boo
           <img
             src={block.src}
             alt={block.alt}
+            loading="lazy"
+            decoding="async"
             className={cn(
               'w-full h-auto rounded-[16px] border',
               darkMode ? 'border-white/10' : 'border-black/10'
@@ -84,7 +86,14 @@ export const BlogArticlePage = ({ post, onBack }: { post: BlogPost; onBack: () =
           </div>
 
           <div className={cn('w-full rounded-[16px] overflow-hidden border', darkMode ? 'border-white/10' : 'border-black/10')}>
-            <img src={post.coverImage} alt={post.title} className="w-full h-full object-cover" />
+            <img
+              src={post.coverImage}
+              alt={post.title}
+              loading="eager"
+              decoding="async"
+              fetchPriority="high"
+              className="w-full h-full object-cover"
+            />
           </div>
         </div>
       </Section>
