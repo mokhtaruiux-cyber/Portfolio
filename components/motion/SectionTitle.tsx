@@ -53,7 +53,7 @@ export const SectionTitle: React.FC<SectionTitleProps> = ({
         {highlight && (
           <>
             {stackHighlight ? <br /> : ' '}
-            <span className="text-[#2f6bff]">{highlight}</span>
+            <span className="text-accent">{highlight}</span>
           </>
         )}
       </BlurIn>

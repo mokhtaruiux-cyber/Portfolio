@@ -39,7 +39,7 @@ export const SegmentTabs: React.FC<SegmentTabsProps> = ({ tabs, activeTab, onCha
                             {isActive && (
                                 <motion.div
                                     layoutId="activeTab"
-                                    className="absolute inset-0 rounded-[4px] border bg-[#2f6bff]/20 border-[#2f6bff]/30 -z-10"
+                                    className="absolute inset-0 rounded-[4px] border bg-accent/20 border-accent/30 -z-10"
                                     transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                                 />
                             )}

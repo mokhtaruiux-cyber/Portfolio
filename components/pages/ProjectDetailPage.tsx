@@ -64,7 +64,7 @@ export const ProjectDetailPage = ({
         type="button"
         onClick={onBack}
         className={cn(
-          'fixed bottom-6 right-6 md:bottom-8 md:right-8 z-[70] px-4 py-2 rounded-[4px] glass border shadow-lg transition-all',
+          'fixed bottom-6 right-6 md:bottom-8 md:right-8 z-floating px-4 py-2 rounded-[4px] glass border shadow-lg transition-all',
           'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40',
           darkMode ? 'bg-black/70 border-white/10 text-white hover:border-white/30' : 'bg-white/80 border-black/10 text-black hover:border-black/30',
           typography.labelSm

@@ -9,7 +9,17 @@ module.exports = {
     "./data/**/*.{ts,tsx}",
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        accent: '#2f6bff',
+      },
+      zIndex: {
+        top: '1000',
+        nav: '100',
+        overlay: '90',
+        floating: '70',
+      },
+    },
   },
   plugins: [],
 };

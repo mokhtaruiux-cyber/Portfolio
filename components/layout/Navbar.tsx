@@ -103,7 +103,7 @@ export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
   };
 
   return (
-    <nav className="fixed top-0 inset-x-0 z-[100] pt-6">
+    <nav className="fixed top-0 inset-x-0 z-nav pt-6">
       <Container>
         <motion.div
           className={cn(
@@ -185,7 +185,7 @@ export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
       <AnimatePresence>
         {isMenuOpen && (
           <motion.div
-            className="fixed inset-0 z-[90] md:hidden"
+            className="fixed inset-0 z-overlay md:hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
