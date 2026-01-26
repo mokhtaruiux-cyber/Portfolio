@@ -1,7 +1,8 @@
 
 import React from "react";
-import { motion, useReducedMotion, Variants } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { durations, easing, stagger, viewportDefaults } from "../../lib/motionTokens";
+import { useMobileMotionGate } from "../../hooks/useMobileMotionGate";
 
 interface RevealProps {
   children: React.ReactNode;
@@ -22,7 +23,7 @@ export const Reveal: React.FC<RevealProps> = ({
   className,
   staggerChildren = false,
 }) => {
-  const reduce = useReducedMotion();
+  const reduce = useMobileMotionGate();
 
   const distance = 20;
   const directionMap = {
@@ -37,9 +38,16 @@ export const Reveal: React.FC<RevealProps> = ({
   const revealVariants: Variants = staggerChildren
     ? (stagger.container(delay) as Variants)
     : ({
-        initial: { opacity: 0, ...axis },
+        initial: reduce ? { opacity: 0 } : { opacity: 0, ...axis },
         animate: reduce
-          ? { opacity: 1, x: 0, y: 0 }
+          ? {
+            opacity: 1,
+            transition: {
+              duration: durations.fast,
+              ease: easing.smooth,
+              delay,
+            },
+          }
           : {
             opacity: 1,
             x: 0,
