@@ -55,7 +55,17 @@ const pageToPath = (page: PageKey, slug = '') => {
 };
 
 export default function App() {
-  const [darkMode, setDarkMode] = useState(true);
+  const [darkMode, setDarkMode] = useState(() => {
+    if (typeof window === 'undefined') return true;
+    try {
+      const stored = window.localStorage.getItem('theme');
+      if (stored === 'dark') return true;
+      if (stored === 'light') return false;
+    } catch {
+      // Ignore storage errors and fall back to system preference.
+    }
+    return window.matchMedia?.('(prefers-color-scheme: dark)')?.matches ?? true;
+  });
 
   const location = useLocation();
   const navigate = useNavigate();
@@ -93,6 +103,11 @@ export default function App() {
     } else {
       document.body.classList.remove('dark');
       document.body.classList.add('light');
+    }
+    try {
+      window.localStorage.setItem('theme', darkMode ? 'dark' : 'light');
+    } catch {
+      // Ignore storage errors.
     }
   }, [darkMode]);
 
