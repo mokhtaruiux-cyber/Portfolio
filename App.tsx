@@ -229,14 +229,14 @@ export default function App() {
       <HowIHelpSection />
       <ExperienceSection />
       <ProcessReelSection />
-      <Section id="work" eyebrow={siteContent.featuredWork.eyebrow} motion="fade">
+      <Section id="work" className="scroll-mt-32" eyebrow={siteContent.featuredWork.eyebrow} motion="fade">
         <div className="mb-10 text-left">
           <BlurIn as="h3" className={cn(typography.h2, 'font-black max-w-[24ch]', darkMode ? 'text-white' : 'text-black')}>
             {siteContent.featuredWork.title} <br /> <span className="text-accent">{siteContent.featuredWork.highlight}</span>
           </BlurIn>
         </div>
 
-        <div className="sticky top-24 sm:top-28 z-40 mb-8 py-2 pointer-events-none">
+        <div className="sticky top-28 sm:top-32 z-40 mb-8 py-2 pointer-events-none">
           <Reveal delay={0.2} className="pointer-events-auto flex justify-start">
             <SegmentTabs
               tabs={workFilters.map((item) => item.label)}
