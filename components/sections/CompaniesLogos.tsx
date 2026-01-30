@@ -16,11 +16,22 @@ export const CompaniesLogos: React.FC = () => {
   const marqueeControls = useAnimation();
   const isInView = useInView(containerRef, { amount: 0.2 });
   const [isPageVisible, setIsPageVisible] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
 
+  // Track if on mobile for lighter marquee
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Fewer duplicates on mobile = fewer DOM nodes = better performance
   const marqueeItems = useMemo(() => {
     const items = siteContent.socialProof.companies;
-    return [...items, ...items, ...items];
-  }, []);
+    return isMobile ? [...items, ...items] : [...items, ...items, ...items];
+  }, [isMobile]);
 
   useEffect(() => {
     const handleVisibilityChange = () => {

@@ -148,7 +148,7 @@ export const ProcessReelSection: React.FC<ProcessReelSectionProps> = ({
         <div
           role="tablist"
           aria-orientation="horizontal"
-          className="flex md:grid md:grid-cols-2 lg:grid-cols-4 gap-4 overflow-x-auto md:overflow-visible snap-x snap-mandatory pb-2"
+          className="flex flex-col space-y-4 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-4 md:gap-4"
           onMouseEnter={() => pauseOnHover && setIsPaused(true)}
           onMouseLeave={() => pauseOnHover && setIsPaused(false)}
           onFocusCapture={() => pauseOnFocus && setIsPaused(true)}
@@ -165,7 +165,7 @@ export const ProcessReelSection: React.FC<ProcessReelSectionProps> = ({
               <div
                 key={step.id}
                 className={cn(
-                  "snap-center min-w-[240px] md:min-w-0 text-left p-6 sm:p-8 rounded-surface glass border transition-all duration-700 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500/40",
+                  "text-left p-6 sm:p-8 rounded-surface glass border transition-all duration-700 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500/40",
                   isActive
                     ? darkMode
                       ? "bg-white/5 border-white/15"

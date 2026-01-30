@@ -16,7 +16,13 @@ interface SectionProps {
 
 export const Section: React.FC<SectionProps> = ({ children, className, id, eyebrow, darkMode, motion = "lift" }) => {
     return (
-        <section id={id} className={cn("py-16 md:py-24 relative z-10", className)}>
+        <section
+          id={id}
+          className={cn(
+            "py-20 md:py-24 relative z-10 scroll-mt-28 sm:scroll-mt-32",
+            className
+          )}
+        >
             <Container>
                 <FadeInUp disableTransform={motion === "fade"}>
                     {eyebrow && (

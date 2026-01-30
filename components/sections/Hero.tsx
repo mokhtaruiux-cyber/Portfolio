@@ -15,8 +15,9 @@ import { GlowButton } from '../ui/GlowButton';
 
 export const Hero = ({ onWorkClick }: { onWorkClick: () => void }) => {
   const { darkMode } = useTheme();
+  const { cal } = siteContent;
   return (
-    <section className="relative pt-24 pb-12 md:pt-32 md:pb-16 overflow-hidden min-h-[70vh] sm:min-h-[75vh] flex flex-col justify-center">
+    <section className="relative pt-28 pb-14 md:pt-32 md:pb-16 overflow-hidden min-h-[70vh] sm:min-h-[75vh] flex flex-col justify-center">
       <HeroGlow darkMode={darkMode} />
       <div
         className={cn(
@@ -27,7 +28,7 @@ export const Hero = ({ onWorkClick }: { onWorkClick: () => void }) => {
       <Container className="text-center relative z-10">
         <FadeInUp>
           <div className="flex flex-col items-center gap-0">
-            <Reveal delay={0.3} className="relative z-0 mt-8">
+            <Reveal delay={0.3} className="relative z-0 mt-10 sm:mt-8">
               <div className="relative w-48 h-48 sm:w-56 sm:h-56 md:w-72 md:h-72">
                 <motion.img
                   initial={{ opacity: 0, scale: 0.95, y: 20 }}
@@ -49,7 +50,7 @@ export const Hero = ({ onWorkClick }: { onWorkClick: () => void }) => {
               </div>
             </Reveal>
 
-            <div className="flex flex-col items-center w-full mt-8 gap-4">
+            <div className="flex flex-col items-center w-full mt-10 sm:mt-8 gap-5 sm:gap-4">
               <motion.div className="relative z-10 w-full">
                 <h1 className={cn(typography.h1, 'font-black max-w-[18ch] block mx-auto !text-center', darkMode ? 'text-white' : 'text-black')}>
                   <TypingEffect as="span" text={siteContent.hero.title} />
@@ -69,13 +70,13 @@ export const Hero = ({ onWorkClick }: { onWorkClick: () => void }) => {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.8, duration: 0.5 }}
-              className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full mx-auto relative z-10 mt-8"
+              className="flex flex-col sm:flex-row items-center justify-center gap-4 w-full mx-auto relative z-10 mt-10 sm:mt-8"
             >
               <GlowButton
                 size="cta"
-                href={siteContent.bookingUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+                calLink={cal.link}
+                calNamespace={cal.namespace}
+                calConfig={cal.configJson}
               >
                 {siteContent.hero.ctaPrimary} <ArrowUpRight size={20} />
               </GlowButton>
@@ -87,7 +88,7 @@ export const Hero = ({ onWorkClick }: { onWorkClick: () => void }) => {
                 {siteContent.hero.ctaSecondary}
               </GlowButton>
             </motion.div>
-            <div className="flex flex-wrap items-center justify-center gap-3 mt-6">
+            <div className="flex flex-wrap items-center justify-center gap-3 mt-8 sm:mt-6">
               {siteContent.hero.badgeItems.map((item) => (
                 <span
                   key={item}

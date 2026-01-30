@@ -55,6 +55,14 @@ const pageToPath = (page: PageKey, slug = '') => {
 };
 
 export default function App() {
+  const [hasManualTheme, setHasManualTheme] = useState(() => {
+    if (typeof window === 'undefined') return true;
+    try {
+      return window.localStorage.getItem('theme') !== null;
+    } catch {
+      return true;
+    }
+  });
   const [darkMode, setDarkMode] = useState(() => {
     if (typeof window === 'undefined') return true;
     try {
@@ -104,16 +112,70 @@ export default function App() {
       document.body.classList.remove('dark');
       document.body.classList.add('light');
     }
+    if (!hasManualTheme) return;
     try {
       window.localStorage.setItem('theme', darkMode ? 'dark' : 'light');
     } catch {
       // Ignore storage errors.
     }
-  }, [darkMode]);
+  }, [darkMode, hasManualTheme]);
+
+  useEffect(() => {
+    if (hasManualTheme) return;
+    const media = window.matchMedia?.('(prefers-color-scheme: dark)');
+    if (!media) return;
+    const handler = (event: MediaQueryListEvent) => setDarkMode(event.matches);
+    setDarkMode(media.matches);
+    if (media.addEventListener) {
+      media.addEventListener('change', handler);
+      return () => media.removeEventListener('change', handler);
+    }
+    media.addListener(handler);
+    return () => media.removeListener(handler);
+  }, [hasManualTheme]);
 
   useEffect(() => {
     window.scrollTo({ top: 0 });
   }, [location.pathname]);
+
+  useEffect(() => {
+    if (currentPage !== 'home') return;
+    let targetId: string | null = null;
+    try {
+      targetId = window.sessionStorage.getItem('scrollToSection');
+    } catch {
+      targetId = null;
+    }
+    if (!targetId) return;
+    if (!targetId) return;
+    let attempts = 0;
+    const maxAttempts = 100;
+    const intervalId = window.setInterval(() => {
+      const target = document.getElementById(targetId);
+      if (target) {
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        try {
+          window.sessionStorage.removeItem('scrollToSection');
+        } catch {
+          // Ignore storage errors.
+        }
+        window.clearInterval(intervalId);
+        return;
+      }
+      attempts += 1;
+      if (attempts >= maxAttempts) {
+        try {
+          window.sessionStorage.removeItem('scrollToSection');
+        } catch {
+          // Ignore storage errors.
+        }
+        window.clearInterval(intervalId);
+      }
+    }, 100);
+    return () => {
+      window.clearInterval(intervalId);
+    };
+  }, [currentPage]);
 
   const navigateTo = useCallback((page: PageKey, slug = '') => {
     navigate(pageToPath(page, slug));
@@ -125,6 +187,37 @@ export default function App() {
       return;
     }
     navigate(pageToPath(fallbackPage));
+  }, [navigate]);
+
+  const handleSetDarkMode = useCallback<React.Dispatch<React.SetStateAction<boolean>>>((value) => {
+    setHasManualTheme(true);
+    setDarkMode((prev) => {
+      const next = typeof value === 'function' ? value(prev) : value;
+      try {
+        window.localStorage.setItem('theme', next ? 'dark' : 'light');
+      } catch {
+        // Ignore storage errors.
+      }
+      return next;
+    });
+  }, []);
+
+  const handleBackToBlogSection = useCallback(() => {
+    try {
+      window.sessionStorage.setItem('scrollToSection', 'blog');
+    } catch {
+      // Ignore storage errors.
+    }
+    navigate('/');
+  }, [navigate]);
+
+  const handleBackToWorkSection = useCallback(() => {
+    try {
+      window.sessionStorage.setItem('scrollToSection', 'work');
+    } catch {
+      // Ignore storage errors.
+    }
+    navigate('/');
   }, [navigate]);
 
   const handleProjectClick = useCallback((slug: string) => {
@@ -229,7 +322,7 @@ export default function App() {
       <HowIHelpSection />
       <ExperienceSection />
       <ProcessReelSection />
-      <Section id="work" className="scroll-mt-32" eyebrow={siteContent.featuredWork.eyebrow} motion="fade">
+      <Section id="work" eyebrow={siteContent.featuredWork.eyebrow} motion="fade">
         <div className="mb-10 text-left">
           <BlurIn as="h3" className={cn(typography.h2, 'font-black max-w-[24ch]', darkMode ? 'text-white' : 'text-black')}>
             {siteContent.featuredWork.title} <br /> <span className="text-accent">{siteContent.featuredWork.highlight}</span>
@@ -285,7 +378,7 @@ export default function App() {
   );
 
   return (
-    <ThemeProvider value={{ darkMode, setDarkMode }}>
+    <ThemeProvider value={{ darkMode, setDarkMode: handleSetDarkMode }}>
       <div className={cn('min-h-screen transition-colors duration-1000 selection:bg-blue-600 selection:text-white pb-[env(safe-area-inset-bottom)]', darkMode ? 'bg-[#030303] text-white' : 'bg-[#fafafa] text-black')}>
         <a
           href="#main-content"
@@ -311,7 +404,7 @@ export default function App() {
                       <ProjectDetailPage
                         project={activeProject}
                         nextProject={nextProject}
-                        onBack={() => handleBack('work')}
+                        onBack={handleBackToWorkSection}
                         onNextProject={handleProjectClick}
                       />
                     ) : (
@@ -324,7 +417,7 @@ export default function App() {
                   path="/blog/:slug"
                   element={
                     activePost ? (
-                      <BlogArticlePage post={activePost} onBack={() => handleBack('blog')} />
+                      <BlogArticlePage post={activePost} onBack={handleBackToBlogSection} />
                     ) : (
                       <Navigate to="/blog" replace />
                     )

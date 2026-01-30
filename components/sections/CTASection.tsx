@@ -11,6 +11,7 @@ import { GlowButton } from '../ui/GlowButton';
 
 export const CTASection = () => {
   const { darkMode } = useTheme();
+  const { cal } = siteContent;
   return (
     <Section>
       <div
@@ -44,9 +45,9 @@ export const CTASection = () => {
           <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
             <GlowButton
               size="cta"
-              href={siteContent.bookingUrl}
-              target="_blank"
-              rel="noopener noreferrer"
+              calLink={cal.link}
+              calNamespace={cal.namespace}
+              calConfig={cal.configJson}
             >
               {siteContent.finalCta.primaryLabel} <ArrowUpRight size={20} />
             </GlowButton>

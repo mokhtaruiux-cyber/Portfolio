@@ -63,26 +63,8 @@ export const ProjectDetailPage = ({
   const { darkMode } = useTheme();
   return (
     <>
-      <button
-        type="button"
-        onClick={onBack}
-        className={cn(
-          'fixed bottom-6 right-6 md:bottom-8 md:right-8 z-floating px-4 py-2 rounded-control glass border shadow-lg transition-all',
-          'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40',
-          darkMode ? 'bg-black/70 border-white/10 text-white hover:border-white/30' : 'bg-white/80 border-black/10 text-black hover:border-black/30',
-          typography.labelSm
-        )}
-        aria-label={siteContent.projectDetail.backToWorkLabel}
-      >
-        {siteContent.projectDetail.backToWorkLabel}
-      </button>
-      <Section>
+      <Section className="pt-28 md:pt-36">
         <div className="text-left space-y-10">
-          <button onClick={onBack} className={cn('flex items-center gap-2 hover:opacity-100 hover:text-accent transition-all font-medium group', typography.body, typography.textSubtle)}>
-            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-            {siteContent.projectDetail.backToWorkLabel}
-          </button>
-
           <div className="space-y-4">
             <span className={cn(typography.labelXs, 'tracking-[0.3em] text-accent')}>{project.category}</span>
             <h1 className={cn(typography.h1Display, 'font-black max-w-[18ch]', darkMode ? 'text-white' : 'text-black')}>{project.title}</h1>
@@ -145,6 +127,22 @@ export const ProjectDetailPage = ({
           </div>
         </Section>
       )}
+
+      <Section>
+        <div className="mx-auto flex w-full max-w-[60ch] flex-col items-start text-left">
+          <button
+            onClick={onBack}
+            className={cn(
+              'flex items-center gap-2 hover:opacity-100 hover:text-accent transition-all font-medium group',
+              typography.body,
+              typography.textSubtle
+            )}
+          >
+            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+            {siteContent.projectDetail.backToWorkLabel}
+          </button>
+        </div>
+      </Section>
     </>
   );
 };

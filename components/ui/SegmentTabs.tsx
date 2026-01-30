@@ -1,6 +1,5 @@
 
 import React from 'react';
-import { motion } from 'framer-motion';
 import { cn } from '../../lib/utils';
 import { useTheme } from '../../context/ThemeContext';
 import { typography } from '../../lib/typography';
@@ -14,11 +13,16 @@ interface SegmentTabsProps {
 export const SegmentTabs: React.FC<SegmentTabsProps> = ({ tabs, activeTab, onChange }) => {
     const { darkMode } = useTheme();
     return (
-        <div className="relative inline-flex max-w-full overflow-hidden">
+        <div
+          className={cn(
+            "relative inline-flex max-w-full overflow-hidden rounded-full border shadow-sm",
+            darkMode ? "border-white/10" : "border-black/10"
+          )}
+        >
             <div
                 className={cn(
-                    "flex items-center gap-1 h-11 p-1 rounded-control border overflow-x-auto whitespace-nowrap no-scrollbar backdrop-blur-xl",
-                    darkMode ? "bg-white/[0.06] border-white/10" : "bg-black/[0.04] border-black/10"
+                    "flex items-center gap-1 h-11 p-1 rounded-full overflow-x-auto whitespace-nowrap no-scrollbar",
+                    darkMode ? "bg-white/5 border-white/10" : "bg-black/5 border-black/10"
                 )}
                 style={{ WebkitOverflowScrolling: "touch" }}
             >
@@ -29,20 +33,17 @@ export const SegmentTabs: React.FC<SegmentTabsProps> = ({ tabs, activeTab, onCha
                             key={tab}
                             onClick={() => onChange(tab)}
                             className={cn(
-                                "relative h-9 px-4 sm:px-5 rounded-control transition-all duration-300 whitespace-nowrap z-10",
+                                "relative h-9 px-4 sm:px-5 rounded-full whitespace-nowrap z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40",
                                 typography.labelXs,
                                 isActive
-                                    ? "text-white"
-                                    : cn("hover:opacity-100", typography.textSubtle, darkMode ? "text-white" : "text-black")
+                                    ? "bg-accent text-white shadow-sm"
+                                    : cn(
+                                        "hover:bg-black/10 hover:text-black",
+                                        typography.textSubtle,
+                                        darkMode && "hover:bg-white/10 hover:text-white"
+                                      )
                             )}
                         >
-                            {isActive && (
-                                <motion.div
-                                    layoutId="activeTab"
-                                    className="absolute inset-0 rounded-control border bg-accent/20 border-accent/30 -z-10"
-                                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
-                                />
-                            )}
                             {tab}
                         </button>
                     );

@@ -1,9 +1,8 @@
 'use client';
-import { motion, useInView } from 'framer-motion';
+import { motion, useInView, useReducedMotion } from 'framer-motion';
 import * as React from 'react';
 import { cn } from '../../lib/utils';
 import { durations, easing, viewportDefaults } from '../../lib/motionTokens';
-import { useMobileMotionGate } from '../../hooks/useMobileMotionGate';
 
 interface FadeInUpProps {
     children: React.ReactNode;
@@ -16,7 +15,7 @@ interface FadeInUpProps {
 export const FadeInUp = ({ children, className, delay = 0, disableTransform = false, offset = 24 }: FadeInUpProps) => {
     const ref = React.useRef(null);
     const isInView = useInView(ref, viewportDefaults);
-    const reduceMotion = useMobileMotionGate();
+    const reduceMotion = useReducedMotion() ?? false;
     const initial = reduceMotion
         ? { opacity: 0 }
         : disableTransform

@@ -17,6 +17,7 @@ export const Footer = ({
 }) => {
   const { darkMode } = useTheme();
   const footerColumns = siteContent.footer.columns;
+  const { cal } = siteContent;
   const [pendingSection, setPendingSection] = useState<string | null>(null);
 
   useEffect(() => {
@@ -64,9 +65,26 @@ export const Footer = ({
                 {column.links.map((link) => (
                   <li key={link.label}>
                     {link.href ? (
-                      <a href={link.href} target="_blank" rel="noopener noreferrer" className={cn(typography.body, typography.textMuted, 'hover:opacity-100 transition-opacity font-semibold')}>
-                        {link.label}
-                      </a>
+                      link.href === siteContent.bookingUrl ? (
+                        <button
+                          type="button"
+                          data-cal-link={cal.link}
+                          data-cal-namespace={cal.namespace}
+                          data-cal-config={cal.configJson}
+                          className={cn(typography.body, typography.textMuted, 'hover:opacity-100 transition-opacity font-semibold')}
+                        >
+                          {link.label}
+                        </button>
+                      ) : (
+                        <a
+                          href={link.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={cn(typography.body, typography.textMuted, 'hover:opacity-100 transition-opacity font-semibold')}
+                        >
+                          {link.label}
+                        </a>
+                      )
                     ) : link.sectionId || link.page ? (
                       <button
                         type="button"

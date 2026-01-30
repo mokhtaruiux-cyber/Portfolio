@@ -1,5 +1,5 @@
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, useMotionValue, useSpring, useTransform, useReducedMotion } from 'framer-motion';
 import { transitions } from '../../lib/motionTokens';
 
@@ -9,12 +9,13 @@ interface TiltCardProps {
   intensity?: number;
 }
 
-export const TiltCard: React.FC<TiltCardProps> = ({ 
-  children, 
+export const TiltCard: React.FC<TiltCardProps> = ({
+  children,
   className = "",
   intensity = 15
 }) => {
   const ref = useRef<HTMLDivElement>(null);
+  const rafId = useRef<number | null>(null);
   const shouldReduceMotion = useReducedMotion();
   const [canHover, setCanHover] = useState(() => {
     if (typeof window === 'undefined') return true;
@@ -30,6 +31,13 @@ export const TiltCard: React.FC<TiltCardProps> = ({
     return () => media.removeEventListener('change', update);
   }, []);
 
+  // Cleanup RAF on unmount
+  useEffect(() => {
+    return () => {
+      if (rafId.current) cancelAnimationFrame(rafId.current);
+    };
+  }, []);
+
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
@@ -38,26 +46,37 @@ export const TiltCard: React.FC<TiltCardProps> = ({
 
   const rotateX = useTransform(mouseY, [-0.5, 0.5], [intensity, -intensity]);
   const rotateY = useTransform(mouseX, [-0.5, 0.5], [-intensity, intensity]);
-  
+
   const shineX = useTransform(mouseX, [-0.5, 0.5], ["0%", "100%"]);
   const shineY = useTransform(mouseY, [-0.5, 0.5], ["0%", "100%"]);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+  // Throttled mouse move using requestAnimationFrame
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
     if (!ref.current || shouldReduceMotion || !canHover) return;
-    const rect = ref.current.getBoundingClientRect();
-    const width = rect.width;
-    const height = rect.height;
-    const mouseXPos = e.clientX - rect.left;
-    const mouseYPos = e.clientY - rect.top;
-    
-    x.set(mouseXPos / width - 0.5);
-    y.set(mouseYPos / height - 0.5);
-  };
 
-  const handleMouseLeave = () => {
+    // Skip if RAF already pending
+    if (rafId.current) return;
+
+    const clientX = e.clientX;
+    const clientY = e.clientY;
+
+    rafId.current = requestAnimationFrame(() => {
+      if (!ref.current) return;
+      const rect = ref.current.getBoundingClientRect();
+      x.set((clientX - rect.left) / rect.width - 0.5);
+      y.set((clientY - rect.top) / rect.height - 0.5);
+      rafId.current = null;
+    });
+  }, [shouldReduceMotion, canHover, x, y]);
+
+  const handleMouseLeave = useCallback(() => {
+    if (rafId.current) {
+      cancelAnimationFrame(rafId.current);
+      rafId.current = null;
+    }
     x.set(0);
     y.set(0);
-  };
+  }, [x, y]);
 
   return (
     <motion.div
@@ -74,9 +93,9 @@ export const TiltCard: React.FC<TiltCardProps> = ({
       <div style={{ transform: "translateZ(50px)" }} className="h-full">
         {children}
       </div>
-      
+
       {!shouldReduceMotion && canHover && (
-        <motion.div 
+        <motion.div
           style={{
             background: `radial-gradient(circle at ${shineX} ${shineY}, rgba(255,255,255,0.12) 0%, transparent 80%)`,
           }}

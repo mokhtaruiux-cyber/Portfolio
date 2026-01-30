@@ -12,8 +12,10 @@ import { stagger, viewportDefaults } from '../../lib/motionTokens';
 
 export const HowIHelpSection: React.FC = () => {
   const { darkMode } = useTheme();
+  const { cal } = siteContent;
   const { howIHelp } = siteContent;
   const titleLabel = howIHelp.titleLines.join(' ');
+  const isCalCta = howIHelp.ctaHref === siteContent.bookingUrl;
 
   return (
     <Section id="help" eyebrow={howIHelp.eyebrow}>
@@ -83,17 +85,32 @@ export const HowIHelpSection: React.FC = () => {
       </motion.div>
 
       <div className="mt-8">
-        <a
-          href={howIHelp.ctaHref}
-          target="_blank"
-          rel="noopener noreferrer"
-          className={cn(
-            "inline-flex items-center gap-2 text-accent hover:text-accent/90 transition-colors font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 rounded-control px-1",
-            typography.body
-          )}
-        >
-          {howIHelp.ctaLabel} <ArrowUpRight size={18} />
-        </a>
+        {isCalCta ? (
+          <button
+            type="button"
+            data-cal-link={cal.link}
+            data-cal-namespace={cal.namespace}
+            data-cal-config={cal.configJson}
+            className={cn(
+              "inline-flex items-center gap-2 text-accent hover:text-accent/90 transition-colors font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 rounded-control px-1",
+              typography.body
+            )}
+          >
+            {howIHelp.ctaLabel} <ArrowUpRight size={18} />
+          </button>
+        ) : (
+          <a
+            href={howIHelp.ctaHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={cn(
+              "inline-flex items-center gap-2 text-accent hover:text-accent/90 transition-colors font-semibold focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 rounded-control px-1",
+              typography.body
+            )}
+          >
+            {howIHelp.ctaLabel} <ArrowUpRight size={18} />
+          </a>
+        )}
       </div>
     </Section>
   );

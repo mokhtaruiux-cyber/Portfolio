@@ -27,7 +27,7 @@ export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
 
   useEffect(() => {
     const s = () => setScrolled(window.scrollY > 40);
-    window.addEventListener('scroll', s);
+    window.addEventListener('scroll', s, { passive: true });
     return () => window.removeEventListener('scroll', s);
   }, []);
 
@@ -77,6 +77,7 @@ export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
   }, [isMenuOpen]);
 
   const navItems = siteContent.nav.items;
+  const { cal } = siteContent;
 
   const handleNavClick = (item: (typeof navItems)[number]) => {
     const sectionId = item.sectionId;
@@ -145,11 +146,11 @@ export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
             </div>
             <div className="flex items-center gap-4">
               <GlowButton
-                href={siteContent.bookingUrl}
-                target="_blank"
-                rel="noopener noreferrer"
                 className="hidden md:inline-flex"
                 size="cta"
+                calLink={cal.link}
+                calNamespace={cal.namespace}
+                calConfig={cal.configJson}
               >
                 {siteContent.hero.ctaPrimary}
               </GlowButton>
@@ -157,8 +158,8 @@ export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
                 onClick={() => setDarkMode(!darkMode)}
                 className={cn(
                   typography.navControl,
-                  'rounded-control border border-white/35 text-white/90 flex items-center justify-center hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30',
-                  !darkMode && 'border-black/10 text-black'
+                  'rounded-control text-white/90 flex items-center justify-center hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30',
+                  !darkMode && 'text-black'
                 )}
                 aria-label={siteContent.nav.toggleThemeLabel}
               >
@@ -168,8 +169,8 @@ export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
                 className={cn(
                   typography.navControl,
-                  'rounded-control border border-white/35 text-white/90 flex items-center justify-center hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 md:hidden',
-                  !darkMode && 'border-black/10 text-black'
+                  'rounded-control text-white/90 flex items-center justify-center hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 md:hidden',
+                  !darkMode && 'text-black'
                 )}
                 aria-label={siteContent.nav.openMenuLabel}
                 aria-controls={menuId}
@@ -224,12 +225,12 @@ export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
                 ))}
                 <div className="w-full h-px bg-current opacity-10" />
                 <GlowButton
-                  href={siteContent.bookingUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
                   size="cta"
                   fullWidth
                   className="w-full"
+                  calLink={cal.link}
+                  calNamespace={cal.namespace}
+                  calConfig={cal.configJson}
                 >
                   {siteContent.hero.ctaPrimary}
                 </GlowButton>

@@ -28,13 +28,21 @@ export const StackedCards: React.FC<StackedCardsProps> = ({ items, renderItem })
         return () => media.removeEventListener('change', update);
     }, []);
 
+    // Mobile: Subtle fade+up animation for each card
     if (!isDesktop) {
         return (
             <div className="space-y-12">
                 {items.map((item, i) => (
-                    <div key={item.id || i} className="w-full">
+                    <motion.div
+                        key={item.id || i}
+                        className="w-full"
+                        initial={{ opacity: 0, y: 24 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true, margin: '-60px' }}
+                        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: i * 0.05 }}
+                    >
                         {renderItem(item, i)}
-                    </div>
+                    </motion.div>
                 ))}
             </div>
         );
@@ -117,14 +125,14 @@ const CardWithTransform = ({ index, total, item, renderItem, scrollProgress, red
                 zIndex: index
             }}
         >
-                <motion.div
-                    style={{
-                        scale,
-                        opacity,
-                        willChange: 'transform, opacity'
-                    }}
-                    className="w-full origin-top transform-gpu bg-transparent"
-                >
+            <motion.div
+                style={{
+                    scale,
+                    opacity,
+                    willChange: 'transform, opacity'
+                }}
+                className="w-full origin-top transform-gpu bg-transparent"
+            >
                 {renderItem(item, index)}
             </motion.div>
         </div>

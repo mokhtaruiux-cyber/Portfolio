@@ -12,6 +12,9 @@ export interface GlowButtonProps {
   href?: string;
   target?: string;
   rel?: string;
+  calLink?: string;
+  calNamespace?: string;
+  calConfig?: string;
   type?: 'button' | 'submit' | 'reset';
   size?: 'default' | 'cta';
   fullWidth?: boolean;
@@ -25,20 +28,32 @@ export const GlowButton: React.FC<GlowButtonProps> = ({
   href,
   target,
   rel,
+  calLink,
+  calNamespace,
+  calConfig,
   type = 'button',
   size = 'default',
   fullWidth = false,
   glow = true,
 }) => {
   const { darkMode } = useTheme();
-  const Element = href ? 'a' : 'button';
-  const elementProps = href ? { href, target, rel } : { type };
+  const isCalLink = Boolean(calLink);
+  const Element = isCalLink ? 'button' : href ? 'a' : 'button';
+  const elementProps = Element === 'a' ? { href, target, rel } : { type };
+  const calProps = calLink
+    ? {
+        'data-cal-link': calLink,
+        ...(calNamespace ? { 'data-cal-namespace': calNamespace } : {}),
+        ...(calConfig ? { 'data-cal-config': calConfig } : {}),
+      }
+    : {};
 
   if (!glow) {
     return (
       <div className={cn(fullWidth && 'w-full', !darkMode && 'light-glow-button', className)}>
         <Element
           {...elementProps}
+          {...calProps}
           className={cn(
             'glow-button-inner group w-full items-center justify-center transition-all duration-300 active:scale-[0.98]',
             size === 'cta' ? 'h-12 !py-0 !px-4 sm:!px-6' : 'px-8 py-4 sm:px-10 sm:py-5'
@@ -69,6 +84,7 @@ export const GlowButton: React.FC<GlowButtonProps> = ({
       <div className="glow-border-bg"></div>
       <Element
         {...elementProps}
+        {...calProps}
         className={cn(
           'glow-button-inner group w-full items-center justify-center transition-all duration-300 active:scale-[0.98]',
           size === 'cta' ? 'h-12 !py-0 !px-4 sm:!px-6' : 'px-8 py-4 sm:px-10 sm:py-5'

@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { useTheme } from "../../context/ThemeContext";
+import { useMobileMotionGate } from "../../hooks/useMobileMotionGate";
 
 /**
  * LivingBackground: A high-end atmospheric background system.
@@ -10,12 +11,15 @@ import { useTheme } from "../../context/ThemeContext";
  * 2. Shifting grid overlay (infinite movement)
  * 3. Noise grain texture
  * 4. Theme-aware colors
+ * 
+ * Mobile: Renders a lightweight static gradient for performance.
  */
 const cn = (...classes: (string | boolean | undefined)[]) => classes.filter(Boolean).join(' ');
 
 export const LivingBackground = () => {
   const { darkMode } = useTheme();
   const reduce = useReducedMotion() ?? false;
+  const skipHeavyAnimations = useMobileMotionGate();
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
@@ -26,6 +30,27 @@ export const LivingBackground = () => {
     document.addEventListener("visibilitychange", handleVisibilityChange);
     return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
   }, []);
+
+  // Mobile/reduced-motion: render lightweight static gradient
+  if (skipHeavyAnimations) {
+    return (
+      <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden select-none">
+        <div className={cn(
+          "absolute inset-0",
+          darkMode
+            ? 'bg-gradient-to-br from-accent/10 via-transparent to-fuchsia-600/5 opacity-40'
+            : 'bg-gradient-to-br from-accent/5 via-transparent to-fuchsia-200/5 opacity-30'
+        )} />
+        {/* Simple vignette for depth */}
+        <div className={cn(
+          "absolute inset-0",
+          darkMode
+            ? 'bg-[radial-gradient(circle_at_center,transparent_0%,rgba(3,3,3,0.7)_100%)]'
+            : 'bg-[radial-gradient(circle_at_center,transparent_0%,rgba(250,250,250,0.7)_100%)]'
+        )} />
+      </div>
+    );
+  }
 
   const animateBackground = !reduce && isVisible;
 

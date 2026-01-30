@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  scroll-behavior: smooth;
+}
+
 /* Hide scrollbars for horizontal tab scrollers */
 .no-scrollbar {
   -ms-overflow-style: none;
@@ -98,7 +102,25 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
   .hero-blob {
     animation: none !important;
+  }
+}
+
+/* Glass effect - optimized for mobile performance */
+.glass {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+/* Reduce backdrop-blur on mobile for better GPU performance */
+@media (max-width: 767px) {
+  .glass {
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
   }
 }

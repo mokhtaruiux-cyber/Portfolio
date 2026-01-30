@@ -59,20 +59,20 @@ const TestimonialMarqueeRow = ({
   shouldAnimate: boolean;
 }) => {
   const marqueeItems = [...items, ...items, ...items];
+  // Only set animation when actively animating, use undefined to avoid re-renders
   const marqueeAnimation = shouldAnimate
     ? { x: direction === 'left' ? [0, '-33.33%'] : ['-33.33%', 0] }
-    : { x: 0 };
+    : undefined;
   const marqueeTransition = shouldAnimate
-    ? { duration: 45, repeat: Infinity, ease: 'linear' }
-    : { duration: 0 };
-  const marqueeStyle = shouldAnimate ? { width: 'fit-content', willChange: 'transform' } : { width: 'fit-content' };
+    ? { duration: 45, repeat: Infinity, ease: 'linear' as const }
+    : undefined;
   return (
     <div className="flex overflow-hidden py-4">
       <motion.div
         className="flex gap-4 sm:gap-6 transform-gpu"
         animate={marqueeAnimation}
         transition={marqueeTransition}
-        style={marqueeStyle}
+        style={{ width: 'fit-content', willChange: shouldAnimate ? 'transform' : 'auto' }}
       >
         {marqueeItems.map((item, idx) => (
           <TestimonialCard key={`${item.id}-${idx}`} testimonial={item} darkMode={darkMode} />

@@ -64,20 +64,8 @@ export const BlogArticlePage = ({ post, onBack }: { post: BlogPost; onBack: () =
   const { darkMode } = useTheme();
   return (
     <>
-      <Section>
+      <Section className="pt-28 md:pt-36">
         <div className="mx-auto flex w-full max-w-[60ch] flex-col items-start text-left space-y-10">
-          <button
-            onClick={onBack}
-            className={cn(
-              'flex items-center gap-2 hover:opacity-100 hover:text-accent transition-all font-medium group',
-              typography.body,
-              typography.textSubtle
-            )}
-          >
-            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-            {siteContent.writing.backToBlogLabel}
-          </button>
-
           <div className="space-y-4">
             <div className={cn('flex items-center gap-4', typography.labelXs, typography.textSubtle)}>
               <span className="px-3 py-1 rounded-mini bg-accent/20 border border-accent/30 text-accent">{post.category}</span>
@@ -109,6 +97,22 @@ export const BlogArticlePage = ({ post, onBack }: { post: BlogPost; onBack: () =
           {post.contentBlocks.map((block, index) => (
             <BlogBlock key={`${post.slug}-block-${index}`} block={block} darkMode={darkMode} />
           ))}
+        </div>
+      </Section>
+
+      <Section>
+        <div className="mx-auto flex w-full max-w-[60ch] flex-col items-start text-left">
+          <button
+            onClick={onBack}
+            className={cn(
+              'flex items-center gap-2 hover:opacity-100 hover:text-accent transition-all font-medium group',
+              typography.body,
+              typography.textSubtle
+            )}
+          >
+            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+            {siteContent.writing.backToBlogLabel}
+          </button>
         </div>
       </Section>
     </>
