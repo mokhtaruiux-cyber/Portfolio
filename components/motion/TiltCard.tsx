@@ -1,7 +1,8 @@
 
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { motion, useMotionValue, useSpring, useTransform, useReducedMotion } from 'framer-motion';
 import { transitions } from '../../lib/motionTokens';
+import { useCanHover } from '../../hooks/useMediaQuery';
 
 interface TiltCardProps {
   children: React.ReactNode;
@@ -17,19 +18,7 @@ export const TiltCard: React.FC<TiltCardProps> = ({
   const ref = useRef<HTMLDivElement>(null);
   const rafId = useRef<number | null>(null);
   const shouldReduceMotion = useReducedMotion();
-  const [canHover, setCanHover] = useState(() => {
-    if (typeof window === 'undefined') return true;
-    return window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-  });
-
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const media = window.matchMedia('(hover: hover) and (pointer: fine)');
-    const update = () => setCanHover(media.matches);
-    update();
-    media.addEventListener('change', update);
-    return () => media.removeEventListener('change', update);
-  }, []);
+  const canHover = useCanHover();
 
   // Cleanup RAF on unmount
   useEffect(() => {

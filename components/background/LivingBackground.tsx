@@ -53,6 +53,7 @@ export const LivingBackground = () => {
   }
 
   const animateBackground = !reduce && isVisible;
+  const animateHeroBlobs = false;
 
   return (
     <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden select-none">
@@ -75,7 +76,7 @@ export const LivingBackground = () => {
             scale: [1, 1.1, 0.95, 1],
           }}
           duration={30}
-          animateEnabled={animateBackground}
+          animateEnabled={animateHeroBlobs}
           reduce={reduce}
         />
         <Blob
@@ -89,7 +90,7 @@ export const LivingBackground = () => {
           }}
           duration={40}
           delay={2}
-          animateEnabled={animateBackground}
+          animateEnabled={animateHeroBlobs}
           reduce={reduce}
         />
       </div>

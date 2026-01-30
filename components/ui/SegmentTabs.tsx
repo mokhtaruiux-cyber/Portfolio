@@ -21,10 +21,9 @@ export const SegmentTabs: React.FC<SegmentTabsProps> = ({ tabs, activeTab, onCha
         >
             <div
                 className={cn(
-                    "flex items-center gap-1 h-11 p-1 rounded-full overflow-x-auto whitespace-nowrap no-scrollbar",
+                    "flex items-center gap-1 h-11 p-1 rounded-full overflow-x-auto whitespace-nowrap no-scrollbar touch-scroll",
                     darkMode ? "bg-white/5 border-white/10" : "bg-black/5 border-black/10"
                 )}
-                style={{ WebkitOverflowScrolling: "touch" }}
             >
                 {tabs.map((tab) => {
                     const isActive = activeTab === tab;

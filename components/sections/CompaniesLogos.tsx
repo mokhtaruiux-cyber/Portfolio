@@ -8,11 +8,14 @@ import { Reveal } from '../motion/Reveal';
 import { cn } from '../../lib/utils';
 import { typography } from '../../lib/typography';
 
+const marqueeStyle: React.CSSProperties = { width: 'fit-content' };
+
 export const CompaniesLogos: React.FC = () => {
   const { darkMode } = useTheme();
   const reduceMotion = useReducedMotion();
-  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [tooltip, setTooltip] = useState<{ label: string; left: number; top: number } | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const itemRefs = useRef<Array<HTMLDivElement | null>>([]);
   const marqueeControls = useAnimation();
   const isInView = useInView(containerRef, { amount: 0.2 });
   const [isPageVisible, setIsPageVisible] = useState(true);
@@ -61,6 +64,23 @@ export const CompaniesLogos: React.FC = () => {
     }
   }, [reduceMotion, isInView, isPageVisible, marqueeControls]);
 
+  const handleMouseEnter = (index: number, label: string) => {
+    const container = containerRef.current;
+    const item = itemRefs.current[index];
+    if (!container || !item) return;
+    const containerRect = container.getBoundingClientRect();
+    const itemRect = item.getBoundingClientRect();
+    setTooltip({
+      label,
+      left: itemRect.left - containerRect.left + itemRect.width / 2,
+      top: itemRect.top - containerRect.top,
+    });
+  };
+
+  const handleMouseLeave = () => {
+    setTooltip(null);
+  };
+
   return (
     <Section>
       <SectionTitle
@@ -83,36 +103,41 @@ export const CompaniesLogos: React.FC = () => {
             darkMode ? "from-[#030303] to-transparent" : "from-[#fafafa] to-transparent"
           )} />
           <motion.div
-            className="flex whitespace-nowrap gap-6 sm:gap-10 md:gap-12 items-center"
+            className="relative flex whitespace-nowrap gap-6 sm:gap-10 md:gap-12 items-center"
             animate={marqueeControls}
-            style={{ width: 'fit-content' }}
+            style={marqueeStyle}
           >
+            <AnimatePresence>
+              {tooltip && (
+                <motion.div
+                  key={tooltip.label}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  style={{
+                    left: tooltip.left,
+                    top: tooltip.top,
+                  }}
+                  className={cn(
+                    'absolute z-30 -translate-x-1/2 -translate-y-full pointer-events-none px-3 py-1 rounded-mini glass border whitespace-nowrap shadow-2xl',
+                    darkMode ? 'bg-black/90 border-white/10' : 'bg-white/90 border-black/10'
+                  )}
+                >
+                  <span className={cn(typography.labelXs, darkMode ? 'text-white' : 'text-black')}>
+                    {tooltip.label}
+                  </span>
+                </motion.div>
+              )}
+            </AnimatePresence>
             {marqueeItems.map((company, idx) => (
               <div
                 key={`${company.name}-${idx}`}
+                ref={(el) => { itemRefs.current[idx] = el; }}
                 className="relative flex items-center justify-center py-4 sm:py-6"
+                onMouseEnter={() => handleMouseEnter(idx, company.name)}
+                onMouseLeave={handleMouseLeave}
               >
-                <AnimatePresence>
-                  {hoveredIndex === idx && (
-                    <motion.div
-                      initial={{ opacity: 0, y: 10, scale: 0.9, x: '-50%' }}
-                      animate={{ opacity: 1, y: 0, scale: 1, x: '-50%' }}
-                      exit={{ opacity: 0, y: 6, scale: 0.95, x: '-50%' }}
-                      className={cn(
-                        'absolute -top-10 left-1/2 z-30 px-3 py-1 rounded-mini glass border whitespace-nowrap shadow-2xl pointer-events-none',
-                        darkMode ? 'bg-black/90 border-white/10' : 'bg-white/90 border-black/10'
-                      )}
-                    >
-                      <span className={cn(typography.labelXs, darkMode ? 'text-white' : 'text-black')}>
-                        {company.name}
-                      </span>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-
                 <div
-                  onMouseEnter={() => setHoveredIndex(idx)}
-                  onMouseLeave={() => setHoveredIndex(null)}
                   className={cn(
                     'w-20 h-20 sm:w-24 sm:h-24 rounded-panel border flex items-center justify-center transition-transform duration-300 hover:scale-105',
                     darkMode ? 'bg-black/40 border-white/10' : 'bg-white border-black/10'

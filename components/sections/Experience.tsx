@@ -55,9 +55,9 @@ export const ExperienceSection: React.FC = () => {
             variants={rowVariants}
             className={cn(
               'py-8 sm:py-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4',
+              idx === siteContent.experience.items.length - 1 ? 'border-b-0' : 'border-b',
               darkMode ? 'border-white/10' : 'border-black/10'
             )}
-            style={{ borderBottomWidth: idx === siteContent.experience.items.length - 1 ? 0 : 1 }}
           >
             <div className={cn(typography.h3Display, "font-black", darkMode ? 'text-white' : 'text-black')}>
               {item.role}

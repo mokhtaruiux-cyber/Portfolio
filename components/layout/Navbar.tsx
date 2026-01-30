@@ -108,7 +108,7 @@ export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
       <Container>
         <motion.div
           className={cn(
-            'relative w-full h-20 rounded-panel glass border shadow-xl overflow-hidden',
+            'relative w-full h-20 rounded-panel glass glass--nav border shadow-xl overflow-hidden',
             scrolled && 'shadow-2xl',
             darkMode ? 'bg-black/60 border-white/10' : 'bg-white/70 border-black/10'
           )}
@@ -203,7 +203,7 @@ export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
                 animate={{ y: 0, opacity: 1 }}
                 exit={{ y: -12, opacity: 0 }}
                 className={cn(
-                  'w-full rounded-surface glass border p-6 flex flex-col items-center gap-6 shadow-2xl',
+                  'w-full rounded-surface glass glass--nav border p-6 flex flex-col items-center gap-6 shadow-2xl',
                   darkMode ? 'bg-black/95 border-white/10 text-white' : 'bg-white/95 border-black/10 text-black'
                 )}
                 role="dialog"

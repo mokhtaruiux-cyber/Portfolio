@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useInView, useReducedMotion } from 'framer-motion';
+import { motion, useInView, useReducedMotion } from 'framer-motion';
 import { siteContent } from '../../content';
 import { useTheme } from '../../context/ThemeContext';
 import { Section } from '../layout/Section';
@@ -7,6 +7,7 @@ import { BlurIn } from '../motion/BlurIn';
 import { Reveal } from '../motion/Reveal';
 import { typography } from '../../lib/typography';
 import { cn } from '../../lib/utils';
+import { stagger, viewportDefaults } from '../../lib/motionTokens';
 
 type ProcessReelSectionProps = {
   autoPlay?: boolean;
@@ -36,7 +37,7 @@ export const ProcessReelSection: React.FC<ProcessReelSectionProps> = ({
   const [isUserInteracting, setIsUserInteracting] = useState(false);
   const [isPageVisible, setIsPageVisible] = useState(true);
   const touchStartX = useRef<number | null>(null);
-  const interactionTimeout = useRef<number | null>(null);
+  const interactionTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const isAutoPlayEnabled = autoPlay && !reduceMotion && isPageVisible;
 
@@ -145,7 +146,7 @@ export const ProcessReelSection: React.FC<ProcessReelSectionProps> = ({
           </Reveal>
         </div>
 
-        <div
+        <motion.div
           role="tablist"
           aria-orientation="horizontal"
           className="flex flex-col space-y-4 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-4 md:gap-4"
@@ -156,14 +157,19 @@ export const ProcessReelSection: React.FC<ProcessReelSectionProps> = ({
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
           onKeyDown={handleTabKeyDown}
+          variants={stagger.container(0.1, 0.08)}
+          initial="initial"
+          whileInView="animate"
+          viewport={viewportDefaults}
         >
           {steps.map((step, index) => {
             const isActive = index === activeIndex;
             const tabId = `process-tab-${step.id}`;
             const panelId = `process-panel-${step.id}`;
             return (
-              <div
+              <motion.div
                 key={step.id}
+                variants={stagger.item}
                 className={cn(
                   "text-left p-6 sm:p-8 rounded-surface glass border transition-all duration-700 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500/40",
                   isActive
@@ -194,10 +200,9 @@ export const ProcessReelSection: React.FC<ProcessReelSectionProps> = ({
                   </div>
                   <div className="h-1 w-full rounded-mini bg-black/10 dark:bg-white/10 overflow-hidden mb-4">
                     <div
-                      className="h-full bg-accent origin-left"
+                      className="h-full bg-accent origin-left will-change-transform"
                       style={{
                         transform: isActive && isAutoPlayEnabled ? `scaleX(${Math.min(progress, 1)})` : 'scaleX(0)',
-                        willChange: 'transform',
                       }}
                     />
                   </div>
@@ -207,10 +212,10 @@ export const ProcessReelSection: React.FC<ProcessReelSectionProps> = ({
                   <p className={cn(typography.body, "font-medium mb-3", typography.textSubtle, darkMode ? "text-gray-300" : "text-gray-600")}>{step.description}</p>
                   <p className={cn(typography.labelSm, typography.textSubtle, darkMode ? "text-gray-400" : "text-gray-500")}>{step.why}</p>
                 </div>
-              </div>
+              </motion.div>
             );
           })}
-        </div>
+        </motion.div>
       </div>
     </Section>
   );

@@ -10,6 +10,7 @@ import { Container } from '../layout/Container';
 import { Reveal } from '../motion/Reveal';
 import { BlurIn } from '../motion/BlurIn';
 import { FadeInUp } from '../motion/FadeInUp';
+import { useIsDesktop } from '../../hooks/useMediaQuery';
 
 interface TestimonialCardProps {
   testimonial: Testimonial;
@@ -52,13 +53,15 @@ const TestimonialMarqueeRow = ({
   direction,
   darkMode,
   shouldAnimate,
+  isDesktop,
 }: {
   items: Testimonial[];
   direction: 'left' | 'right';
   darkMode: boolean;
   shouldAnimate: boolean;
+  isDesktop: boolean;
 }) => {
-  const marqueeItems = [...items, ...items, ...items];
+  const marqueeItems = isDesktop ? [...items, ...items, ...items] : [...items, ...items];
   // Only set animation when actively animating, use undefined to avoid re-renders
   const marqueeAnimation = shouldAnimate
     ? { x: direction === 'left' ? [0, '-33.33%'] : ['-33.33%', 0] }
@@ -66,13 +69,17 @@ const TestimonialMarqueeRow = ({
   const marqueeTransition = shouldAnimate
     ? { duration: 45, repeat: Infinity, ease: 'linear' as const }
     : undefined;
+  const marqueeStyle = React.useMemo(() => ({
+    width: 'fit-content',
+    willChange: shouldAnimate ? 'transform' : 'auto',
+  }), [shouldAnimate]);
   return (
     <div className="flex overflow-hidden py-4">
       <motion.div
         className="flex gap-4 sm:gap-6 transform-gpu"
         animate={marqueeAnimation}
         transition={marqueeTransition}
-        style={{ width: 'fit-content', willChange: shouldAnimate ? 'transform' : 'auto' }}
+        style={marqueeStyle}
       >
         {marqueeItems.map((item, idx) => (
           <TestimonialCard key={`${item.id}-${idx}`} testimonial={item} darkMode={darkMode} />
@@ -85,6 +92,7 @@ const TestimonialMarqueeRow = ({
 export const TestimonialsSection = () => {
   const { darkMode } = useTheme();
   const reduceMotion = useReducedMotion() ?? false;
+  const isDesktop = useIsDesktop();
   const sectionRef = useRef<HTMLElement | null>(null);
   const isInView = useInView(sectionRef, { amount: 0.2 });
   const [isPageVisible, setIsPageVisible] = useState(true);
@@ -132,13 +140,13 @@ export const TestimonialsSection = () => {
           )} />
           <div className="space-y-2">
             <Reveal delay={0.1}>
-              <TestimonialMarqueeRow items={row1} direction="left" darkMode={darkMode} shouldAnimate={shouldAnimate} />
+              <TestimonialMarqueeRow items={row1} direction="left" darkMode={darkMode} shouldAnimate={shouldAnimate} isDesktop={isDesktop} />
             </Reveal>
             <Reveal delay={0.2}>
-              <TestimonialMarqueeRow items={row2} direction="right" darkMode={darkMode} shouldAnimate={shouldAnimate} />
+              <TestimonialMarqueeRow items={row2} direction="right" darkMode={darkMode} shouldAnimate={shouldAnimate} isDesktop={isDesktop} />
             </Reveal>
             <Reveal delay={0.3}>
-              <TestimonialMarqueeRow items={row3} direction="left" darkMode={darkMode} shouldAnimate={shouldAnimate} />
+              <TestimonialMarqueeRow items={row3} direction="left" darkMode={darkMode} shouldAnimate={shouldAnimate} isDesktop={isDesktop} />
             </Reveal>
           </div>
         </div>

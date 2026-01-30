@@ -1,7 +1,8 @@
 
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { motion, useReducedMotion, useScroll, useSpring, useTransform, MotionValue } from 'framer-motion';
 import { Project } from '../../types';
+import { useIsDesktop } from '../../hooks/useMediaQuery';
 
 // GPU-friendly stacked card animation
 // We avoid layout shifts and expensive filters (blur)
@@ -14,19 +15,7 @@ interface StackedCardsProps {
 }
 
 export const StackedCards: React.FC<StackedCardsProps> = ({ items, renderItem }) => {
-    const [isDesktop, setIsDesktop] = useState(() => {
-        if (typeof window === 'undefined') return true;
-        return window.matchMedia('(min-width: 768px)').matches;
-    });
-
-    useEffect(() => {
-        if (typeof window === 'undefined') return;
-        const media = window.matchMedia('(min-width: 768px)');
-        const update = () => setIsDesktop(media.matches);
-        update();
-        media.addEventListener('change', update);
-        return () => media.removeEventListener('change', update);
-    }, []);
+    const isDesktop = useIsDesktop();
 
     // Mobile: Subtle fade+up animation for each card
     if (!isDesktop) {

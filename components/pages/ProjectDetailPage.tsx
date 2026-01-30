@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 import { ArrowLeft, ArrowUpRight } from 'lucide-react';
 import { Project } from '../../types';
 import { siteContent } from '../../content';
@@ -7,6 +8,7 @@ import { Section } from '../layout/Section';
 import { typography } from '../../lib/typography';
 import { cn } from '../../lib/utils';
 import { GlowButton } from '../ui/GlowButton';
+import { stagger, viewportDefaults } from '../../lib/motionTokens';
 
 const ProjectMetaItem = ({ label, value, darkMode }: { label: string; value: string; darkMode: boolean }) => {
   return (
@@ -71,42 +73,79 @@ export const ProjectDetailPage = ({
             <p className={cn(typography.body, 'max-w-[60ch] font-medium', typography.textSubtle, darkMode ? 'text-white' : 'text-black')}>{project.description}</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            <ProjectMetaItem label={siteContent.projectDetail.metaLabels.role} value={project.role} darkMode={darkMode} />
-            <ProjectMetaItem label={siteContent.projectDetail.metaLabels.year} value={project.year} darkMode={darkMode} />
-            <ProjectMetaItem label={siteContent.projectDetail.metaLabels.tools} value={project.tools.join(' • ')} darkMode={darkMode} />
-          </div>
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
+            variants={stagger.container(0.1, 0.08)}
+            initial="initial"
+            whileInView="animate"
+            viewport={viewportDefaults}
+          >
+            {[{
+              label: siteContent.projectDetail.metaLabels.role,
+              value: project.role
+            }, {
+              label: siteContent.projectDetail.metaLabels.year,
+              value: project.year
+            }, {
+              label: siteContent.projectDetail.metaLabels.tools,
+              value: project.tools.join(' • ')
+            }].map((item) => (
+              <motion.div key={item.label} variants={stagger.item}>
+                <ProjectMetaItem label={item.label} value={item.value} darkMode={darkMode} />
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </Section>
 
       <Section eyebrow={siteContent.projectDetail.galleryEyebrow}>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+        <motion.div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
+          variants={stagger.container(0.1, 0.08)}
+          initial="initial"
+          whileInView="animate"
+          viewport={viewportDefaults}
+        >
           {project.gallery.map((item, index) => (
-            <ProjectGalleryItem key={`${project.slug}-gallery-${index}`} item={item} darkMode={darkMode} />
+            <motion.div key={`${project.slug}-gallery-${index}`} variants={stagger.item}>
+              <ProjectGalleryItem item={item} darkMode={darkMode} />
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </Section>
 
       <Section eyebrow={siteContent.projectDetail.caseStudyEyebrow}>
-        <div className="space-y-12 text-left">
+        <motion.div
+          className="space-y-12 text-left"
+          variants={stagger.container(0.1, 0.08)}
+          initial="initial"
+          whileInView="animate"
+          viewport={viewportDefaults}
+        >
           {project.caseStudySections.map((section) => (
-            <div key={section.title} className="space-y-3">
+            <motion.div key={section.title} className="space-y-3" variants={stagger.item}>
               <h3 className={cn(typography.h3, 'font-black', darkMode ? 'text-white' : 'text-black')}>{section.title}</h3>
               <p className={cn(typography.body, 'max-w-[60ch] font-medium', typography.textSubtle, darkMode ? 'text-white' : 'text-black')}>{section.content}</p>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </Section>
 
       <Section eyebrow={siteContent.projectDetail.metricsEyebrow}>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 md:gap-6 text-left">
+        <motion.div
+          className="grid grid-cols-2 sm:grid-cols-3 gap-4 md:gap-6 text-left"
+          variants={stagger.container(0.1, 0.08)}
+          initial="initial"
+          whileInView="animate"
+          viewport={viewportDefaults}
+        >
           {project.metrics.map((metric) => (
-            <div key={metric.label}>
+            <motion.div key={metric.label} variants={stagger.item}>
               <span className={cn(typography.labelXs, typography.textMuted, 'mb-2 block')}>{metric.label}</span>
               <span className={cn(typography.h3, 'font-black', darkMode ? 'text-white' : 'text-black')}>{metric.value}</span>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </Section>
 
       {nextProject && (
