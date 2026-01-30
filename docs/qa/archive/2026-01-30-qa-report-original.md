@@ -1,3 +1,5 @@
+> Archived: historical snapshot. For current status see `../2026-01-30-qa-report.md` and `../2026-01-30-animation-performance-audit.md`.
+
 # QA & Code Quality Report
 **Date:** January 30, 2026  
 **Project:** Mokhtar Portfolio  
@@ -19,14 +21,14 @@ All animation components follow Framer Motion best practices:
 
 | Component | Best Practices | Status |
 |-----------|---------------|--------|
-| [TypingEffect.tsx](file:///Users/mokhtar/Downloads/Mokhtar%20Portfolio%20Final/components/motion/TypingEffect.tsx) | CSS clip-path, `useInView`, `useReducedMotion` | ✅ Optimized |
-| [BlurIn.tsx](file:///Users/mokhtar/Downloads/Mokhtar%20Portfolio%20Final/components/motion/BlurIn.tsx) | Mobile fallback via `useMobileMotionGate`, no blur on mobile | ✅ Optimized |
-| [TiltCard.tsx](file:///Users/mokhtar/Downloads/Mokhtar%20Portfolio%20Final/components/motion/TiltCard.tsx) | RAF throttled, `canHover` gating, `useReducedMotion` | ✅ Optimized |
-| [FadeInUp.tsx](file:///Users/mokhtar/Downloads/Mokhtar%20Portfolio%20Final/components/motion/FadeInUp.tsx) | `will-change` hints, `useReducedMotion`, `useInView` | ✅ Optimized |
-| [Reveal.tsx](file:///Users/mokhtar/Downloads/Mokhtar%20Portfolio%20Final/components/motion/Reveal.tsx) | Variants pattern, `whileInView`, `useReducedMotion` | ✅ Optimized |
-| [StackedCards.tsx](file:///Users/mokhtar/Downloads/Mokhtar%20Portfolio%20Final/components/motion/StackedCards.tsx) | Mobile fallback, scroll-linked only on desktop, GPU-friendly | ✅ Optimized |
-| [LivingBackground.tsx](file:///Users/mokhtar/Downloads/Mokhtar%20Portfolio%20Final/components/background/LivingBackground.tsx) | Static gradient on mobile, visibility gating, `useReducedMotion` | ✅ Optimized |
-| [HeroGlow.tsx](file:///Users/mokhtar/Downloads/Mokhtar%20Portfolio%20Final/components/background/HeroGlow.tsx) | Static gradient on mobile via `useMobileMotionGate` | ✅ Optimized |
+| [TypingEffect.tsx](components/motion/TypingEffect.tsx) | CSS clip-path, `useInView`, `useReducedMotion` | ✅ Optimized |
+| [BlurIn.tsx](components/motion/BlurIn.tsx) | Mobile fallback via `useMobileMotionGate`, no blur on mobile | ✅ Optimized |
+| [TiltCard.tsx](components/motion/TiltCard.tsx) | RAF throttled, `canHover` gating, `useReducedMotion` | ✅ Optimized |
+| [FadeInUp.tsx](components/motion/FadeInUp.tsx) | `will-change` hints, `useReducedMotion`, `useInView` | ✅ Optimized |
+| [Reveal.tsx](components/motion/Reveal.tsx) | Variants pattern, `whileInView`, `useReducedMotion` | ✅ Optimized |
+| [StackedCards.tsx](components/motion/StackedCards.tsx) | Mobile fallback, scroll-linked only on desktop, GPU-friendly | ✅ Optimized |
+| [LivingBackground.tsx](components/background/LivingBackground.tsx) | Static gradient on mobile, visibility gating, `useReducedMotion` | ✅ Optimized |
+| [HeroGlow.tsx](components/background/HeroGlow.tsx) | Static gradient on mobile via `useMobileMotionGate` | ✅ Optimized |
 
 ### Animation Best Practices Applied
 

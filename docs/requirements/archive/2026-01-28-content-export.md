@@ -1,6 +1,11 @@
+> Archived: content snapshot from 2026-01-28. For current content export see `../2026-01-30-content-export.md`.
+
 # Website Content Export
 
-Last updated: 2026-01-28
+Date: 2026-01-28
+Source: `content.ts` + `data/*`
+
+This document is a snapshot of site content used across the portfolio. Update source files if changes are required.
 
 ## Global
 - Brand name: Mokhtar.

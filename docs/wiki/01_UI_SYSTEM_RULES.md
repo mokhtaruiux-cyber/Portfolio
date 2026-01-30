@@ -12,7 +12,7 @@ A UI change is “correct” only if ALL are true:
 2) Mobile-first breakpoints (base=mobile; breakpoints enhance)
 3) Predictable grid (only approved presets)
 4) No horizontal overflow (no sideways scroll anywhere)
-5) Unified motion (one source of tokens, same behavior on desktop/tablet/mobile)
+5) Unified motion (one source of tokens; consistent feel across devices)
 6) iPhone parity for StackedCards (projects pinned/stacked like desktop)
 
 ---
@@ -23,6 +23,7 @@ A UI change is “correct” only if ALL are true:
 - Custom CSS is allowed only for:
   - global resets
   - scrollbar hiding helpers
+  - touch scroll helper (`.touch-scroll`)
   - rare browser quirks (must be documented)
 
 ### 1.2 React usage contract
@@ -31,8 +32,8 @@ A UI change is “correct” only if ALL are true:
   - `components/layout/Section.tsx` is the only section spacing authority.
 
 ### 1.3 Motion usage contract
-- All motion timing/variants/viewport defaults MUST come from `lib/motionTokens.ts`.
-- No duplicate systems (no separate motion config files drifting).
+- Motion timing/variants/viewport defaults SHOULD come from `lib/motionTokens.ts`.
+- Avoid introducing new ad‑hoc motion systems.
 
 ---
 
@@ -142,7 +143,9 @@ Avoid during scroll:
 - heavy shadows
 - layout properties causing reflow
 
-Mobile/tablet must have the same animations as desktop.
+Device parity:
+- Content motion should feel consistent across devices.
+- Heavy background/blur effects may use mobile gating (`useMobileMotionGate`) to preserve performance while keeping visual intent.
 
 ---
 

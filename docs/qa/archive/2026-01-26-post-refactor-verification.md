@@ -1,3 +1,5 @@
+> Archived: historical snapshot. For current status see `../2026-01-30-qa-report.md` and `../2026-01-30-animation-performance-audit.md`.
+
 # Post-Refactor Verification Plan
 
 Date: 2026-01-26

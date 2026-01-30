@@ -1,4 +1,4 @@
-# Mokhtar Portfolio - Project Rules (Mirror of `.cursorrules`)
+# Mokhtar Portfolio — Project Rules
 
 Purpose: Keep new pages/components consistent with current structure, routes, and visual system.
 
@@ -44,37 +44,33 @@ Notes:
 - Route transitions are handled in `App.tsx` with `AnimatePresence`.
 - `CTASection` is rendered outside the transition to remain persistent.
 - Transition key uses `currentPage` (slug changes should not remount the wrapper).
-- Slug-based routes must not introduce new transition keys.
 - Page-level transitions are keyed by page type, not content identity.
 
 ## Theme & Colors
-Dark mode is the default; light mode supported via `ThemeContext`:
+Theme follows system preference by default and persists to localStorage when manually toggled (via `ThemeContext`):
 - Dark background: `#030303`
 - Light background: `#fafafa`
 - Primary accent: Tailwind `blue-500` / `blue-600`
-- Highlight accent: `#2f6bff` (see `components/motion/SectionTitle.tsx`)
-- “Glass” surfaces: `bg-black/40` or `bg-white/60` with subtle borders (static only, no animated opacity)
+- Highlight accent: Tailwind `accent` (`#2f6bff` in `tailwind.config.cjs`)
+- “Glass” surfaces: `bg-black/40` or `bg-white/60` with subtle borders
 
 Text contrast is tokenized in `lib/typography.ts`:
-- `typography.textMuted` → use for muted labels/secondary text
-- `typography.textSubtle` → use for subdued body copy
-- Avoid inline opacity tweaks for text; use these tokens instead.
+- `typography.textMuted` → muted labels/secondary text
+- `typography.textSubtle` → subdued body copy
+- Avoid inline opacity tweaks for text; use tokens
 
 ## Typography & Motion
 - Use typography tokens from `lib/typography.ts`.
-- Motion timing/variants should come from `lib/motionTokens.ts`.
+- Motion timing/variants should use `lib/motionTokens.ts` where possible.
 - Prefer existing motion primitives: `Reveal`, `BlurIn`, `FadeInUp`, `StackedCards`.
 
-## Motion Scope Rules
-- Section titles are static (no entrance animation).
-- Section titles must never animate on scroll. They are part of the layout structure, not the content.
+## Motion Scope Rules (Current Behavior)
+- Section titles use `BlurIn` (gentle, token-based).
 - Section content may animate on first entry only.
-- Large grids (projects, blog lists, testimonials):
-  - Animate the container only.
-  - Individual cards must NOT have entrance animations.
+- Large grids (projects, blog lists, testimonials): keep motion lightweight; existing `Reveal` usage on cards is acceptable but avoid heavier per-card effects.
 - Hover motion is allowed on cards (transform only).
-- Avoid stacking multiple micro-interactions on the same element (e.g. hover + tap + scroll animation). If needed, prefer hover-only.
-- Performance rule: If an animation cannot be explained in one sentence, it should not exist.
+- Avoid stacking multiple micro-interactions on the same element (e.g., hover + tap + scroll animation). If needed, prefer hover-only.
+- Performance rule: if an animation cannot be explained in one sentence, it should not exist.
 
 ## Heavy Pages (Detail Pages)
 Applies to:
@@ -83,7 +79,7 @@ Applies to:
 
 Rules:
 - Prefer opacity-only page transitions.
-- Avoid staggered animations.
+- Keep stagger minimal and content-focused (no heavy sequences).
 - Avoid blur/backdrop-filter during scroll.
 - Images must have fixed dimensions or aspect-ratio.
 
@@ -97,10 +93,10 @@ Rules:
 - Content lives in `content.ts`, with data modules in `data/`.
 - When adding a new page, add data to `data/` and re-export from `content.ts`.
 
-## Adding a New Page – Checklist
+## Adding a New Page — Checklist
 - [ ] Uses `Container` + `Section`
-- [ ] Motion uses existing tokens only
-- [ ] No per-card entrance animations
+- [ ] Motion uses existing tokens/primitives
+- [ ] Motion remains lightweight on grids and detail pages
 - [ ] Text uses typography tokens (no inline opacity)
 - [ ] No new transition keys
 - [ ] CTA behavior unchanged

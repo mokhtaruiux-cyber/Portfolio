@@ -72,14 +72,14 @@ For every section/route, classify as:
 ### What to do
 - Consolidate to ONE motion source:
   - `lib/motionTokens.ts`
-- Update all motion components to use these tokens:
+- Update motion components to use these tokens:
   - SectionTitle reveal
   - FadeInUp/Reveal wrappers
   - Any whileInView variants
 
 ### Rules
-- Same animation behavior on desktop/tablet/mobile.
-- No “desktop only” motion.
+- Content motion should feel consistent on desktop/tablet/mobile.
+- Heavy background/blur effects may be gated on mobile for performance (document the exception).
 
 ### Performance guardrails
 - Scroll-linked animations must animate only transform/opacity.
@@ -116,4 +116,4 @@ After finishing, deliver:
    - Which files changed for Container unification
    - Which motion files now import from motionTokens
    - Which overflow offenders were removed and how
-2) Proof checks completed (see `wiki/03_QA_AND_PROOF.md`)
+2) Proof checks completed (see `03_QA_AND_PROOF.md`)
