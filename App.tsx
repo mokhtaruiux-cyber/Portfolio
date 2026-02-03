@@ -135,7 +135,37 @@ export default function App() {
   }, [hasManualTheme]);
 
   useEffect(() => {
-    window.scrollTo({ top: 0 });
+    const key = `scrollY:${location.pathname}`;
+    let restored = false;
+    try {
+      const storedY = window.sessionStorage.getItem(key);
+      if (storedY !== null) {
+        const y = Number.parseInt(storedY, 10);
+        if (!Number.isNaN(y)) {
+          window.scrollTo({ top: y, left: 0, behavior: 'auto' });
+          restored = true;
+        }
+        window.sessionStorage.removeItem(key);
+      }
+    } catch {
+      // Ignore storage errors.
+    }
+    if (!restored) {
+      window.scrollTo({ top: 0 });
+    }
+  }, [location.pathname]);
+
+  useEffect(() => {
+    const key = `scrollY:${location.pathname}`;
+    const handleBeforeUnload = () => {
+      try {
+        window.sessionStorage.setItem(key, String(window.scrollY));
+      } catch {
+        // Ignore storage errors.
+      }
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [location.pathname]);
 
   useEffect(() => {
@@ -202,15 +232,6 @@ export default function App() {
     });
   }, []);
 
-  const handleBackToBlogSection = useCallback(() => {
-    try {
-      window.sessionStorage.setItem('scrollToSection', 'blog');
-    } catch {
-      // Ignore storage errors.
-    }
-    navigate('/');
-  }, [navigate]);
-
   const handleBackToWorkSection = useCallback(() => {
     try {
       window.sessionStorage.setItem('scrollToSection', 'work');
@@ -253,6 +274,13 @@ export default function App() {
     if (index === -1) return undefined;
     return siteContent.projects.items[(index + 1) % siteContent.projects.items.length];
   }, [activeProject]);
+  const nextPost = useMemo(() => {
+    if (!activePost) return undefined;
+    if (siteContent.writing.items.length < 2) return undefined;
+    const index = siteContent.writing.items.findIndex((post) => post.slug === activePost.slug);
+    if (index === -1) return undefined;
+    return siteContent.writing.items[(index + 1) % siteContent.writing.items.length];
+  }, [activePost]);
 
   const seo = useMemo(() => {
     const baseTitle = siteContent.seo.title;
@@ -413,22 +441,26 @@ export default function App() {
                   }
                 />
                 <Route path="/blog" element={<BlogIndexPage onPostClick={handleBlogClick} />} />
-                <Route
-                  path="/blog/:slug"
-                  element={
-                    activePost ? (
-                      <BlogArticlePage post={activePost} onBack={handleBackToBlogSection} />
+              <Route
+                path="/blog/:slug"
+                element={
+                  activePost ? (
+                      <BlogArticlePage
+                        post={activePost}
+                        nextPost={nextPost}
+                        onNextPost={handleBlogClick}
+                      />
                     ) : (
                       <Navigate to="/blog" replace />
                     )
                   }
-                />
+              />
                 <Route path="/about" element={aboutElement} />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </motion.div>
           </AnimatePresence>
-          <CTASection />
+          {currentPage !== 'blog-details' && <CTASection />}
         </main>
         <Footer currentPage={currentPage} onNavigate={navigateTo} />
       </div>

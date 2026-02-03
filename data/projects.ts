@@ -314,4 +314,128 @@ export const projects: Project[] = [
       },
     ],
   },
+  {
+    id: '7',
+    slug: 'dashboard-placeholder-01',
+    title: 'Dashboard Project (Placeholder 01)',
+    category: 'Dashboards',
+    type: 'Analytics Dashboard',
+    industry: 'B2B SaaS',
+    platform: 'Web - Responsive',
+    year: 'TBD',
+    role: 'TBD',
+    tools: ['TBD'],
+    coverGradient: 'from-sky-500/20 to-cyan-500/20',
+    description:
+      'Placeholder entry for an upcoming dashboard case study. Replace this content with the real project details.',
+    impact: 'TBD',
+    image: stockImage('unsplash-1516549655169-df83a0774514.jpg'),
+    tags: ['Dashboard', 'Analytics', 'B2B'],
+    metrics: [
+      { label: 'Status', value: 'TBD' },
+      { label: 'Launch', value: 'TBD' },
+      { label: 'Impact', value: 'TBD' },
+    ],
+    gallery: [
+      {
+        type: 'image',
+        src: stockImage('unsplash-1516549655169-df83a0774514.jpg'),
+        alt: 'Dashboard placeholder preview',
+      },
+      {
+        type: 'image',
+        src: stockImage('unsplash-1520607162513-77705c0f0d4a.jpg'),
+        alt: 'Dashboard placeholder detail',
+      },
+      {
+        type: 'video',
+        src: stockImage('unsplash-1550745165-9bc0b252726f.jpg'),
+        alt: 'Dashboard placeholder walkthrough',
+      },
+    ],
+    caseStudySections: [
+      {
+        title: 'Problem',
+        content:
+          'Placeholder content. Replace with the real problem statement for the dashboard project.',
+      },
+      {
+        title: 'Process',
+        content:
+          'Placeholder content. Replace with the process summary and research notes.',
+      },
+      {
+        title: 'Solution',
+        content:
+          'Placeholder content. Replace with the actual dashboard solution details.',
+      },
+      {
+        title: 'Results',
+        content:
+          'Placeholder content. Replace with measurable outcomes once available.',
+      },
+    ],
+  },
+  {
+    id: '8',
+    slug: 'dashboard-placeholder-02',
+    title: 'Dashboard Project (Placeholder 02)',
+    category: 'Dashboards',
+    type: 'Operations Dashboard',
+    industry: 'Enterprise',
+    platform: 'Web - Responsive',
+    year: 'TBD',
+    role: 'TBD',
+    tools: ['TBD'],
+    coverGradient: 'from-emerald-500/20 to-lime-500/20',
+    description:
+      'Placeholder entry for an upcoming dashboard case study. Replace this content with the real project details.',
+    impact: 'TBD',
+    image: stockImage('unsplash-1487017159836-4e23ece2e4cf.jpg'),
+    tags: ['Dashboard', 'Operations', 'Enterprise'],
+    metrics: [
+      { label: 'Status', value: 'TBD' },
+      { label: 'Launch', value: 'TBD' },
+      { label: 'Impact', value: 'TBD' },
+    ],
+    gallery: [
+      {
+        type: 'image',
+        src: stockImage('unsplash-1487017159836-4e23ece2e4cf.jpg'),
+        alt: 'Dashboard placeholder overview',
+      },
+      {
+        type: 'image',
+        src: stockImage('unsplash-1489515217757-5fd1be406fef.jpg'),
+        alt: 'Dashboard placeholder flow',
+      },
+      {
+        type: 'video',
+        src: stockImage('unsplash-1490481651871-ab68de25d43d.jpg'),
+        alt: 'Dashboard placeholder walkthrough',
+      },
+    ],
+    caseStudySections: [
+      {
+        title: 'Problem',
+        content:
+          'Placeholder content. Replace with the real problem statement for the dashboard project.',
+      },
+      {
+        title: 'Process',
+        content:
+          'Placeholder content. Replace with the process summary and research notes.',
+      },
+      {
+        title: 'Solution',
+        content:
+          'Placeholder content. Replace with the actual dashboard solution details.',
+      },
+      {
+        title: 'Results',
+        content:
+          'Placeholder content. Replace with measurable outcomes once available.',
+      },
+    ],
+  },
 ];

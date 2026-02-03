@@ -174,10 +174,10 @@ export const ProcessReelSection: React.FC<ProcessReelSectionProps> = ({
                   "text-left p-6 sm:p-8 rounded-surface glass border transition-all duration-700 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500/40",
                   isActive
                     ? darkMode
-                      ? "bg-white/5 border-white/15"
-                      : "bg-white/80 border-black/10"
+                      ? "bg-white/5 border-white/10"
+                      : "bg-white/80 border-black/5"
                     : darkMode
-                      ? "bg-black/40 border-white/5 opacity-70 hover:opacity-100"
+                      ? "bg-black/40 border-white/10 opacity-70 hover:opacity-100"
                       : "bg-white/50 border-black/5 opacity-70 hover:opacity-100"
                 )}
               >

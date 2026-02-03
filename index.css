@@ -57,6 +57,24 @@ html {
   bottom: -22%;
 }
 
+@keyframes company-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(var(--marquee-translate, -33.33%));
+  }
+}
+
+@keyframes testimonial-marquee {
+  from {
+    transform: translateX(var(--marquee-from, 0));
+  }
+  to {
+    transform: translateX(var(--marquee-to, -33.33%));
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

@@ -20,9 +20,13 @@ export function useMediaQuery(query: string): boolean {
         // Set initial value
         update();
 
-        // Listen for changes
-        media.addEventListener('change', update);
-        return () => media.removeEventListener('change', update);
+        // Listen for changes (Safari/WebView fallback)
+        if (media.addEventListener) {
+            media.addEventListener('change', update);
+            return () => media.removeEventListener('change', update);
+        }
+        media.addListener(update);
+        return () => media.removeListener(update);
     }, [query]);
 
     return matches;

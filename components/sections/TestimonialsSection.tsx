@@ -15,27 +15,41 @@ import { useIsDesktop } from '../../hooks/useMediaQuery';
 interface TestimonialCardProps {
   testimonial: Testimonial;
   darkMode: boolean;
+  ariaHidden?: boolean;
 }
 
-const TestimonialCard: React.FC<TestimonialCardProps> = ({ testimonial, darkMode }) => (
+const TestimonialCard: React.FC<TestimonialCardProps> = ({ testimonial, darkMode, ariaHidden }) => (
   <div
     className={cn(
       'w-[300px] sm:w-[450px] flex-shrink-0 p-8 sm:p-12 rounded-surface glass border flex flex-col justify-between transition-transform duration-500 hover:scale-[1.01] group',
       darkMode
-        ? 'bg-white/5 border-white/5 hover:border-white/20 shadow-[0_20px_60px_-50px_rgba(0,0,0,0.4)]'
+        ? 'bg-white/5 border-white/10 hover:border-white/20 shadow-[0_20px_60px_-50px_rgba(0,0,0,0.4)]'
         : 'bg-white/40 border-black/5 hover:border-black/20 shadow-[0_20px_60px_-50px_rgba(0,0,0,0.18)]'
     )}
+    aria-hidden={ariaHidden ? true : undefined}
   >
     <p className={cn(typography.body, 'font-medium italic mb-12 text-left', darkMode ? 'text-gray-200' : 'text-gray-800')}>
       &quot;{testimonial.content}&quot;
     </p>
     <div className="flex items-center gap-5 text-left">
       <div className="relative">
-        <img
-          src={testimonial.avatar}
-          alt={testimonial.name}
-          className="w-12 h-12 sm:w-16 sm:h-16 rounded-full border-2 border-accent/30 group-hover:scale-110 transition-transform duration-500"
-        />
+        <div
+          className={cn(
+            "w-12 h-12 sm:w-16 sm:h-16 rounded-full overflow-hidden border-2 border-accent/30",
+            testimonial.id === '1' ? "scale-[1.04]" : ""
+          )}
+        >
+          <img
+            src={testimonial.avatar}
+            alt={testimonial.name}
+            className={cn(
+              "w-full h-full object-cover object-center transition-transform duration-500",
+              testimonial.id === '1'
+                ? "scale-[1.08] group-hover:scale-[1.15]"
+                : "group-hover:scale-110"
+            )}
+          />
+        </div>
         <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-accent rounded-full flex items-center justify-center border-2 border-black">
           <Zap size={10} className="text-white fill-current" />
         </div>
@@ -54,36 +68,58 @@ const TestimonialMarqueeRow = ({
   darkMode,
   shouldAnimate,
   isDesktop,
+  phaseOffset,
 }: {
   items: Testimonial[];
   direction: 'left' | 'right';
   darkMode: boolean;
   shouldAnimate: boolean;
   isDesktop: boolean;
+  phaseOffset?: number;
 }) => {
+  const [isPaused, setIsPaused] = useState(false);
+  const baseCount = items.length;
   const marqueeItems = isDesktop ? [...items, ...items, ...items] : [...items, ...items];
-  // Only set animation when actively animating, use undefined to avoid re-renders
-  const marqueeAnimation = shouldAnimate
-    ? { x: direction === 'left' ? [0, '-33.33%'] : ['-33.33%', 0] }
-    : undefined;
-  const marqueeTransition = shouldAnimate
-    ? { duration: 45, repeat: Infinity, ease: 'linear' as const }
-    : undefined;
+  const duration = 45;
+  const travel = isDesktop ? '-33.33%' : '-50%';
+  const rowPhaseOffset = phaseOffset ?? 0;
+  const marqueeFrom = direction === 'left' ? '0%' : travel;
+  const marqueeTo = direction === 'left' ? travel : '0%';
   const marqueeStyle = React.useMemo(() => ({
     width: 'fit-content',
     willChange: shouldAnimate ? 'transform' : 'auto',
-  }), [shouldAnimate]);
+    transform: `translateX(${marqueeFrom})`,
+    animation: shouldAnimate ? `testimonial-marquee ${duration}s linear infinite` : 'none',
+    animationPlayState: isPaused ? 'paused' : 'running',
+    animationDelay: rowPhaseOffset ? `${rowPhaseOffset}s` : '0s',
+    animationFillMode: 'both',
+    ['--marquee-from' as string]: marqueeFrom,
+    ['--marquee-to' as string]: marqueeTo,
+  }), [duration, isPaused, marqueeFrom, marqueeTo, rowPhaseOffset, shouldAnimate]);
   return (
-    <div className="flex overflow-hidden py-4">
+    <div
+      className="flex overflow-hidden py-4"
+      tabIndex={0}
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      onFocus={() => setIsPaused(true)}
+      onBlur={() => setIsPaused(false)}
+    >
       <motion.div
         className="flex gap-4 sm:gap-6 transform-gpu"
-        animate={marqueeAnimation}
-        transition={marqueeTransition}
         style={marqueeStyle}
       >
-        {marqueeItems.map((item, idx) => (
-          <TestimonialCard key={`${item.id}-${idx}`} testimonial={item} darkMode={darkMode} />
-        ))}
+        {marqueeItems.map((item, idx) => {
+          const isDuplicate = idx >= baseCount;
+          return (
+            <TestimonialCard
+              key={`${item.id}-${idx}`}
+              testimonial={item}
+              darkMode={darkMode}
+              ariaHidden={isDuplicate}
+            />
+          );
+        })}
       </motion.div>
     </div>
   );
@@ -140,13 +176,13 @@ export const TestimonialsSection = () => {
           )} />
           <div className="space-y-2">
             <Reveal delay={0.1}>
-              <TestimonialMarqueeRow items={row1} direction="left" darkMode={darkMode} shouldAnimate={shouldAnimate} isDesktop={isDesktop} />
+              <TestimonialMarqueeRow items={row1} direction="right" darkMode={darkMode} shouldAnimate={shouldAnimate} isDesktop={isDesktop} phaseOffset={0} />
             </Reveal>
             <Reveal delay={0.2}>
-              <TestimonialMarqueeRow items={row2} direction="right" darkMode={darkMode} shouldAnimate={shouldAnimate} isDesktop={isDesktop} />
+              <TestimonialMarqueeRow items={row2} direction="left" darkMode={darkMode} shouldAnimate={shouldAnimate} isDesktop={isDesktop} phaseOffset={-15} />
             </Reveal>
             <Reveal delay={0.3}>
-              <TestimonialMarqueeRow items={row3} direction="left" darkMode={darkMode} shouldAnimate={shouldAnimate} isDesktop={isDesktop} />
+              <TestimonialMarqueeRow items={row3} direction="right" darkMode={darkMode} shouldAnimate={shouldAnimate} isDesktop={isDesktop} phaseOffset={-30} />
             </Reveal>
           </div>
         </div>

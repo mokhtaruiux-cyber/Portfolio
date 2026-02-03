@@ -15,7 +15,7 @@ const ProjectMetaItem = ({ label, value, darkMode }: { label: string; value: str
     <div
       className={cn(
         'p-6 sm:p-8 rounded-panel glass border',
-        darkMode ? 'bg-black/40 border-white/5' : 'bg-white/60 border-black/5'
+        darkMode ? 'bg-black/40 border-white/10' : 'bg-white/60 border-black/5'
       )}
     >
       <span className={cn(typography.labelXs, typography.textMuted, 'mb-2 block')}>{label}</span>
@@ -29,7 +29,7 @@ const ProjectGalleryItem = ({ item, darkMode }: { item: Project['gallery'][numbe
     <div
       className={cn(
         'relative aspect-[16/10] rounded-surface overflow-hidden glass border',
-        darkMode ? 'bg-black/40 border-white/5' : 'bg-white/60 border-black/5'
+        darkMode ? 'bg-black/40 border-white/10' : 'bg-white/60 border-black/5'
       )}
     >
       <img
@@ -69,7 +69,7 @@ export const ProjectDetailPage = ({
         <div className="text-left space-y-10">
           <div className="space-y-4">
             <span className={cn(typography.labelXs, 'tracking-[0.3em] text-accent')}>{project.category}</span>
-            <h1 className={cn(typography.h1Display, 'font-black max-w-[18ch]', darkMode ? 'text-white' : 'text-black')}>{project.title}</h1>
+            <h1 className={cn(typography.h1Display, 'font-black max-w-[18ch] tracking-normal', darkMode ? 'text-white' : 'text-black')}>{project.title}</h1>
             <p className={cn(typography.body, 'max-w-[60ch] font-medium', typography.textSubtle, darkMode ? 'text-white' : 'text-black')}>{project.description}</p>
           </div>
 
@@ -150,19 +150,59 @@ export const ProjectDetailPage = ({
 
       {nextProject && (
         <Section>
-          <div
-            className={cn(
-              'p-8 sm:p-12 rounded-surface glass border flex flex-col items-start gap-6',
-              darkMode ? 'bg-black/40 border-white/10' : 'bg-white/60 border-black/10'
-            )}
-          >
-            <span className={cn(typography.labelXs, typography.textMuted)}>{siteContent.projectDetail.nextProjectLabel}</span>
-            <h3 className={cn(typography.h2, 'font-black max-w-[24ch]', darkMode ? 'text-white' : 'text-black')}>
-              {nextProject.title}
+          <div className="w-full text-left">
+            <h3 className={cn(typography.h3, 'font-black mb-4 text-white')}>
+              {siteContent.projectDetail.nextProjectLabel}
             </h3>
-            <GlowButton size="cta" onClick={() => onNextProject(nextProject.slug)}>
-              {siteContent.projectDetail.nextProjectButton} <ArrowUpRight size={20} />
-            </GlowButton>
+            <button
+              type="button"
+              onClick={() => onNextProject(nextProject.slug)}
+              className={cn(
+                'group w-full text-left rounded-surface glass border overflow-hidden transition-all duration-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 focus-visible:ring-offset-2',
+                darkMode
+                  ? 'bg-black/40 border-white/10 hover:border-accent/30 focus-visible:ring-offset-[#030303]'
+                  : 'bg-white/60 border-black/5 hover:border-accent/30 shadow-xl focus-visible:ring-offset-[#fafafa]'
+              )}
+            >
+              <div className="flex flex-row w-full items-stretch gap-6 p-6 sm:p-8">
+                <div
+                  className={cn(
+                    "self-stretch h-full aspect-[16/10] w-auto max-w-[45%] rounded-mini overflow-hidden border flex-shrink-0",
+                    darkMode ? "border-white/10" : "border-black/10"
+                  )}
+                >
+                  <img
+                    src={nextProject.image}
+                    alt={nextProject.title}
+                    loading="lazy"
+                    decoding="async"
+                    width={1600}
+                    height={1000}
+                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                  />
+                </div>
+                <div className="flex min-w-0 flex-1 flex-col">
+                  <div className={cn('flex items-center gap-3 mb-3', typography.labelXs, typography.textMuted)}>
+                    <span className="px-3 py-1 rounded-mini bg-accent/20 border border-accent/30 text-accent">
+                      {nextProject.category}
+                    </span>
+                    <span>{nextProject.year}</span>
+                    <span>{nextProject.type}</span>
+                  </div>
+                  <h3 className={cn(typography.h3Display, 'mb-3 group-hover:text-accent transition-colors', darkMode ? 'text-white' : 'text-black')}>
+                    {nextProject.title}
+                  </h3>
+                  <p className={cn(typography.body, 'font-medium line-clamp-2', typography.textSubtle)}>
+                    {nextProject.description}
+                  </p>
+                  <div className="mt-6">
+                    <GlowButton size="cta" as="span">
+                      {siteContent.projectDetail.nextProjectButton} <ArrowUpRight size={20} />
+                    </GlowButton>
+                  </div>
+                </div>
+              </div>
+            </button>
           </div>
         </Section>
       )}

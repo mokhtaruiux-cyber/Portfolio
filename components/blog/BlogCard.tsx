@@ -24,7 +24,7 @@ const BlogCardComponent: React.FC<BlogCardProps> = ({ post, onClick }) => {
       className={cn(
         'group w-full text-left flex flex-col rounded-surface glass border overflow-hidden transition-all duration-700 cursor-pointer h-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 focus-visible:ring-offset-2',
         darkMode
-          ? 'bg-black/40 border-white/5 hover:border-accent/30 focus-visible:ring-offset-[#030303]'
+          ? 'bg-black/40 border-white/10 hover:border-accent/30 focus-visible:ring-offset-[#030303]'
           : 'bg-white/60 border-black/5 hover:border-accent/30 shadow-xl focus-visible:ring-offset-[#fafafa]'
       )}
     >
@@ -61,8 +61,8 @@ const BlogCardComponent: React.FC<BlogCardProps> = ({ post, onClick }) => {
     </button>
   );
   return (
-    <Reveal>
-      {isDesktop ? <TiltCard intensity={8}>{cardButton}</TiltCard> : cardButton}
+    <Reveal className="h-full">
+      {isDesktop ? <TiltCard intensity={8} className="h-full">{cardButton}</TiltCard> : cardButton}
     </Reveal>
   );
 };

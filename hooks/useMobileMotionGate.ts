@@ -15,8 +15,12 @@ export const useMobileMotionGate = () => {
     const media = window.matchMedia(MOBILE_MOTION_QUERY);
     const update = () => setIsMobile(media.matches);
     update();
-    media.addEventListener('change', update);
-    return () => media.removeEventListener('change', update);
+    if (media.addEventListener) {
+      media.addEventListener('change', update);
+      return () => media.removeEventListener('change', update);
+    }
+    media.addListener(update);
+    return () => media.removeListener(update);
   }, []);
 
   return prefersReduced || isMobile;

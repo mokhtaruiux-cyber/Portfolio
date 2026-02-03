@@ -42,7 +42,7 @@ export const AboutSection: React.FC = () => {
               variants={stagger.item}
               className={cn(
                 "p-6 sm:p-8 rounded-surface glass border",
-                darkMode ? "bg-black/40 border-white/5" : "bg-white/60 border-black/5"
+                darkMode ? "bg-black/40 border-white/10" : "bg-white/60 border-black/5"
               )}
             >
               <span className={cn(typography.body, "font-medium", darkMode ? "text-white" : "text-black")}>{item}</span>

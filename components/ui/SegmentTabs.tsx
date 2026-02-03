@@ -15,13 +15,13 @@ export const SegmentTabs: React.FC<SegmentTabsProps> = ({ tabs, activeTab, onCha
     return (
         <div
           className={cn(
-            "relative inline-flex max-w-full overflow-hidden rounded-full border shadow-sm",
+            "relative inline-flex max-w-full overflow-hidden rounded-panel border shadow-sm",
             darkMode ? "border-white/10" : "border-black/10"
           )}
         >
             <div
                 className={cn(
-                    "flex items-center gap-1 h-11 p-1 rounded-full overflow-x-auto whitespace-nowrap no-scrollbar touch-scroll",
+                    "flex items-center gap-1 h-12 p-1 rounded-panel overflow-x-auto whitespace-nowrap no-scrollbar touch-scroll",
                     darkMode ? "bg-white/5 border-white/10" : "bg-black/5 border-black/10"
                 )}
             >
@@ -32,7 +32,7 @@ export const SegmentTabs: React.FC<SegmentTabsProps> = ({ tabs, activeTab, onCha
                             key={tab}
                             onClick={() => onChange(tab)}
                             className={cn(
-                                "relative h-9 px-4 sm:px-5 rounded-full whitespace-nowrap z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40",
+                                "relative h-10 px-4 sm:px-5 rounded-control whitespace-nowrap z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40",
                                 typography.labelXs,
                                 isActive
                                     ? "bg-accent text-white shadow-sm"

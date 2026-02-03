@@ -16,6 +16,7 @@ export interface GlowButtonProps {
   calNamespace?: string;
   calConfig?: string;
   type?: 'button' | 'submit' | 'reset';
+  as?: 'button' | 'a' | 'span';
   size?: 'default' | 'cta';
   fullWidth?: boolean;
   glow?: boolean;
@@ -32,15 +33,16 @@ export const GlowButton: React.FC<GlowButtonProps> = ({
   calNamespace,
   calConfig,
   type = 'button',
+  as,
   size = 'default',
   fullWidth = false,
   glow = true,
 }) => {
   const { darkMode } = useTheme();
   const isCalLink = Boolean(calLink);
-  const Element = isCalLink ? 'button' : href ? 'a' : 'button';
-  const elementProps = Element === 'a' ? { href, target, rel } : { type };
-  const calProps = calLink
+  const Element = as ?? (isCalLink ? 'button' : href ? 'a' : 'button');
+  const elementProps = Element === 'a' ? { href, target, rel } : Element === 'button' ? { type } : {};
+  const calProps = calLink && Element === 'button'
     ? {
         'data-cal-link': calLink,
         ...(calNamespace ? { 'data-cal-namespace': calNamespace } : {}),

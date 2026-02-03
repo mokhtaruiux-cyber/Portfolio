@@ -25,11 +25,14 @@ export const HowIHelpSection: React.FC = () => {
           aria-label={titleLabel}
           className={cn(typography.h2, "font-black max-w-[24ch] mb-6", darkMode ? "text-white" : "text-black")}
         >
-          {howIHelp.titleLines.map((line) => (
-            <span key={line} className="block">
-              {line}
-            </span>
-          ))}
+          {howIHelp.titleLines.map((line) => {
+            const isHelpLine = line.toLowerCase().includes('help');
+            return (
+              <span key={line} className={cn("block", isHelpLine && "text-accent")}>
+                {line}
+              </span>
+            );
+          })}
         </BlurIn>
         <Reveal delay={0.2}>
           <p className={cn(typography.body, "max-w-[60ch] font-medium", typography.textSubtle, darkMode ? "text-gray-300" : "text-gray-600")}>
