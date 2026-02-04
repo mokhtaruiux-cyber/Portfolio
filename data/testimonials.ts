@@ -22,11 +22,14 @@ export const testimonials: Testimonial[] = [
   },
   {
     id: '3',
-    name: 'Michael Chen',
-    role: 'Founder',
-    company: 'Aura Retail',
-    content: "He didn't just design a website; he designed a brand experience. Our conversion rates speak for themselves.",
-    avatar: avatarImage('avatar-michael.jpg'),
+    name: 'Kenza Mo',
+    role: 'UX Designer & Project Lead',
+    company: 'Zain KSA',
+    content:
+      'Working with Mokhtar is agreeable and efficient as he is flexible and responsive.\n\n' +
+      'Thanks to his expertise building digital products is easy and potential issues get prevented or resolved quickly.\n\n' +
+      'Mokhtar is a trusted colleague and professional that I recommend warmly.',
+    avatar: avatarImage('Kenza.png'),
   },
   {
     id: '4',
