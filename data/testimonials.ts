@@ -23,7 +23,7 @@ export const testimonials: Testimonial[] = [
   {
     id: '3',
     name: 'Kenza Mo',
-    role: 'UX Designer & Project Lead',
+    role: 'UX Designer',
     company: 'Zain KSA',
     content:
       'Working with Mokhtar is agreeable and efficient as he is flexible and responsive.\n\n' +
@@ -33,11 +33,13 @@ export const testimonials: Testimonial[] = [
   },
   {
     id: '4',
-    name: 'Elena Rodriguez',
-    role: 'Head of Growth',
-    company: 'Vortex',
-    content: 'Collaborating with Mohammed was the best decision for our rebranding. The mobile experience is now our primary acquisition channel.',
-    avatar: avatarImage('avatar-elena.jpg'),
+    name: 'Shroug Alshehri',
+    role: 'UI UX Designer',
+    company: 'Zain KSA',
+    content:
+      'I had the pleasure of working with Mokhtar, and I can confidently say that he is a highly talented and detail-oriented designer. His ability to translate ideas into clean, thoughtful, and visually compelling designs is impressive.\n\n' +
+      'Mokhtar is professional, reliable, and always open to feedback, which makes collaboration smooth and productive. He consistently delivers high-quality work while maintaining a strong sense of creativity and user-focused thinking.',
+    avatar: avatarImage('Shrouk.jpeg'),
   },
   {
     id: '5',

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { motion, useInView, useReducedMotion } from 'framer-motion';
 import { Zap } from 'lucide-react';
 import { Testimonial } from '../../types';
@@ -10,7 +10,6 @@ import { Container } from '../layout/Container';
 import { Reveal } from '../motion/Reveal';
 import { BlurIn } from '../motion/BlurIn';
 import { FadeInUp } from '../motion/FadeInUp';
-import { useIsDesktop } from '../../hooks/useMediaQuery';
 
 interface TestimonialCardProps {
   testimonial: Testimonial;
@@ -21,7 +20,7 @@ interface TestimonialCardProps {
 const TestimonialCard: React.FC<TestimonialCardProps> = ({ testimonial, darkMode, ariaHidden }) => (
   <div
     className={cn(
-      'w-[300px] sm:w-[450px] flex-shrink-0 p-8 sm:p-12 rounded-surface glass border flex flex-col justify-between transition-transform duration-500 hover:scale-[1.01] group',
+      'w-[300px] sm:w-[450px] flex-shrink-0 p-8 sm:p-12 rounded-surface glass border flex flex-col justify-between transition-transform duration-500 hover:scale-[1.01] group transform-gpu [backface-visibility:hidden] [will-change:transform]',
       darkMode
         ? 'bg-white/5 border-white/10 hover:border-white/20 shadow-[0_20px_60px_-50px_rgba(0,0,0,0.4)]'
         : 'bg-white/40 border-black/5 hover:border-black/20 shadow-[0_20px_60px_-50px_rgba(0,0,0,0.18)]'
@@ -67,35 +66,25 @@ const TestimonialMarqueeRow = ({
   direction,
   darkMode,
   shouldAnimate,
-  isDesktop,
+  isMobile,
   phaseOffset,
 }: {
   items: Testimonial[];
   direction: 'left' | 'right';
   darkMode: boolean;
   shouldAnimate: boolean;
-  isDesktop: boolean;
+  isMobile: boolean;
   phaseOffset?: number;
 }) => {
   const [isPaused, setIsPaused] = useState(false);
-  const baseCount = items.length;
-  const marqueeItems = isDesktop ? [...items, ...items, ...items] : [...items, ...items];
   const duration = 45;
-  const travel = isDesktop ? '-33.33%' : '-50%';
   const rowPhaseOffset = phaseOffset ?? 0;
-  const marqueeFrom = direction === 'left' ? '0%' : travel;
-  const marqueeTo = direction === 'left' ? travel : '0%';
-  const marqueeStyle = React.useMemo(() => ({
-    width: 'fit-content',
-    willChange: shouldAnimate ? 'transform' : 'auto',
-    transform: `translateX(${marqueeFrom})`,
-    animation: shouldAnimate ? `testimonial-marquee ${duration}s linear infinite` : 'none',
-    animationPlayState: isPaused ? 'paused' : 'running',
-    animationDelay: rowPhaseOffset ? `${rowPhaseOffset}s` : '0s',
-    animationFillMode: 'both',
-    ['--marquee-from' as string]: marqueeFrom,
-    ['--marquee-to' as string]: marqueeTo,
-  }), [duration, isPaused, marqueeFrom, marqueeTo, rowPhaseOffset, shouldAnimate]);
+  const baseCount = items.length;
+  const marqueeItems = useMemo(() => {
+    return isMobile ? [...items, ...items] : [...items, ...items, ...items];
+  }, [isMobile, items]);
+  const marqueeTranslate = isMobile ? '-50%' : '-33.33%';
+  const animationDirection = direction === 'left' ? 'normal' : 'reverse';
   return (
     <div
       className="flex overflow-hidden py-4"
@@ -110,8 +99,20 @@ const TestimonialMarqueeRow = ({
       }}
     >
       <motion.div
-        className="flex gap-4 sm:gap-6 transform-gpu"
-        style={marqueeStyle}
+        className="flex gap-4 sm:gap-6 transform-gpu [backface-visibility:hidden]"
+        style={{
+          width: 'fit-content',
+          animationName: shouldAnimate ? 'company-marquee' : 'none',
+          animationDuration: shouldAnimate ? `${duration}s` : undefined,
+          animationTimingFunction: shouldAnimate ? 'linear' : undefined,
+          animationIterationCount: shouldAnimate ? 'infinite' : undefined,
+          animationDelay: rowPhaseOffset ? `${rowPhaseOffset}s` : '0s',
+          animationDirection,
+          animationFillMode: shouldAnimate ? 'both' : undefined,
+          animationPlayState: isPaused ? 'paused' : 'running',
+          willChange: shouldAnimate ? 'transform' : 'auto',
+          ['--marquee-translate' as string]: marqueeTranslate,
+        }}
       >
         {marqueeItems.map((item, idx) => {
           const isDuplicate = idx >= baseCount;
@@ -132,14 +133,22 @@ const TestimonialMarqueeRow = ({
 export const TestimonialsSection = () => {
   const { darkMode } = useTheme();
   const reduceMotion = useReducedMotion() ?? false;
-  const isDesktop = useIsDesktop();
   const sectionRef = useRef<HTMLElement | null>(null);
   const isInView = useInView(sectionRef, { amount: 0.2 });
   const [isPageVisible, setIsPageVisible] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
   const row1 = siteContent.testimonials.items.slice(0, 3);
   const row2 = siteContent.testimonials.items.slice(3, 6);
   const row3 = siteContent.testimonials.items.slice(6, 9);
   const shouldAnimate = !reduceMotion && isInView && isPageVisible;
+
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    const checkMobile = () => setIsMobile(window.innerWidth < 768);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -180,13 +189,13 @@ export const TestimonialsSection = () => {
           )} />
           <div className="space-y-2">
             <Reveal delay={0.1}>
-              <TestimonialMarqueeRow items={row1} direction="right" darkMode={darkMode} shouldAnimate={shouldAnimate} isDesktop={isDesktop} phaseOffset={0} />
+              <TestimonialMarqueeRow items={row1} direction="right" darkMode={darkMode} shouldAnimate={shouldAnimate} isMobile={isMobile} phaseOffset={0} />
             </Reveal>
             <Reveal delay={0.2}>
-              <TestimonialMarqueeRow items={row2} direction="left" darkMode={darkMode} shouldAnimate={shouldAnimate} isDesktop={isDesktop} phaseOffset={-15} />
+              <TestimonialMarqueeRow items={row2} direction="left" darkMode={darkMode} shouldAnimate={shouldAnimate} isMobile={isMobile} phaseOffset={-15} />
             </Reveal>
             <Reveal delay={0.3}>
-              <TestimonialMarqueeRow items={row3} direction="right" darkMode={darkMode} shouldAnimate={shouldAnimate} isDesktop={isDesktop} phaseOffset={-30} />
+              <TestimonialMarqueeRow items={row3} direction="right" darkMode={darkMode} shouldAnimate={shouldAnimate} isMobile={isMobile} phaseOffset={-30} />
             </Reveal>
           </div>
         </div>

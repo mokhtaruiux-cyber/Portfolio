@@ -66,12 +66,12 @@ html {
   }
 }
 
-@keyframes testimonial-marquee {
+@keyframes marquee-px {
   from {
-    transform: translateX(var(--marquee-from, 0));
+    transform: translate3d(var(--marquee-from, 0px), 0, 0);
   }
   to {
-    transform: translateX(var(--marquee-to, -33.33%));
+    transform: translate3d(var(--marquee-to, -100px), 0, 0);
   }
 }
 
