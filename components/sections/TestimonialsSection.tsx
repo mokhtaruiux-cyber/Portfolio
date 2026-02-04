@@ -104,6 +104,10 @@ const TestimonialMarqueeRow = ({
       onMouseLeave={() => setIsPaused(false)}
       onFocus={() => setIsPaused(true)}
       onBlur={() => setIsPaused(false)}
+      onPointerDown={(event) => {
+        if (event.pointerType !== 'touch') return;
+        setIsPaused((prev) => !prev);
+      }}
     >
       <motion.div
         className="flex gap-4 sm:gap-6 transform-gpu"
