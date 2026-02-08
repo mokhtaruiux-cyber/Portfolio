@@ -21,6 +21,6 @@ test('blog index route loads', async ({ page }) => {
 });
 
 test('blog article route loads', async ({ page }) => {
-  await page.goto('/blog/the-future-of-ai-in-ux');
-  await expect(page.getByRole('heading', { name: /The Future of AI in UX Design/i })).toBeVisible();
+  await page.goto('/blog/how-social-media-is-reshaping-your-brain');
+  await expect(page.getByRole('heading', { name: /How Social Media Is Reshaping Your Brain/i })).toBeVisible();
 });

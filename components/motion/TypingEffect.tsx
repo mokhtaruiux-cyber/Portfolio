@@ -27,7 +27,7 @@ export function TypingEffect({
     const ref = React.useRef<HTMLElement | null>(null);
     const isInView = useInView(ref, { once: true });
     const reduceMotion = useReducedMotion();
-    const MotionComponent = motion(Component);
+    const MotionComponent = React.useMemo(() => motion.create(Component), [Component]);
     const words = React.useMemo(() => text.split(' '), [text]);
 
     const containerVariants = React.useMemo(() => ({

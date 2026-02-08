@@ -125,7 +125,6 @@ export default function App() {
     const media = window.matchMedia?.('(prefers-color-scheme: dark)');
     if (!media) return;
     const handler = (event: MediaQueryListEvent) => setDarkMode(event.matches);
-    setDarkMode(media.matches);
     if (media.addEventListener) {
       media.addEventListener('change', handler);
       return () => media.removeEventListener('change', handler);
@@ -177,7 +176,6 @@ export default function App() {
       targetId = null;
     }
     if (!targetId) return;
-    if (!targetId) return;
     let attempts = 0;
     const maxAttempts = 100;
     const intervalId = window.setInterval(() => {
@@ -209,14 +207,6 @@ export default function App() {
 
   const navigateTo = useCallback((page: PageKey, slug = '') => {
     navigate(pageToPath(page, slug));
-  }, [navigate]);
-
-  const handleBack = useCallback((fallbackPage: PageKey) => {
-    if (window.history.state?.idx > 0) {
-      navigate(-1);
-      return;
-    }
-    navigate(pageToPath(fallbackPage));
   }, [navigate]);
 
   const handleSetDarkMode = useCallback<React.Dispatch<React.SetStateAction<boolean>>>((value) => {

@@ -15,7 +15,7 @@ export const CompaniesLogos: React.FC = () => {
   const reduceMotion = useReducedMotion();
   const [tooltip, setTooltip] = useState<{ label: string; left: number; top: number } | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
-  const itemRefs = useRef<Array<HTMLDivElement | null>>([]);
+  const itemRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const isInView = useInView(containerRef, { amount: 0.2 });
   const [isPageVisible, setIsPageVisible] = useState(true);
   const [isMobile, setIsMobile] = useState(false);

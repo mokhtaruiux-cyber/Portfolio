@@ -5,14 +5,14 @@ const raw = process.env.VITE_SITE_URL;
 const isPlaceholder = !raw || raw.includes('%VITE_SITE_URL%');
 const isCi = process.env.CI === 'true' || process.env.NODE_ENV === 'production';
 
-let baseUrl = raw;
+let baseUrl = raw ?? '';
 if (isPlaceholder) {
   if (isCi) {
     console.error('VITE_SITE_URL is required to generate sitemap.xml in CI/production.');
     process.exit(1);
   }
-  baseUrl = 'http://localhost:3000';
-  console.warn('VITE_SITE_URL is missing; defaulting sitemap base to http://localhost:3000.');
+  baseUrl = 'https://example.com';
+  console.warn('VITE_SITE_URL is missing; defaulting sitemap base to https://example.com to avoid localhost output.');
 }
 
 const siteUrl = baseUrl.replace(/\/+$/, '');

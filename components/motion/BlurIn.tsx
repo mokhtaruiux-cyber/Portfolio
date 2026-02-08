@@ -16,7 +16,7 @@ type BlurInProps = {
 export const BlurIn = ({ as: Component = "h2", children, className, delay = 0 }: BlurInProps) => {
     const ref = React.useRef<HTMLElement | null>(null);
     const isInView = useInView(ref, viewportDefaults);
-    const MotionComponent = React.useMemo(() => motion(Component), [Component]);
+    const MotionComponent = React.useMemo(() => motion.create(Component), [Component]);
     // Skip expensive blur filter on mobile/reduced-motion for better performance
     const skipHeavyAnimations = useMobileMotionGate();
 

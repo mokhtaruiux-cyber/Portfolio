@@ -10,11 +10,10 @@ interface SectionProps {
     className?: string;
     id?: string;
     eyebrow?: string;
-    darkMode?: boolean;
     motion?: "lift" | "fade";
 }
 
-export const Section: React.FC<SectionProps> = ({ children, className, id, eyebrow, darkMode, motion = "lift" }) => {
+export const Section: React.FC<SectionProps> = ({ children, className, id, eyebrow, motion = "lift" }) => {
     return (
         <section
           id={id}

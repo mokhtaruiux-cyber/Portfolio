@@ -37,7 +37,7 @@ export const ProcessReelSection: React.FC<ProcessReelSectionProps> = ({
   const [isUserInteracting, setIsUserInteracting] = useState(false);
   const [isPageVisible, setIsPageVisible] = useState(true);
   const touchStartX = useRef<number | null>(null);
-  const interactionTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const interactionTimeout = useRef<ReturnType<typeof window.setTimeout> | null>(null);
 
   const isAutoPlayEnabled = autoPlay && !reduceMotion && isPageVisible;
 
@@ -85,12 +85,12 @@ export const ProcessReelSection: React.FC<ProcessReelSectionProps> = ({
 
   useEffect(() => {
     if (!isUserInteracting) return;
-    if (interactionTimeout.current) window.clearTimeout(interactionTimeout.current);
-    interactionTimeout.current = window.setTimeout(() => {
+    if (interactionTimeout.current) clearTimeout(interactionTimeout.current);
+    interactionTimeout.current = setTimeout(() => {
       setIsUserInteracting(false);
     }, 1200);
     return () => {
-      if (interactionTimeout.current) window.clearTimeout(interactionTimeout.current);
+      if (interactionTimeout.current) clearTimeout(interactionTimeout.current);
     };
   }, [isUserInteracting]);
 

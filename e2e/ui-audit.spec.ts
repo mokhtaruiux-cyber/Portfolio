@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Locator, type Page } from '@playwright/test';
 
 const viewports = [
   { name: 'mobile-390x844', width: 390, height: 844 },
@@ -14,22 +14,22 @@ const routes = {
 
 const outPath = (name: string) => `test-results/ui-audit/${name}.png`;
 
-async function shot(page: Parameters<typeof test>[0]['page'], name: string) {
+async function shot(page: Page, name: string) {
   await page.screenshot({ path: outPath(name), fullPage: true });
 }
 
 async function clipNavZone(
-  page: Parameters<typeof test>[0]['page'],
+  page: Page,
   label: string,
-  target: Parameters<typeof test>[0]['page']['locator'],
+  target: Locator,
 ) {
   const nav = page.locator('nav').first();
   await expect(nav).toBeVisible();
 
   const navBox = await nav.boundingBox();
   const targetBox = (await target.count()) ? await target.boundingBox() : null;
-  const navZ = await nav.evaluate((el) => getComputedStyle(el).zIndex);
-  const targetZ = await target.evaluate((el) => getComputedStyle(el).zIndex);
+  const navZ = await nav.evaluate((el: HTMLElement) => getComputedStyle(el).zIndex);
+  const targetZ = await target.evaluate((el: HTMLElement) => getComputedStyle(el).zIndex);
 
   console.log(`[${label}] nav bbox:`, navBox);
   console.log(`[${label}] target bbox:`, targetBox);
