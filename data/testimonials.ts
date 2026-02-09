@@ -34,7 +34,7 @@ export const testimonials: Testimonial[] = [
   {
     id: '4',
     name: 'Shroug Alshehri',
-    role: 'UI UX Designer',
+    role: 'UI/UX Designer',
     company: 'Zain KSA',
     content:
       'I had the pleasure of working with Mokhtar, and I can confidently say that he is a highly talented and detail-oriented designer. His ability to translate ideas into clean, thoughtful, and visually compelling designs is impressive.\n\n' +
@@ -51,11 +51,13 @@ export const testimonials: Testimonial[] = [
   },
   {
     id: '6',
-    name: 'Sofia Khan',
-    role: 'Marketing Manager',
+    name: 'Mohammed Samir',
+    role: 'UI/UX Designer',
     company: 'Zain',
-    content: 'The speed at which he translates complex ideas into high-fidelity prototypes is unmatched. Truly professional workflow.',
-    avatar: avatarImage('avatar-sofia.jpg'),
+    content:
+      'Mohammed is an exceptional product designer with a rare ability to balance business goals, user needs, and design quality. During our time working together, he consistently demonstrated strong strategic thinking, deep UX expertise, and a clear product mindset.\n\n' +
+      'He leads design with confidence, gives thoughtful feedback, and always pushes for meaningful, user-centered outcomes. Mohammed is also a great collaborator - reliable, supportive, and respected by both designers and cross-functional teams. Any organization would be lucky to have him leading product design initiatives.',
+    avatar: avatarImage('Samir.jpeg'),
   },
   {
     id: '7',

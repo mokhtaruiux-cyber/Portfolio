@@ -59,6 +59,7 @@ export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
       if (event.key !== 'Tab' || focusableItems.length === 0) return;
       const first = focusableItems[0];
       const last = focusableItems[focusableItems.length - 1];
+      if (!first || !last) return;
       if (event.shiftKey && document.activeElement === first) {
         event.preventDefault();
         last.focus();

@@ -24,27 +24,27 @@ export const companies: Company[] = [
   },
   {
     name: 'LDUN',
-    subtitle: 'Real Estate',
+    subtitle: 'Fintech',
     logoSrc: assetPath('assets/images/LDUN-color@4x.webp'),
   },
   {
     name: 'NasNav',
-    subtitle: 'Retail Tech',
+    subtitle: 'BNPL',
     logoSrc: assetPath('assets/images/NasNav-color@4x.webp'),
   },
   {
     name: 'Sahab',
-    subtitle: 'Government',
+    subtitle: 'iOT',
     logoSrc: assetPath('assets/images/Sahab_express-color@4x.webp'),
   },
   {
     name: 'Stips',
-    subtitle: 'Consulting',
+    subtitle: 'iOT',
     logoSrc: assetPath('assets/images/Stips-color@4x.webp'),
   },
   {
     name: 'SolutionPlus',
-    subtitle: 'Development',
+    subtitle: 'Software House',
     logoSrc: assetPath('assets/images/SolutionPlus-color@4x.webp'),
   },
 ];

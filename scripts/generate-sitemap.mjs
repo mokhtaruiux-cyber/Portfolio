@@ -1,3 +1,10 @@
+/**
+ * IMPORTANT: Routes in this file must be manually synchronized with:
+ * - App.tsx (route definitions)
+ * - content.ts (project/blog slugs)
+ * 
+ * Add new routes here when adding pages to the app.
+ */
 import { writeFile } from 'node:fs/promises';
 import path from 'node:path';
 

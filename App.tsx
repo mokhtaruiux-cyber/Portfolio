@@ -35,6 +35,7 @@ import { ProjectDetailPage } from './components/pages/ProjectDetailPage';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 import { ThemeProvider } from './context/ThemeContext';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 const pageToPath = (page: PageKey, slug = '') => {
   switch (page) {
@@ -410,46 +411,48 @@ export default function App() {
         <Navbar currentPage={currentPage} onNavigate={navigateTo} />
 
         <main id="main-content" className="relative">
-          <AnimatePresence mode="wait">
-            <motion.div key={currentPage} variants={variants.fadeIn} initial="initial" animate="animate" exit="exit" transition={transitions.smooth}>
-              <Routes location={location}>
-                <Route path="/" element={homeElement} />
-                <Route path="/projects" element={workElement} />
-                <Route
-                  path="/projects/:slug"
-                  element={
-                    activeProject ? (
-                      <ProjectDetailPage
-                        project={activeProject}
-                        nextProject={nextProject}
-                        onBack={handleBackToWorkSection}
-                        onNextProject={handleProjectClick}
-                      />
-                    ) : (
-                      <Navigate to="/projects" replace />
-                    )
-                  }
-                />
-                <Route path="/blog" element={<BlogIndexPage onPostClick={handleBlogClick} />} />
-              <Route
-                path="/blog/:slug"
-                element={
-                  activePost ? (
-                      <BlogArticlePage
-                        post={activePost}
-                        nextPost={nextPost}
-                        onNextPost={handleBlogClick}
-                      />
-                    ) : (
-                      <Navigate to="/blog" replace />
-                    )
-                  }
-              />
-                <Route path="/about" element={aboutElement} />
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </Routes>
-            </motion.div>
-          </AnimatePresence>
+          <ErrorBoundary>
+            <AnimatePresence mode="wait">
+              <motion.div key={currentPage} variants={variants.fadeIn} initial="initial" animate="animate" exit="exit" transition={transitions.smooth}>
+                <Routes location={location}>
+                  <Route path="/" element={homeElement} />
+                  <Route path="/projects" element={workElement} />
+                  <Route
+                    path="/projects/:slug"
+                    element={
+                      activeProject ? (
+                        <ProjectDetailPage
+                          project={activeProject}
+                          nextProject={nextProject}
+                          onBack={handleBackToWorkSection}
+                          onNextProject={handleProjectClick}
+                        />
+                      ) : (
+                        <Navigate to="/projects" replace />
+                      )
+                    }
+                  />
+                  <Route path="/blog" element={<BlogIndexPage onPostClick={handleBlogClick} />} />
+                  <Route
+                    path="/blog/:slug"
+                    element={
+                      activePost ? (
+                        <BlogArticlePage
+                          post={activePost}
+                          nextPost={nextPost}
+                          onNextPost={handleBlogClick}
+                        />
+                      ) : (
+                        <Navigate to="/blog" replace />
+                      )
+                    }
+                  />
+                  <Route path="/about" element={aboutElement} />
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </Routes>
+              </motion.div>
+            </AnimatePresence>
+          </ErrorBoundary>
           {currentPage !== 'blog-details' && <CTASection />}
         </main>
         <Footer currentPage={currentPage} onNavigate={navigateTo} />

@@ -19,6 +19,8 @@
     "allowJs": true,
     "jsx": "react-jsx",
     "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitReturns": true,
     "paths": {
       "@/*": [
         "./*"

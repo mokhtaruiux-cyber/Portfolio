@@ -210,6 +210,7 @@ export const ProjectDetailPage = ({
       <Section>
         <div className="mx-auto flex w-full max-w-[60ch] flex-col items-start text-left">
           <button
+            type="button"
             onClick={onBack}
             className={cn(
               'flex items-center gap-2 hover:opacity-100 hover:text-accent transition-all font-medium group',

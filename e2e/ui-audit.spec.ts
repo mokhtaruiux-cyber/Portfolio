@@ -125,6 +125,7 @@ test.describe('UI audit (read-only visual proof)', () => {
 
   test('C) card media sizing proof on desktop', async ({ page }) => {
     const desktop = viewports[2];
+    if (!desktop) return;
     await page.setViewportSize({ width: desktop.width, height: desktop.height });
 
     await page.goto(routes.projects, { waitUntil: 'networkidle' });
