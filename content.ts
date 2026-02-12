@@ -156,9 +156,9 @@ export const siteContent = {
     viewProjectLabel: 'View Project',
     filters: [
       { label: 'All Projects', category: 'All Projects' },
+      { label: 'Apps', category: 'Mobile Apps' },
       { label: 'Websites', category: 'Websites' },
       { label: 'Dashboards', category: 'Dashboards' },
-      { label: 'Apps', category: 'Mobile Apps' },
       { label: 'Design Systems', category: 'Design Systems' },
     ],
     archive: {

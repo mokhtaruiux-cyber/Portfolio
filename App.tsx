@@ -103,6 +103,16 @@ export default function App() {
   const workFilters = siteContent.featuredWork.filters;
   const allProjectsFilter = workFilters[0];
   const [filter, setFilter] = useState(allProjectsFilter?.label ?? '');
+  const orderedProjects = useMemo(() => {
+    const featuredSlug = 'homecare-medical-app';
+    const featuredProject = siteContent.projects.items.find((project) => project.slug === featuredSlug);
+    if (!featuredProject) return siteContent.projects.items;
+
+    return [
+      featuredProject,
+      ...siteContent.projects.items.filter((project) => project.slug !== featuredSlug),
+    ];
+  }, []);
 
   useEffect(() => {
     // toggle dark mode without wiping other classes (like overflow-x-hidden)
@@ -223,15 +233,6 @@ export default function App() {
     });
   }, []);
 
-  const handleBackToWorkSection = useCallback(() => {
-    try {
-      window.sessionStorage.setItem('scrollToSection', 'work');
-    } catch {
-      // Ignore storage errors.
-    }
-    navigate('/');
-  }, [navigate]);
-
   const handleProjectClick = useCallback((slug: string) => {
     navigateTo('project-details', slug);
   }, [navigateTo]);
@@ -243,17 +244,17 @@ export default function App() {
   const filteredProjects = useMemo(() => {
     const activeFilter = workFilters.find((item) => item.label === filter);
     if (!activeFilter || !allProjectsFilter || activeFilter.category === allProjectsFilter.category) {
-      return siteContent.projects.items;
+      return orderedProjects;
     }
-    return siteContent.projects.items.filter((project) => project.category === activeFilter.category);
-  }, [filter, workFilters, allProjectsFilter]);
+    return orderedProjects.filter((project) => project.category === activeFilter.category);
+  }, [filter, workFilters, allProjectsFilter, orderedProjects]);
 
   const projectSlug = projectDetailMatch?.params.slug ?? '';
   const blogSlug = blogDetailMatch?.params.slug ?? '';
 
   const activeProject = useMemo(
-    () => siteContent.projects.items.find((project) => project.slug === projectSlug),
-    [projectSlug]
+    () => orderedProjects.find((project) => project.slug === projectSlug),
+    [projectSlug, orderedProjects]
   );
   const activePost = useMemo(
     () => siteContent.writing.items.find((post) => post.slug === blogSlug),
@@ -261,10 +262,10 @@ export default function App() {
   );
   const nextProject = useMemo(() => {
     if (!activeProject) return undefined;
-    const index = siteContent.projects.items.findIndex((project) => project.slug === activeProject.slug);
+    const index = orderedProjects.findIndex((project) => project.slug === activeProject.slug);
     if (index === -1) return undefined;
-    return siteContent.projects.items[(index + 1) % siteContent.projects.items.length];
-  }, [activeProject]);
+    return orderedProjects[(index + 1) % orderedProjects.length];
+  }, [activeProject, orderedProjects]);
   const nextPost = useMemo(() => {
     if (!activePost) return undefined;
     if (siteContent.writing.items.length < 2) return undefined;
@@ -378,7 +379,7 @@ export default function App() {
         </BlurIn>
       </div>
       <div className="space-y-24">
-        {siteContent.projects.items.map((project) => (
+        {orderedProjects.map((project) => (
           <ProjectCardWrapper
             key={project.id}
             project={project}
@@ -424,7 +425,6 @@ export default function App() {
                         <ProjectDetailPage
                           project={activeProject}
                           nextProject={nextProject}
-                          onBack={handleBackToWorkSection}
                           onNextProject={handleProjectClick}
                         />
                       ) : (

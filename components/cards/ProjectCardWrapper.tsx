@@ -1,6 +1,5 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowUpRight } from 'lucide-react';
 import { Project } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
 import { siteContent } from '../../content';
@@ -9,6 +8,8 @@ import { typography } from '../../lib/typography';
 import { cn } from '../../lib/utils';
 import { Reveal } from '../motion/Reveal';
 import { TiltCard } from '../motion/TiltCard';
+import { GlowButton } from '../ui/GlowButton';
+import { ProjectTagChips } from '../ui/ProjectTagChips';
 
 interface ProjectCardWrapperProps {
   project: Project;
@@ -44,19 +45,7 @@ const ProjectCardWrapperComponent: React.FC<ProjectCardWrapperProps> = ({ projec
                   <p className={cn(typography.body, 'font-medium mb-6 sm:mb-10 max-w-3xl', typography.textSubtle, darkMode ? 'text-gray-300' : 'text-gray-600')}>
                     {project.description}
                   </p>
-                  <div className="flex flex-wrap gap-2 mb-6">
-                    {project.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className={cn(
-                          typography.labelXs,
-                          'px-3 py-1 rounded-mini border border-accent/20 text-accent'
-                        )}
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
+                  <ProjectTagChips tags={project.tags} className="mb-6" />
                   <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 md:gap-6 mb-8 sm:mb-12">
                     {project.metrics.map((metric) => (
                       <div key={metric.label}>
@@ -70,9 +59,9 @@ const ProjectCardWrapperComponent: React.FC<ProjectCardWrapperProps> = ({ projec
                     {project.impact}
                   </p>
                   <div className="flex flex-wrap gap-4 items-center">
-                    <div className={cn('flex items-center gap-2 group-hover:opacity-100 group-hover:text-accent transition-all duration-500', typography.button, typography.textMuted)}>
-                      {siteContent.featuredWork.viewProjectLabel} <ArrowUpRight size={16} />
-                    </div>
+                    <GlowButton as="span" size="cta">
+                      {siteContent.featuredWork.viewProjectLabel}
+                    </GlowButton>
                   </div>
                 </Reveal>
               </div>

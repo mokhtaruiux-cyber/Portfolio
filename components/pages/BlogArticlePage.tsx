@@ -4,7 +4,6 @@ import { siteContent } from '../../content';
 import { useTheme } from '../../context/ThemeContext';
 import { Section } from '../layout/Section';
 import { Reveal } from '../motion/Reveal';
-import { GlowButton } from '../ui/GlowButton';
 import { typography } from '../../lib/typography';
 import { cn } from '../../lib/utils';
 
@@ -127,10 +126,10 @@ export const BlogArticlePage = ({
                   : 'bg-white/60 border-black/5 hover:border-accent/30 shadow-xl focus-visible:ring-offset-[#fafafa]'
               )}
             >
-              <div className="flex flex-row w-full items-stretch gap-6 p-6 sm:p-8">
+              <div className="flex w-full flex-row items-stretch gap-4 p-4 sm:gap-6 sm:p-8">
                 <div
                   className={cn(
-                    "self-stretch h-full aspect-[16/10] w-auto max-w-[45%] rounded-mini overflow-hidden border flex-shrink-0",
+                    "self-stretch aspect-[16/10] w-[42%] min-w-[132px] max-w-[180px] rounded-mini overflow-hidden border flex-shrink-0 sm:w-auto sm:max-w-[45%]",
                     darkMode ? "border-white/10" : "border-black/10"
                   )}
                 >
@@ -144,25 +143,20 @@ export const BlogArticlePage = ({
                     className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                   />
                 </div>
-                <div className="flex min-w-0 flex-1 flex-col">
-                  <div className={cn('flex items-center gap-3 mb-3', typography.labelXs, typography.textMuted)}>
-                    <span className="px-3 py-1 rounded-mini bg-accent/20 border border-accent/30 text-accent">
+                <div className="flex min-w-0 flex-1 flex-col justify-center">
+                  <div className={cn('mb-2 flex items-center gap-2 sm:mb-3 sm:gap-3', typography.labelXs, typography.textMuted)}>
+                    <span className="px-2.5 py-1 rounded-mini bg-accent/20 border border-accent/30 text-accent">
                       {nextPost.category}
                     </span>
                     <span>{nextPost.date}</span>
                     <span>{nextPost.readTime}</span>
                   </div>
-                  <h3 className={cn(typography.h3Display, 'mb-3 group-hover:text-accent transition-colors', darkMode ? 'text-white' : 'text-black')}>
+                  <h3 className={cn(typography.h3Display, 'mb-2 line-clamp-2 group-hover:text-accent transition-colors sm:mb-3', darkMode ? 'text-white' : 'text-black')}>
                     {nextPost.title}
                   </h3>
-                  <p className={cn(typography.body, 'font-medium line-clamp-2', typography.textSubtle)}>
+                  <p className={cn(typography.body, 'font-medium line-clamp-3', typography.textSubtle)}>
                     {nextPost.excerpt}
                   </p>
-                  <div className="mt-6">
-                    <GlowButton size="cta" as="span">
-                      {siteContent.writing.readArticleLabel}
-                    </GlowButton>
-                  </div>
                 </div>
               </div>
             </button>

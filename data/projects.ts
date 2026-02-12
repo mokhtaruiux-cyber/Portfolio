@@ -20,7 +20,7 @@ export const projects: Project[] = [
       'A comprehensive smart solution designed to streamline restaurant operations, from order management to high-end customer engagement. Built with performance and scalability in mind.',
     impact: 'Cut order friction and improved on-premise efficiency across peak hours.',
     image: stockImage('Nodel@4x.webp'),
-    tags: ['Product Design', 'Hospitality', 'SaaS'],
+    tags: ['Product Design', 'Hospitality', 'SAAS'],
     metrics: [
       { label: 'Efficiency', value: '+40%' },
       { label: 'Satisfaction', value: '4.9' },
@@ -69,7 +69,7 @@ export const projects: Project[] = [
   {
     id: '2',
     slug: 'homecare-medical-app',
-    title: 'Home care Medical App',
+    title: 'Home Care App',
     category: 'Mobile Apps',
     type: 'Healthcare App',
     industry: 'Healthcare',
@@ -91,18 +91,18 @@ export const projects: Project[] = [
     gallery: [
       {
         type: 'image',
-        src: stockImage('Home Care@4x.webp'),
-        alt: 'Home care patient dashboard',
+        src: stockImage('Home Care Presentation@1x.webp'),
+        alt: 'Home Care presentation hero',
       },
       {
         type: 'image',
-        src: stockImage('Home Care@4x.webp'),
-        alt: 'Caregiver scheduling flow',
+        src: stockImage('Home Care Presentation@1x.webp'),
+        alt: 'Home Care presentation section',
       },
       {
-        type: 'video',
-        src: stockImage('Home Care@4x.webp'),
-        alt: 'Home care app demo',
+        type: 'image',
+        src: stockImage('Home Care Presentation@1x.webp'),
+        alt: 'Home Care presentation closing',
       },
     ],
     caseStudySections: [

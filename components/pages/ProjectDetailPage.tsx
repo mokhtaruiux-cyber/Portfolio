@@ -1,6 +1,5 @@
-import React from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ArrowLeft, ArrowUpRight } from 'lucide-react';
 import { Project } from '../../types';
 import { siteContent } from '../../content';
 import { useTheme } from '../../context/ThemeContext';
@@ -8,7 +7,15 @@ import { Section } from '../layout/Section';
 import { typography } from '../../lib/typography';
 import { cn } from '../../lib/utils';
 import { GlowButton } from '../ui/GlowButton';
+import { ProjectImageViewer } from '../ui/ProjectImageViewer';
+import { ProjectTagChips } from '../ui/ProjectTagChips';
 import { stagger, viewportDefaults } from '../../lib/motionTokens';
+
+type ViewerImage = {
+  src: string;
+  alt: string;
+  id: string;
+};
 
 const ProjectMetaItem = ({ label, value, darkMode }: { label: string; value: string; darkMode: boolean }) => {
   return (
@@ -24,7 +31,15 @@ const ProjectMetaItem = ({ label, value, darkMode }: { label: string; value: str
   );
 };
 
-const ProjectGalleryItem = ({ item, darkMode }: { item: Project['gallery'][number]; darkMode: boolean }) => {
+const ProjectGalleryItem = ({
+  item,
+  darkMode,
+  onOpen,
+}: {
+  item: Project['gallery'][number];
+  darkMode: boolean;
+  onOpen: (event: React.MouseEvent<HTMLButtonElement>) => void;
+}) => {
   return (
     <div
       className={cn(
@@ -32,18 +47,25 @@ const ProjectGalleryItem = ({ item, darkMode }: { item: Project['gallery'][numbe
         darkMode ? 'bg-black/40 border-white/10' : 'bg-white/60 border-black/5'
       )}
     >
-      <img
-        src={item.src}
-        alt={item.alt}
-        loading="lazy"
-        decoding="async"
-        width={1600}
-        height={1000}
-        sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-        className="w-full h-full object-cover"
-      />
+      <button
+        type="button"
+        onClick={onOpen}
+        className="block h-full w-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 focus-visible:ring-offset-2"
+        aria-label={`Open image viewer: ${item.alt}`}
+      >
+        <img
+          src={item.src}
+          alt={item.alt}
+          loading="lazy"
+          decoding="async"
+          width={1600}
+          height={1000}
+          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+          className="h-full w-full object-cover"
+        />
+      </button>
       {item.type === 'video' && (
-        <div className="absolute inset-0 bg-black/45 flex items-center justify-center">
+        <div className="pointer-events-none absolute inset-0 bg-black/45 flex items-center justify-center">
           <span className={cn(typography.labelXs, 'tracking-[0.3em] text-white')}>{siteContent.projectDetail.videoLabel}</span>
         </div>
       )}
@@ -54,18 +76,50 @@ const ProjectGalleryItem = ({ item, darkMode }: { item: Project['gallery'][numbe
 export const ProjectDetailPage = ({
   project,
   nextProject,
-  onBack,
   onNextProject,
 }: {
   project: Project;
   nextProject?: Project;
-  onBack: () => void;
   onNextProject: (slug: string) => void;
 }) => {
   const { darkMode } = useTheme();
+  const isBehanceStyleGallery = project.slug === 'homecare-medical-app';
+  const [isViewerOpen, setIsViewerOpen] = useState(false);
+  const [initialViewerIndex, setInitialViewerIndex] = useState(0);
+  const galleryTriggerRefs = useRef<Array<HTMLButtonElement | null>>([]);
+
+  const viewerImages = useMemo<ViewerImage[]>(
+    () =>
+      project.gallery.map((item, index) => ({
+        src: item.src,
+        alt: item.alt,
+        id: `${project.slug}-image-${index}`,
+      })),
+    [project.gallery, project.slug]
+  );
+
+  const openViewerAt = useCallback((index: number, trigger: HTMLButtonElement | null) => {
+    galleryTriggerRefs.current[index] = trigger;
+    setInitialViewerIndex(index);
+    setIsViewerOpen(true);
+  }, []);
+
+  const closeViewer = useCallback(() => {
+    setIsViewerOpen(false);
+  }, []);
+
   return (
     <>
-      <Section className="pt-28 md:pt-36">
+      <ProjectImageViewer
+        images={viewerImages}
+        initialIndex={initialViewerIndex}
+        projectTitle={project.title}
+        projectSubtitle={project.description}
+        isOpen={isViewerOpen}
+        onClose={closeViewer}
+      />
+
+      <Section className={cn('pt-28 md:pt-36', isBehanceStyleGallery && 'pb-0')}>
         <div className="text-left space-y-10">
           <div className="space-y-4">
             <span className={cn(typography.labelXs, 'tracking-[0.3em] text-accent')}>{project.category}</span>
@@ -98,21 +152,63 @@ export const ProjectDetailPage = ({
         </div>
       </Section>
 
-      <Section eyebrow={siteContent.projectDetail.galleryEyebrow}>
-        <motion.div
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
-          variants={stagger.container(0.1, 0.08)}
-          initial="initial"
-          whileInView="animate"
-          viewport={viewportDefaults}
-        >
-          {project.gallery.map((item, index) => (
-            <motion.div key={`${project.slug}-gallery-${index}`} variants={stagger.item}>
-              <ProjectGalleryItem item={item} darkMode={darkMode} />
-            </motion.div>
-          ))}
-        </motion.div>
-      </Section>
+      {isBehanceStyleGallery ? (
+        <Section className="pb-0 pt-6 md:pt-8">
+          <motion.div
+            className="space-y-0"
+            variants={stagger.container(0.1, 0.08)}
+            initial="initial"
+            whileInView="animate"
+            viewport={viewportDefaults}
+          >
+            {project.gallery.map((item, index) => (
+              <motion.div key={`${project.slug}-gallery-${index}`} variants={stagger.item} className="w-full">
+                <button
+                  type="button"
+                  ref={(node) => {
+                    galleryTriggerRefs.current[index] = node;
+                  }}
+                  onClick={(event) => openViewerAt(index, event.currentTarget)}
+                  className={cn(
+                    'block w-full overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 focus-visible:ring-offset-2',
+                    index === 0 && 'rounded-t-[16px] sm:rounded-t-[20px] md:rounded-t-[24px]',
+                    index === project.gallery.length - 1 && 'rounded-b-[16px] sm:rounded-b-[20px] md:rounded-b-[24px]'
+                  )}
+                  aria-label={`Open image viewer: ${item.alt}`}
+                >
+                  <img
+                    src={item.src}
+                    alt={item.alt}
+                    loading="lazy"
+                    decoding="async"
+                    className="block h-auto w-full"
+                  />
+                </button>
+              </motion.div>
+            ))}
+          </motion.div>
+        </Section>
+      ) : (
+        <Section eyebrow={siteContent.projectDetail.galleryEyebrow}>
+          <motion.div
+            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
+            variants={stagger.container(0.1, 0.08)}
+            initial="initial"
+            whileInView="animate"
+            viewport={viewportDefaults}
+          >
+            {project.gallery.map((item, index) => (
+              <motion.div key={`${project.slug}-gallery-${index}`} variants={stagger.item}>
+                <ProjectGalleryItem
+                  item={item}
+                  darkMode={darkMode}
+                  onOpen={(event) => openViewerAt(index, event.currentTarget)}
+                />
+              </motion.div>
+            ))}
+          </motion.div>
+        </Section>
+      )}
 
       <Section eyebrow={siteContent.projectDetail.caseStudyEyebrow}>
         <motion.div
@@ -152,7 +248,7 @@ export const ProjectDetailPage = ({
         <Section>
           <div className="w-full text-left">
             <h3 className={cn(typography.h3, 'font-black mb-4 text-white')}>
-              {siteContent.projectDetail.nextProjectLabel}
+              Up Next
             </h3>
             <button
               type="button"
@@ -164,10 +260,10 @@ export const ProjectDetailPage = ({
                   : 'bg-white/60 border-black/5 hover:border-accent/30 shadow-xl focus-visible:ring-offset-[#fafafa]'
               )}
             >
-              <div className="flex flex-row w-full items-stretch gap-6 p-6 sm:p-8">
+              <div className="flex w-full flex-col items-stretch gap-4 p-4 sm:gap-6 sm:p-8 md:flex-row">
                 <div
                   className={cn(
-                    "self-stretch h-full aspect-[16/10] w-auto max-w-[45%] rounded-mini overflow-hidden border flex-shrink-0",
+                    "w-full aspect-[16/10] rounded-mini overflow-hidden border flex-shrink-0 md:w-[42%] md:max-w-[45%] md:aspect-auto md:self-stretch",
                     darkMode ? "border-white/10" : "border-black/10"
                   )}
                 >
@@ -181,23 +277,19 @@ export const ProjectDetailPage = ({
                     className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
                   />
                 </div>
-                <div className="flex min-w-0 flex-1 flex-col">
-                  <div className={cn('flex items-center gap-3 mb-3', typography.labelXs, typography.textMuted)}>
-                    <span className="px-3 py-1 rounded-mini bg-accent/20 border border-accent/30 text-accent">
-                      {nextProject.category}
-                    </span>
-                    <span>{nextProject.year}</span>
-                    <span>{nextProject.type}</span>
+                <div className="flex min-w-0 flex-1 flex-col md:justify-between">
+                  <div className="space-y-3">
+                    <ProjectTagChips tags={nextProject.tags} className="mb-1" />
+                    <h3 className={cn(typography.h3Display, 'mb-2 line-clamp-2 group-hover:text-accent transition-colors sm:mb-3', darkMode ? 'text-white' : 'text-black')}>
+                      {nextProject.title}
+                    </h3>
+                    <p className={cn(typography.body, 'font-medium line-clamp-3', typography.textSubtle)}>
+                      {nextProject.description}
+                    </p>
                   </div>
-                  <h3 className={cn(typography.h3Display, 'mb-3 group-hover:text-accent transition-colors', darkMode ? 'text-white' : 'text-black')}>
-                    {nextProject.title}
-                  </h3>
-                  <p className={cn(typography.body, 'font-medium line-clamp-2', typography.textSubtle)}>
-                    {nextProject.description}
-                  </p>
-                  <div className="mt-6">
+                  <div className="mt-5 sm:mt-6">
                     <GlowButton size="cta" as="span">
-                      {siteContent.projectDetail.nextProjectButton} <ArrowUpRight size={20} />
+                      {siteContent.projectDetail.nextProjectButton}
                     </GlowButton>
                   </div>
                 </div>
@@ -206,23 +298,6 @@ export const ProjectDetailPage = ({
           </div>
         </Section>
       )}
-
-      <Section>
-        <div className="mx-auto flex w-full max-w-[60ch] flex-col items-start text-left">
-          <button
-            type="button"
-            onClick={onBack}
-            className={cn(
-              'flex items-center gap-2 hover:opacity-100 hover:text-accent transition-all font-medium group',
-              typography.body,
-              typography.textSubtle
-            )}
-          >
-            <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-            {siteContent.projectDetail.backToWorkLabel}
-          </button>
-        </div>
-      </Section>
     </>
   );
 };
