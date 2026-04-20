@@ -45,10 +45,3 @@ export function useCanHover(): boolean {
 export function useIsDesktop(): boolean {
     return useMediaQuery('(min-width: 768px)');
 }
-
-/**
- * Check if user prefers reduced motion
- */
-export function usePrefersReducedMotion(): boolean {
-    return useMediaQuery('(prefers-reduced-motion: reduce)');
-}

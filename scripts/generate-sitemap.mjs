@@ -5,7 +5,7 @@
  * 
  * Add new routes here when adding pages to the app.
  */
-import { writeFile } from 'node:fs/promises';
+import { access, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 
 const raw = process.env.VITE_SITE_URL;
@@ -18,8 +18,15 @@ if (isPlaceholder) {
     console.error('VITE_SITE_URL is required to generate sitemap.xml in CI/production.');
     process.exit(1);
   }
-  baseUrl = 'https://example.com';
-  console.warn('VITE_SITE_URL is missing; defaulting sitemap base to https://example.com to avoid localhost output.');
+  const outputPath = path.resolve(process.cwd(), 'public', 'sitemap.xml');
+  try {
+    await access(outputPath);
+    console.warn(`VITE_SITE_URL is missing; keeping existing sitemap at ${outputPath}.`);
+    process.exit(0);
+  } catch {
+    console.warn('VITE_SITE_URL is missing; skipping sitemap generation outside CI.');
+    process.exit(0);
+  }
 }
 
 const siteUrl = baseUrl.replace(/\/+$/, '');

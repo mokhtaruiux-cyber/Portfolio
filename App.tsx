@@ -1,12 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Navigate, Route, Routes, useLocation, useMatch, useNavigate } from 'react-router-dom';
+import { Route, Routes, useLocation, useMatch, useNavigate } from 'react-router-dom';
 
 import { siteContent } from './content';
 import { PageKey } from './types';
 import { transitions, variants } from './lib/motionTokens';
 import { typography } from './lib/typography';
 import { cn } from './lib/utils';
+import { applySeoMetadata } from './lib/seo';
+import { useAppScroll } from './hooks/useAppScroll';
 
 import { LivingBackground } from './components/background/LivingBackground';
 import { ScrollProgress } from './components/motion/ScrollProgress';
@@ -31,6 +33,7 @@ import { ProjectCardWrapper } from './components/cards/ProjectCardWrapper';
 import { BlogIndexPage } from './components/pages/BlogIndexPage';
 import { BlogArticlePage } from './components/pages/BlogArticlePage';
 import { ProjectDetailPage } from './components/pages/ProjectDetailPage';
+import { NotFoundPage } from './components/pages/NotFoundPage';
 
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
@@ -49,6 +52,8 @@ const pageToPath = (page: PageKey, slug = '') => {
       return slug ? `/blog/${slug}` : '/blog';
     case 'about':
       return '/about';
+    case 'not-found':
+      return '/';
     case 'home':
     default:
       return '/';
@@ -56,6 +61,7 @@ const pageToPath = (page: PageKey, slug = '') => {
 };
 
 export default function App() {
+  const { scrollTo, scrollToId } = useAppScroll();
   const [hasManualTheme, setHasManualTheme] = useState(() => {
     if (typeof window === 'undefined') return true;
     try {
@@ -86,7 +92,10 @@ export default function App() {
   const aboutMatch = useMatch({ path: '/about', end: true });
   const homeMatch = useMatch({ path: '/', end: true });
 
-  const currentPage: PageKey = projectDetailMatch
+  const projectSlug = projectDetailMatch?.params.slug ?? '';
+  const blogSlug = blogDetailMatch?.params.slug ?? '';
+
+  const routePage: PageKey = projectDetailMatch
     ? 'project-details'
     : blogDetailMatch
       ? 'blog-details'
@@ -98,7 +107,7 @@ export default function App() {
             ? 'about'
             : homeMatch
               ? 'home'
-              : 'home';
+              : 'not-found';
 
   const workFilters = siteContent.featuredWork.filters;
   const allProjectsFilter = workFilters[0];
@@ -152,7 +161,7 @@ export default function App() {
       if (storedY !== null) {
         const y = Number.parseInt(storedY, 10);
         if (!Number.isNaN(y)) {
-          window.scrollTo({ top: y, left: 0, behavior: 'auto' });
+          scrollTo(y, { immediate: true });
           restored = true;
         }
         window.sessionStorage.removeItem(key);
@@ -161,9 +170,9 @@ export default function App() {
       // Ignore storage errors.
     }
     if (!restored) {
-      window.scrollTo({ top: 0 });
+      scrollTo(0, { immediate: true });
     }
-  }, [location.pathname]);
+  }, [location.pathname, scrollTo]);
 
   useEffect(() => {
     const key = `scrollY:${location.pathname}`;
@@ -179,7 +188,7 @@ export default function App() {
   }, [location.pathname]);
 
   useEffect(() => {
-    if (currentPage !== 'home') return;
+    if (routePage !== 'home') return;
     let targetId: string | null = null;
     try {
       targetId = window.sessionStorage.getItem('scrollToSection');
@@ -192,7 +201,7 @@ export default function App() {
     const intervalId = window.setInterval(() => {
       const target = document.getElementById(targetId);
       if (target) {
-        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        scrollTo(target, { offset: 112 });
         try {
           window.sessionStorage.removeItem('scrollToSection');
         } catch {
@@ -214,7 +223,7 @@ export default function App() {
     return () => {
       window.clearInterval(intervalId);
     };
-  }, [currentPage]);
+  }, [routePage, scrollTo]);
 
   const navigateTo = useCallback((page: PageKey, slug = '') => {
     navigate(pageToPath(page, slug));
@@ -249,9 +258,6 @@ export default function App() {
     return orderedProjects.filter((project) => project.category === activeFilter.category);
   }, [filter, workFilters, allProjectsFilter, orderedProjects]);
 
-  const projectSlug = projectDetailMatch?.params.slug ?? '';
-  const blogSlug = blogDetailMatch?.params.slug ?? '';
-
   const activeProject = useMemo(
     () => orderedProjects.find((project) => project.slug === projectSlug),
     [projectSlug, orderedProjects]
@@ -273,6 +279,11 @@ export default function App() {
     if (index === -1) return undefined;
     return siteContent.writing.items[(index + 1) % siteContent.writing.items.length];
   }, [activePost]);
+
+  const currentPage: PageKey =
+    (routePage === 'project-details' && !activeProject) || (routePage === 'blog-details' && !activePost)
+      ? 'not-found'
+      : routePage;
 
   const seo = useMemo(() => {
     const baseTitle = siteContent.seo.title;
@@ -306,24 +317,26 @@ export default function App() {
         description: siteContent.about.subtitle,
       };
     }
+    if (currentPage === 'not-found') {
+      return {
+        title: `404 — ${baseTitle}`,
+        description: `The page ${location.pathname} could not be found.`,
+      };
+    }
     return {
       title: baseTitle,
       description: siteContent.seo.description,
     };
-  }, [activePost, activeProject, currentPage]);
+  }, [activePost, activeProject, currentPage, location.pathname]);
 
   useEffect(() => {
-    document.title = seo.title;
-    const existing = document.querySelector('meta[name="description"]');
-    if (existing) {
-      existing.setAttribute('content', seo.description);
-      return;
-    }
-    const meta = document.createElement('meta');
-    meta.name = 'description';
-    meta.content = seo.description;
-    document.head.appendChild(meta);
-  }, [seo.description, seo.title]);
+    applySeoMetadata({
+      title: seo.title,
+      description: seo.description,
+      pathname: location.pathname,
+      robots: currentPage === 'not-found' ? 'noindex, follow' : 'index, follow',
+    });
+  }, [currentPage, location.pathname, seo.description, seo.title]);
 
   const routeAnnouncement = useMemo(() => {
     if (activeProject) return `Project ${activeProject.title} page loaded`;
@@ -331,12 +344,13 @@ export default function App() {
     if (currentPage === 'work') return 'Work page loaded';
     if (currentPage === 'blog') return 'Blog page loaded';
     if (currentPage === 'about') return 'About page loaded';
+    if (currentPage === 'not-found') return 'Page not found';
     return 'Home page loaded';
   }, [activePost, activeProject, currentPage]);
 
   const homeElement = (
     <>
-      <Hero onWorkClick={() => document.getElementById('work')?.scrollIntoView({ behavior: 'smooth' })} />
+      <Hero onWorkClick={() => scrollToId('work', { offset: 112 })} />
       <CompaniesLogos />
       <AboutSection />
       <HowIHelpSection />
@@ -397,6 +411,16 @@ export default function App() {
     </div>
   );
 
+  const notFoundElement = (
+    <NotFoundPage
+      pathname={location.pathname}
+      darkMode={darkMode}
+      onGoHome={() => navigateTo('home')}
+      onViewWork={() => navigateTo('work')}
+      onReadBlog={() => navigateTo('blog')}
+    />
+  );
+
   return (
     <ThemeProvider value={{ darkMode, setDarkMode: handleSetDarkMode }}>
       <div className={cn('min-h-screen transition-colors duration-1000 selection:bg-blue-600 selection:text-white pb-[env(safe-area-inset-bottom)]', darkMode ? 'bg-[#030303] text-white' : 'bg-[#fafafa] text-black')}>
@@ -428,7 +452,7 @@ export default function App() {
                           onNextProject={handleProjectClick}
                         />
                       ) : (
-                        <Navigate to="/projects" replace />
+                        notFoundElement
                       )
                     }
                   />
@@ -443,12 +467,12 @@ export default function App() {
                           onNextPost={handleBlogClick}
                         />
                       ) : (
-                        <Navigate to="/blog" replace />
+                        notFoundElement
                       )
                     }
                   />
                   <Route path="/about" element={aboutElement} />
-                  <Route path="*" element={<Navigate to="/" replace />} />
+                  <Route path="*" element={notFoundElement} />
                 </Routes>
               </motion.div>
             </AnimatePresence>

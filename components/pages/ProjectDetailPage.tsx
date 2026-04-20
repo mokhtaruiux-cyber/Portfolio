@@ -111,6 +111,7 @@ export const ProjectDetailPage = ({
   return (
     <>
       <ProjectImageViewer
+        key={`${project.slug}-${isViewerOpen ? initialViewerIndex : 'closed'}`}
         images={viewerImages}
         initialIndex={initialViewerIndex}
         projectTitle={project.title}

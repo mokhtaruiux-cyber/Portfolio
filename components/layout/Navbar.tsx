@@ -9,6 +9,7 @@ import { cn } from '../../lib/utils';
 import { typography } from '../../lib/typography';
 import { Container } from './Container';
 import { GlowButton } from '../ui/GlowButton';
+import { useAppScroll } from '../../hooks/useAppScroll';
 
 interface NavbarProps {
   currentPage: PageKey;
@@ -16,6 +17,7 @@ interface NavbarProps {
 }
 
 export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
+  const { scrollToId } = useAppScroll();
   const { darkMode, setDarkMode } = useTheme();
   const [scrolled, setScrolled] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -34,10 +36,10 @@ export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
   useEffect(() => {
     if (currentPage !== 'home' || !pendingSection) return;
     requestAnimationFrame(() => {
-      document.getElementById(pendingSection)?.scrollIntoView({ behavior: 'smooth' });
+      scrollToId(pendingSection, { offset: 112 });
       setPendingSection(null);
     });
-  }, [currentPage, pendingSection]);
+  }, [currentPage, pendingSection, scrollToId]);
 
   useEffect(() => {
     if (!isMenuOpen) return;
@@ -87,7 +89,7 @@ export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
         setPendingSection(sectionId);
         onNavigate('home');
       } else {
-        document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' });
+        scrollToId(sectionId, { offset: 112 });
       }
       setIsMenuOpen(false);
       return;

@@ -10,7 +10,7 @@ export type CaseStudySection = {
   content: string;
 };
 
-export type PageKey = "home" | "work" | "blog" | "project-details" | "blog-details" | "about";
+export type PageKey = "home" | "work" | "blog" | "project-details" | "blog-details" | "about" | "not-found";
 
 export type ProcessStep = {
   id: string;

@@ -5,6 +5,7 @@ import { Container } from './Container';
 import { useTheme } from '../../context/ThemeContext';
 import { typography } from '../../lib/typography';
 import { cn } from '../../lib/utils';
+import { useAppScroll } from '../../hooks/useAppScroll';
 
 type FooterNavLink = (typeof siteContent.footer.columns)[number]['links'][number];
 
@@ -15,6 +16,7 @@ export const Footer = ({
   currentPage: PageKey;
   onNavigate: (page: PageKey) => void;
 }) => {
+  const { scrollToId } = useAppScroll();
   const { darkMode } = useTheme();
   const footerColumns = siteContent.footer.columns;
   const { cal } = siteContent;
@@ -23,10 +25,10 @@ export const Footer = ({
   useEffect(() => {
     if (currentPage !== 'home' || !pendingSection) return;
     requestAnimationFrame(() => {
-      document.getElementById(pendingSection)?.scrollIntoView({ behavior: 'smooth' });
+      scrollToId(pendingSection, { offset: 112 });
       setPendingSection(null);
     });
-  }, [currentPage, pendingSection]);
+  }, [currentPage, pendingSection, scrollToId]);
 
   const handleFooterNavigation = (link: FooterNavLink) => {
     if (link.sectionId) {
@@ -34,7 +36,7 @@ export const Footer = ({
         setPendingSection(link.sectionId);
         onNavigate('home');
       } else {
-        document.getElementById(link.sectionId)?.scrollIntoView({ behavior: 'smooth' });
+        scrollToId(link.sectionId, { offset: 112 });
       }
       return;
     }

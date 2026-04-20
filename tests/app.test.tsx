@@ -42,4 +42,18 @@ describe('App routing and landmarks', () => {
     });
     expect(heading).toBeInTheDocument();
   });
+
+  it('renders a not-found page for an unknown route', () => {
+    renderWithRoute('/does-not-exist');
+    expect(
+      screen.getByRole('heading', { name: /the page you requested does not exist/i })
+    ).toBeInTheDocument();
+    expect(document.title).toMatch(/^404 — /);
+  });
+
+  it('renders a not-found page for an unknown project slug', () => {
+    renderWithRoute('/projects/not-a-real-project');
+    expect(screen.getByText('/projects/not-a-real-project')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: /back home/i })).toBeInTheDocument();
+  });
 });

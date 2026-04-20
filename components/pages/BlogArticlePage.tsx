@@ -1,6 +1,5 @@
 import React from 'react';
 import { BlogContentBlock, BlogPost } from '../../types';
-import { siteContent } from '../../content';
 import { useTheme } from '../../context/ThemeContext';
 import { Section } from '../layout/Section';
 import { Reveal } from '../motion/Reveal';

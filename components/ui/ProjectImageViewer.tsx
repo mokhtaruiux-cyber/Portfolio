@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { useLenis } from 'lenis/react';
 import { X } from 'lucide-react';
 
 type ProjectViewerImage = {
@@ -42,24 +43,19 @@ export const ProjectImageViewer: React.FC<ProjectImageViewerProps> = ({
   isOpen,
   onClose,
 }) => {
+  const lenis = useLenis();
   const reduceMotion = useReducedMotion();
   const dialogRef = useRef<HTMLDivElement | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
   const scrollRef = useRef<HTMLDivElement | null>(null);
   const previousFocusedRef = useRef<HTMLElement | null>(null);
   const itemRefs = useRef<Array<HTMLElement | null>>([]);
-  const [activeIndex, setActiveIndex] = useState(initialIndex);
-
   const safeInitialIndex = Math.max(0, Math.min(initialIndex, Math.max(images.length - 1, 0)));
+  const [activeIndex, setActiveIndex] = useState(safeInitialIndex);
 
   useEffect(() => {
     itemRefs.current = Array.from({ length: images.length }, (_, index) => itemRefs.current[index] ?? null);
   }, [images.length]);
-
-  useEffect(() => {
-    if (!isOpen) return;
-    setActiveIndex(safeInitialIndex);
-  }, [isOpen, safeInitialIndex]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -79,6 +75,7 @@ export const ProjectImageViewer: React.FC<ProjectImageViewerProps> = ({
     body.style.top = `-${scrollY}px`;
     body.style.width = '100%';
     body.style.overflow = 'hidden';
+    lenis?.stop();
     if (scrollbarWidth > 0) {
       body.style.paddingRight = `${scrollbarWidth}px`;
     }
@@ -89,9 +86,10 @@ export const ProjectImageViewer: React.FC<ProjectImageViewerProps> = ({
       body.style.width = original.width;
       body.style.overflow = original.overflow;
       body.style.paddingRight = original.paddingRight;
+      lenis?.start();
       window.scrollTo(0, scrollY);
     };
-  }, [isOpen]);
+  }, [isOpen, lenis]);
 
   useEffect(() => {
     if (!isOpen) return;
@@ -227,6 +225,7 @@ export const ProjectImageViewer: React.FC<ProjectImageViewerProps> = ({
 
           <div
             ref={scrollRef}
+            data-lenis-prevent
             className="relative h-dvh overflow-y-auto px-4 pb-10 pt-[max(.75rem,env(safe-area-inset-top))] sm:px-8 sm:pb-12 md:px-10 lg:px-12"
             onClick={(event) => {
               if (event.target === event.currentTarget) onClose();
