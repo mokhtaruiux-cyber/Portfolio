@@ -34,6 +34,7 @@ import { BlogIndexPage } from './components/pages/BlogIndexPage';
 import { BlogArticlePage } from './components/pages/BlogArticlePage';
 import { ProjectDetailPage } from './components/pages/ProjectDetailPage';
 import { NotFoundPage } from './components/pages/NotFoundPage';
+import { PageIntro } from './components/layout/PageIntro';
 
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
@@ -358,7 +359,7 @@ export default function App() {
       <ProcessReelSection />
       <Section id="work" eyebrow={siteContent.featuredWork.eyebrow} motion="fade">
         <div className="mb-10 text-left">
-          <BlurIn as="h3" className={cn(typography.h2, 'font-black max-w-[24ch]', darkMode ? 'text-white' : 'text-black')}>
+          <BlurIn as="h2" className={cn(typography.h2, 'font-black max-w-[24ch] text-balance', darkMode ? 'text-white' : 'text-black')}>
             {siteContent.featuredWork.title} <br /> <span className="text-accent">{siteContent.featuredWork.highlight}</span>
           </BlurIn>
         </div>
@@ -386,21 +387,31 @@ export default function App() {
   );
 
   const workElement = (
-    <Section className="min-h-screen" eyebrow={siteContent.featuredWork.archive.eyebrow}>
-      <div className="mb-10 text-left">
-        <BlurIn as="h3" className={cn(typography.h2, 'font-black max-w-[24ch]', darkMode ? 'text-white' : 'text-black')}>
-          {siteContent.featuredWork.archive.title}
-        </BlurIn>
-      </div>
-      <div className="space-y-24">
-        {orderedProjects.map((project) => (
-          <ProjectCardWrapper
-            key={project.id}
-            project={project}
-            onClick={handleProjectClick}
+    <Section className="pb-8 pt-32 md:pb-10 md:pt-36" eyebrow={siteContent.featuredWork.archive.eyebrow}>
+      <PageIntro
+        title="The"
+        highlight="Archive."
+        description="A full index of selected case studies, systems, and product work across apps, websites, and service platforms."
+        darkMode={darkMode}
+        className="mb-10"
+      />
+
+      <div className="sticky top-28 sm:top-32 z-40 mb-8 py-2 pointer-events-none">
+        <Reveal delay={0.15} className="pointer-events-auto flex justify-start">
+          <SegmentTabs
+            tabs={workFilters.map((item) => item.label)}
+            activeTab={filter}
+            onChange={setFilter}
           />
-        ))}
+        </Reveal>
       </div>
+
+      <StackedCards
+        items={filteredProjects}
+        renderItem={(project) => (
+          <ProjectCardWrapper project={project} onClick={handleProjectClick} />
+        )}
+      />
     </Section>
   );
 
@@ -479,7 +490,11 @@ export default function App() {
           </ErrorBoundary>
           {currentPage !== 'blog-details' && <CTASection />}
         </main>
-        <Footer currentPage={currentPage} onNavigate={navigateTo} />
+        <Footer
+          currentPage={currentPage}
+          onNavigate={navigateTo}
+          spacing={currentPage === 'home' || currentPage === 'blog-details' ? 'expanded' : currentPage === 'work' || currentPage === 'blog' || currentPage === 'not-found' ? 'compact' : 'default'}
+        />
       </div>
     </ThemeProvider>
   );

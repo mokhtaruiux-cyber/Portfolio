@@ -151,6 +151,7 @@ export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
               <GlowButton
                 className="hidden md:inline-flex"
                 size="cta"
+                glow
                 calLink={cal.link}
                 calNamespace={cal.namespace}
                 calConfig={cal.configJson}
@@ -231,6 +232,7 @@ export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
                   size="cta"
                   fullWidth
                   className="w-full"
+                  glow
                   calLink={cal.link}
                   calNamespace={cal.namespace}
                   calConfig={cal.configJson}

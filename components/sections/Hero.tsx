@@ -52,7 +52,10 @@ export const Hero = ({ onWorkClick }: { onWorkClick: () => void }) => {
 
             <div className="flex flex-col items-center w-full mt-10 sm:mt-8 gap-5 sm:gap-4">
               <motion.div className="relative z-10 w-full">
-                <h1 className={cn(typography.h1, 'font-black max-w-[18ch] block mx-auto !text-center', darkMode ? 'text-white' : 'text-black')}>
+                <h1
+                  aria-label={siteContent.hero.title}
+                  className={cn(typography.h1, 'font-black max-w-[18ch] block mx-auto !text-center text-balance', darkMode ? 'text-white' : 'text-black')}
+                >
                   <TypingEffect as="span" text={siteContent.hero.title} />
                 </h1>
               </motion.div>

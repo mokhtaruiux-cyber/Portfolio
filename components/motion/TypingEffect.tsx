@@ -53,22 +53,23 @@ export function TypingEffect({
     }), [duration]);
 
     if (reduceMotion) {
-        return (
-            <MotionComponent
-                ref={ref}
-                className={cn("font-black tracking-tighter relative inline-block", className)}
-            >
+    return (
+        <MotionComponent
+            ref={ref}
+            aria-hidden="true"
+            className={cn("font-black tracking-tighter relative inline-block", className)}
+        >
                 {text}
-            </MotionComponent>
-        );
+        </MotionComponent>
+    );
     }
 
     return (
         <MotionComponent
             ref={ref}
+            aria-hidden="true"
             className={cn("font-black tracking-tighter relative inline-block", className)}
         >
-            <span className="sr-only">{text}</span>
             <motion.span
                 aria-hidden="true"
                 className="inline-block"

@@ -12,15 +12,23 @@ type FooterNavLink = (typeof siteContent.footer.columns)[number]['links'][number
 export const Footer = ({
   currentPage,
   onNavigate,
+  spacing = 'default',
 }: {
   currentPage: PageKey;
   onNavigate: (page: PageKey) => void;
+  spacing?: 'compact' | 'default' | 'expanded';
 }) => {
   const { scrollToId } = useAppScroll();
   const { darkMode } = useTheme();
   const footerColumns = siteContent.footer.columns;
   const { cal } = siteContent;
   const [pendingSection, setPendingSection] = useState<string | null>(null);
+  const spacingClass =
+    spacing === 'compact'
+      ? 'pt-10 pb-10 sm:pt-16'
+      : spacing === 'expanded'
+        ? 'pt-24 pb-12 sm:pt-36'
+        : 'pt-16 pb-12 sm:pt-24';
 
   useEffect(() => {
     if (currentPage !== 'home' || !pendingSection) return;
@@ -46,7 +54,7 @@ export const Footer = ({
   };
 
   return (
-    <footer className={cn('pt-24 pb-12 sm:pt-48 border-t border-white/5 relative z-10', darkMode ? 'bg-[#030303]' : 'bg-[#fafafa]')}>
+    <footer className={cn(spacingClass, 'border-t border-white/5 relative z-10', darkMode ? 'bg-[#030303]' : 'bg-[#fafafa]')}>
       <Container>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 mb-24">
           <div className="lg:col-span-2 text-left">
