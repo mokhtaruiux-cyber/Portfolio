@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion, useScroll } from 'framer-motion';
+import { motion, useScroll, useSpring, useTransform } from 'motion/react';
 
 const isPageScrollable = () => {
   if (typeof document === 'undefined' || typeof window === 'undefined') return false;
@@ -10,12 +10,14 @@ const isPageScrollable = () => {
 
 const ScrollProgressBar: React.FC = () => {
   const { scrollYProgress } = useScroll();
-  const progressStyle = React.useMemo(() => ({ scaleX: scrollYProgress }), [scrollYProgress]);
+  const smoothProgress = useSpring(scrollYProgress, { stiffness: 140, damping: 32, mass: 0.2 });
+  const opacity = useTransform(scrollYProgress, [0, 0.015], [0, 1]);
+  const progressStyle = React.useMemo(() => ({ scaleX: smoothProgress, opacity }), [smoothProgress, opacity]);
 
   return (
     <div className="fixed top-0 left-0 right-0 z-top">
       <motion.div
-        className="relative h-1 bg-accent origin-left"
+        className="relative h-px bg-accent/90 origin-left"
         style={progressStyle}
       />
     </div>

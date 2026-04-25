@@ -33,6 +33,11 @@ const bookingUrl = `https://cal.com/${calLink}`;
 const calNamespace = 'book-call';
 const calConfig = { layout: 'month_view' } as const;
 const calConfigJson = JSON.stringify(calConfig);
+const visibleProjectSlugs = new Set(['homecare-medical-app', 'nodel-restaurant-system']);
+const publishedProjects = projects.filter((project) => !project.isDraft && visibleProjectSlugs.has(project.slug));
+const publicProjectCategories = new Set(publishedProjects.map((project) => project.category));
+const visibleTestimonialNames = new Set(['Christine Zaki', 'Noha Khattab', 'Kenza Mo', 'Shroug Alshehri', 'Mohammed Samir']);
+const publishedTestimonials = testimonials.filter((testimonial) => visibleTestimonialNames.has(testimonial.name));
 
 export const siteContent = {
   bookingUrl,
@@ -158,16 +163,15 @@ export const siteContent = {
       { label: 'All Projects', category: 'All Projects' },
       { label: 'Apps', category: 'Mobile Apps' },
       { label: 'Websites', category: 'Websites' },
-      { label: 'Dashboards', category: 'Dashboards' },
       { label: 'Design Systems', category: 'Design Systems' },
-    ],
+    ].filter((item) => item.category === 'All Projects' || publicProjectCategories.has(item.category)),
     archive: {
       eyebrow: 'All Projects',
       title: 'The Archive.',
     },
   },
   projects: {
-    items: projects,
+    items: publishedProjects,
     impactLabel: 'Impact',
   },
   projectDetail: {
@@ -205,7 +209,7 @@ export const siteContent = {
     title: 'Voices of',
     highlight: 'Impact.',
     description: 'Trusted by teams and leaders across regions to deliver high-impact digital products.',
-    items: testimonials,
+    items: publishedTestimonials,
   },
   finalCta: {
     badge: 'Available for new projects',
@@ -239,7 +243,7 @@ export const siteContent = {
     copyright: '© 2026 Mohammed Mokhtar • All Rights Reserved',
   },
   seo: {
-    title: 'Mokhtar — Digital Product Designer',
-    description: 'Digital product designer and creative engineer building scalable, high-impact experiences across web and mobile.',
+    title: 'Mohammed Mokhtar | Product Designer & Engineer',
+    description: 'Product designer and creative engineer crafting premium digital experiences.',
   },
 };

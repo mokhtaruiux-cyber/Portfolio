@@ -2,6 +2,7 @@ import React from 'react';
 import { BlurIn } from './BlurIn';
 import { cn } from '@/lib/utils';
 import { typography } from '@/lib/typography';
+import { masterTitleReveal, titleReveal } from '@/lib/motionTokens';
 
 interface SectionTitleProps {
   eyebrow?: string;
@@ -13,6 +14,7 @@ interface SectionTitleProps {
   prefix?: React.ReactNode;
   stackHighlight?: boolean;
   eyebrowClassName?: string;
+  stackWords?: boolean;
 }
 
 export const SectionTitle: React.FC<SectionTitleProps> = ({
@@ -20,11 +22,12 @@ export const SectionTitle: React.FC<SectionTitleProps> = ({
   title,
   highlight,
   align = 'left',
-  delay = 0,
+  delay = masterTitleReveal.sectionDelay,
   className,
   prefix,
   stackHighlight = false,
   eyebrowClassName,
+  stackWords = false,
 }) => {
   const alignment = {
     left: 'text-left items-start',
@@ -46,7 +49,8 @@ export const SectionTitle: React.FC<SectionTitleProps> = ({
       <BlurIn
         as="h2"
         className={cn(typography.h2, 'font-black max-w-[24ch]')}
-        delay={delay + 0.1}
+        delay={delay + titleReveal.headingDelay}
+        stackWords={stackWords}
       >
         {prefix && <span className="inline-flex mr-3 align-middle">{prefix}</span>}
         {title}

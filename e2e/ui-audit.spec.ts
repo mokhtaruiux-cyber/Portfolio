@@ -66,6 +66,8 @@ test.describe('UI audit (read-only visual proof)', () => {
       await page.setViewportSize({ width: vp.width, height: vp.height });
       await page.goto('/', { waitUntil: 'networkidle' });
       await page.waitForTimeout(300);
+      const stickyBar = page.locator('main div.sticky').first();
+      await expect(stickyBar).toHaveCount(1);
 
       // Move into the work section so the sticky filter bar can pin under the navbar.
       await page.evaluate(() => {
@@ -77,7 +79,6 @@ test.describe('UI audit (read-only visual proof)', () => {
       await page.waitForTimeout(200);
 
       await shot(page, `A-${vp.name}-work-full`);
-      const stickyBar = page.locator('main div.sticky').first();
       await expect(stickyBar).toBeVisible();
       await clipNavZone(page, `A-${vp.name}-work`, stickyBar);
     }

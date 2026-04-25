@@ -1,6 +1,6 @@
 
 import React, { useCallback, useEffect, useRef } from 'react';
-import { motion, useMotionValue, useSpring, useTransform, useReducedMotion } from 'framer-motion';
+import { motion, useMotionValue, useSpring, useTransform, useReducedMotion } from 'motion/react';
 import { transitions } from '../../lib/motionTokens';
 import { useCanHover } from '../../hooks/useMediaQuery';
 
@@ -13,7 +13,7 @@ interface TiltCardProps {
 export const TiltCard: React.FC<TiltCardProps> = ({
   children,
   className = "",
-  intensity = 15
+  intensity = 8
 }) => {
   const ref = useRef<HTMLDivElement>(null);
   const rafId = useRef<number | null>(null);
@@ -30,8 +30,8 @@ export const TiltCard: React.FC<TiltCardProps> = ({
   const x = useMotionValue(0);
   const y = useMotionValue(0);
 
-  const mouseX = useSpring(x, transitions.tight);
-  const mouseY = useSpring(y, transitions.tight);
+  const mouseX = useSpring(x, transitions.gentle);
+  const mouseY = useSpring(y, transitions.gentle);
 
   const rotateX = useTransform(mouseY, [-0.5, 0.5], [intensity, -intensity]);
   const rotateY = useTransform(mouseX, [-0.5, 0.5], [-intensity, intensity]);
@@ -79,16 +79,16 @@ export const TiltCard: React.FC<TiltCardProps> = ({
       }}
       className={`relative group ${className}`}
     >
-      <div style={{ transform: "translateZ(50px)" }} className="h-full">
+      <div style={{ transform: "translateZ(24px)" }} className="h-full">
         {children}
       </div>
 
       {!shouldReduceMotion && canHover && (
         <motion.div
           style={{
-            background: `radial-gradient(circle at ${shineX} ${shineY}, rgba(255,255,255,0.12) 0%, transparent 80%)`,
+            background: `radial-gradient(circle at ${shineX} ${shineY}, rgba(255,255,255,0.06) 0%, transparent 80%)`,
           }}
-          className="absolute inset-0 pointer-events-none rounded-[inherit] opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+          className="absolute inset-0 pointer-events-none rounded-[inherit] opacity-0 group-hover:opacity-100 transition-opacity duration-300"
         />
       )}
     </motion.div>

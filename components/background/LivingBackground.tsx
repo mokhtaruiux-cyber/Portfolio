@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { motion, useReducedMotion } from "motion/react";
 import { useTheme } from "../../context/ThemeContext";
 import { useMobileMotionGate } from "../../hooks/useMobileMotionGate";
 
@@ -52,14 +52,14 @@ export const LivingBackground = () => {
     );
   }
 
-  const animateBackground = !reduce && isVisible;
+  const animateBackground = !reduce && isVisible && !skipHeavyAnimations;
   const animateHeroBlobs = false;
 
   return (
     <div className="fixed inset-0 pointer-events-none -z-10 overflow-hidden select-none">
       {/* 1. Base Gradient Glow (Hero anchor) */}
       <div className={cn(
-        "absolute top-0 left-1/2 -translate-x-1/2 w-full h-screen scale-[1.4] blur-[120px] rounded-full will-change-[filter,opacity]",
+        "absolute top-0 left-1/2 -translate-x-1/2 w-full h-screen scale-[1.4] blur-[120px] rounded-full",
         reduce ? "opacity-25" : "opacity-40",
         darkMode ? 'bg-accent/20' : 'bg-accent/10'
       )} />
@@ -102,11 +102,10 @@ export const LivingBackground = () => {
           size="w-full h-full scale-[0.5]"
           initial={{ top: "10%", left: "-10%" }}
           animate={{
-            x: [0, 40, -20, 0],
-            y: [0, -40, 20, 0],
-            borderRadius: ["30% 70% 70% 30% / 30% 30% 70% 70%", "60% 40% 30% 70% / 50% 50% 30% 70%", "30% 70% 70% 30% / 30% 30% 70% 70%"]
+            x: [0, 14, 0],
+            y: [0, -10, 0],
           }}
-          duration={25}
+          duration={40}
           animateEnabled={animateBackground}
           reduce={reduce}
         />
@@ -115,11 +114,10 @@ export const LivingBackground = () => {
           size="w-full h-full scale-[0.45]"
           initial={{ bottom: "10%", right: "10%" }}
           animate={{
-            x: [0, -50, 30, 0],
-            y: [0, 50, -20, 0],
-            borderRadius: ["50% 50% 20% 80% / 25% 80% 20% 75%", "40% 60% 40% 60% / 40% 60% 40% 60%", "50% 50% 20% 80% / 25% 80% 20% 75%"]
+            x: [0, -12, 0],
+            y: [0, 8, 0],
           }}
-          duration={35}
+          duration={46}
           delay={1}
           animateEnabled={animateBackground}
           reduce={reduce}
@@ -130,7 +128,7 @@ export const LivingBackground = () => {
       <div
         className={cn(
           "absolute inset-0 opacity-[0.02]",
-          animateBackground && "animate-grid will-change-[background-position]",
+          animateBackground && "will-change-[opacity]",
           reduce && "opacity-[0.01]",
           darkMode ? 'invert opacity-[0.04]' : ''
         )}
@@ -142,7 +140,7 @@ export const LivingBackground = () => {
 
       {/* 5. Vignette Depth */}
       <div className={cn(
-        "absolute inset-0 will-change-opacity",
+        "absolute inset-0",
         darkMode
           ? 'bg-[radial-gradient(circle_at_center,transparent_0%,rgba(3,3,3,0.7)_100%)]'
           : 'bg-[radial-gradient(circle_at_center,transparent_0%,rgba(250,250,250,0.7)_100%)]'

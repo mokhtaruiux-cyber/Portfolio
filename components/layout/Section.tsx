@@ -2,7 +2,7 @@
 import React from 'react';
 import { cn } from '../../lib/utils';
 import { Container } from './Container';
-import { FadeInUp } from '../motion/FadeInUp';
+import { RevealSection } from '../motion/RevealSection';
 import { typography } from '../../lib/typography';
 
 interface SectionProps {
@@ -11,9 +11,32 @@ interface SectionProps {
     id?: string;
     eyebrow?: string;
     motion?: "lift" | "fade";
+    reveal?: boolean;
 }
 
-export const Section: React.FC<SectionProps> = ({ children, className, id, eyebrow, motion = "lift" }) => {
+export const Section: React.FC<SectionProps> = ({
+    children,
+    className,
+    id,
+    eyebrow,
+    motion = "fade",
+    reveal = true,
+}) => {
+    const content = (
+      <>
+        {eyebrow && (
+          <span className={cn(
+              typography.labelXs,
+              "mb-4 sm:mb-6 block",
+              "text-accent"
+          )}>
+              {eyebrow}
+          </span>
+        )}
+        {children}
+      </>
+    );
+
     return (
         <section
           id={id}
@@ -23,18 +46,11 @@ export const Section: React.FC<SectionProps> = ({ children, className, id, eyebr
           )}
         >
             <Container>
-                <FadeInUp disableTransform={motion === "fade"}>
-                    {eyebrow && (
-                        <span className={cn(
-                            typography.labelXs,
-                            "mb-4 sm:mb-6 block",
-                            "text-accent"
-                        )}>
-                            {eyebrow}
-                        </span>
-                    )}
-                    {children}
-                </FadeInUp>
+                {reveal ? (
+                  <RevealSection disableTransform={motion === "fade"}>
+                    {content}
+                  </RevealSection>
+                ) : content}
             </Container>
         </section>
     );

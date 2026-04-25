@@ -1,15 +1,16 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { motion, AnimatePresence, useMotionValueEvent, useScroll, useVelocity } from 'motion/react';
+import { useLenis } from 'lenis/react';
 import { Sun, Moon, Menu, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { siteContent } from '../../content';
 import { useTheme } from '../../context/ThemeContext';
 import { PageKey } from '../../types';
+import { durations, easing, scrollTiming, transitions } from '../../lib/motionTokens';
 import { cn } from '../../lib/utils';
 import { typography } from '../../lib/typography';
 import { Container } from './Container';
 import { GlowButton } from '../ui/GlowButton';
-import { useAppScroll } from '../../hooks/useAppScroll';
 
 interface NavbarProps {
   currentPage: PageKey;
@@ -17,9 +18,12 @@ interface NavbarProps {
 }
 
 export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
-  const { scrollToId } = useAppScroll();
+  const lenis = useLenis();
+  const { scrollY } = useScroll();
+  const scrollVelocity = useVelocity(scrollY);
   const { darkMode, setDarkMode } = useTheme();
   const [scrolled, setScrolled] = useState(false);
+  const [navHidden, setNavHidden] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [pendingSection, setPendingSection] = useState<string | null>(null);
   const menuPanelRef = useRef<HTMLDivElement | null>(null);
@@ -27,19 +31,41 @@ export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
   const bodyOverflowRef = useRef<string>('');
   const menuId = 'mobile-menu';
 
-  useEffect(() => {
-    const s = () => setScrolled(window.scrollY > 40);
-    window.addEventListener('scroll', s, { passive: true });
-    return () => window.removeEventListener('scroll', s);
-  }, []);
+  const scrollToSection = useCallback((sectionId: string) => {
+    const target = document.getElementById(sectionId);
+    if (!target) return;
+    if (lenis) {
+      lenis.scrollTo(target, { duration: scrollTiming.anchorDuration });
+      return;
+    }
+    target.scrollIntoView({ behavior: 'auto', block: 'start' });
+  }, [lenis]);
+
+  useMotionValueEvent(scrollY, 'change', (current) => {
+    setScrolled(current > 40);
+    if (current < 80) setNavHidden(false);
+  });
+
+  useMotionValueEvent(scrollVelocity, 'change', (velocity) => {
+    if (isMenuOpen) {
+      setNavHidden(false);
+      return;
+    }
+    if (scrollY.get() < 120) {
+      setNavHidden(false);
+      return;
+    }
+    if (velocity > 120) setNavHidden(true);
+    if (velocity < -60) setNavHidden(false);
+  });
 
   useEffect(() => {
     if (currentPage !== 'home' || !pendingSection) return;
     requestAnimationFrame(() => {
-      scrollToId(pendingSection, { offset: 112 });
+      scrollToSection(pendingSection);
       setPendingSection(null);
     });
-  }, [currentPage, pendingSection, scrollToId]);
+  }, [currentPage, pendingSection, scrollToSection]);
 
   useEffect(() => {
     if (!isMenuOpen) return;
@@ -55,6 +81,7 @@ export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
 
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
+        setNavHidden(false);
         setIsMenuOpen(false);
         return;
       }
@@ -89,14 +116,16 @@ export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
         setPendingSection(sectionId);
         onNavigate('home');
       } else {
-        scrollToId(sectionId, { offset: 112 });
+        scrollToSection(sectionId);
       }
+      setNavHidden(false);
       setIsMenuOpen(false);
       return;
     }
     if (item.page) {
       onNavigate(item.page);
     }
+    setNavHidden(false);
     setIsMenuOpen(false);
   };
 
@@ -107,7 +136,12 @@ export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
   };
 
   return (
-    <nav className="fixed top-0 inset-x-0 z-nav pt-6">
+    <motion.nav
+      className="fixed top-0 inset-x-0 z-nav pt-6"
+      initial={false}
+      animate={{ y: navHidden ? -120 : 0 }}
+      transition={{ duration: durations.fast, ease: easing.hover }}
+    >
       <Container>
         <motion.div
           className={cn(
@@ -117,7 +151,7 @@ export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
           )}
           initial={{ y: -10, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          transition={transitions.smooth}
         >
           <div className="flex items-center justify-between h-full px-4 sm:px-6">
             <Link
@@ -151,7 +185,6 @@ export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
               <GlowButton
                 className="hidden md:inline-flex"
                 size="cta"
-                glow
                 calLink={cal.link}
                 calNamespace={cal.namespace}
                 calConfig={cal.configJson}
@@ -170,7 +203,10 @@ export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
                 {darkMode ? <Sun className={typography.navIcon} /> : <Moon className={typography.navIcon} />}
               </button>
               <button
-                onClick={() => setIsMenuOpen(!isMenuOpen)}
+                onClick={() => {
+                  setNavHidden(false);
+                  setIsMenuOpen(!isMenuOpen);
+                }}
                 className={cn(
                   typography.navControl,
                   'rounded-control text-white/90 flex items-center justify-center hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 md:hidden',
@@ -197,7 +233,10 @@ export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
           >
             <div
               className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-              onClick={() => setIsMenuOpen(false)}
+              onClick={() => {
+                setNavHidden(false);
+                setIsMenuOpen(false);
+              }}
             />
             <Container className="relative pt-24">
               <motion.div
@@ -232,7 +271,6 @@ export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
                   size="cta"
                   fullWidth
                   className="w-full"
-                  glow
                   calLink={cal.link}
                   calNamespace={cal.namespace}
                   calConfig={cal.configJson}
@@ -244,6 +282,6 @@ export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
           </motion.div>
         )}
       </AnimatePresence>
-    </nav>
+    </motion.nav>
   );
 };

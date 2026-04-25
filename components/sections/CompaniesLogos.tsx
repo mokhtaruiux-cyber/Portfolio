@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { AnimatePresence, motion, useInView, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, motion, useInView, useReducedMotion } from 'motion/react';
 import { siteContent } from '../../content';
 import { useTheme } from '../../context/ThemeContext';
 import { Section } from '../layout/Section';
@@ -7,11 +7,13 @@ import { SectionTitle } from '../motion/SectionTitle';
 import { Reveal } from '../motion/Reveal';
 import { cn } from '../../lib/utils';
 import { typography } from '../../lib/typography';
+import { sectionPacing } from '../../lib/motionTokens';
 
 const marqueeStyle: React.CSSProperties = { width: 'fit-content' };
 
 export const CompaniesLogos: React.FC = () => {
   const { darkMode } = useTheme();
+  const pacing = sectionPacing.support;
   const reduceMotion = useReducedMotion();
   const [tooltip, setTooltip] = useState<{ label: string; left: number; top: number } | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -86,17 +88,17 @@ export const CompaniesLogos: React.FC = () => {
   };
 
   return (
-    <Section>
+    <Section motion="fade">
       <SectionTitle
         eyebrow={siteContent.socialProof.eyebrow}
         title={siteContent.socialProof.title}
         highlight={siteContent.socialProof.highlight}
         align="left"
-        delay={0}
+        delay={pacing.title}
         stackHighlight
         eyebrowClassName="text-accent/80"
       />
-      <Reveal delay={0.1}>
+      <Reveal delay={pacing.body}>
         <div ref={containerRef} className="mt-10 relative">
           <div
             className="relative overflow-x-hidden"
@@ -115,7 +117,10 @@ export const CompaniesLogos: React.FC = () => {
               className="relative flex whitespace-nowrap gap-6 sm:gap-10 md:gap-12 items-center"
               style={{
                 ...marqueeStyle,
-                animation: shouldAnimate ? 'company-marquee 45s linear infinite' : 'none',
+                animationName: shouldAnimate ? 'company-marquee' : 'none',
+                animationDuration: '58s',
+                animationTimingFunction: 'linear',
+                animationIterationCount: 'infinite',
                 animationPlayState: isHovering ? 'paused' : 'running',
                 willChange: shouldAnimate ? 'transform' : 'auto',
                 ['--marquee-translate' as string]: marqueeTranslate,
@@ -143,7 +148,7 @@ export const CompaniesLogos: React.FC = () => {
                   >
                     <div
                       className={cn(
-                        'w-20 h-20 sm:w-24 sm:h-24 rounded-panel border flex items-center justify-center transition-transform duration-300 hover:scale-105',
+                        'w-20 h-20 sm:w-24 sm:h-24 rounded-panel border flex items-center justify-center',
                         darkMode ? 'bg-black/40 border-white/10' : 'bg-white border-black/5'
                       )}
                     >

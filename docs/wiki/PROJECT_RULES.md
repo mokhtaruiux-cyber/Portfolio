@@ -4,8 +4,8 @@ Purpose: Keep new pages/components consistent with current structure, routes, an
 
 ## Tech Stack
 - React 19 + TypeScript
-- Vite 6 + Tailwind CSS 3
-- Framer Motion 12
+- Vite 8 + Tailwind CSS 4
+- Motion 12
 - React Router DOM 7
 - Icons: lucide-react
 - Utilities: clsx + tailwind-merge (via `lib/utils`)
@@ -51,7 +51,7 @@ Theme follows system preference by default and persists to localStorage when man
 - Dark background: `#030303`
 - Light background: `#fafafa`
 - Primary accent: Tailwind `blue-500` / `blue-600`
-- Highlight accent: Tailwind `accent` (`#2f6bff` in `tailwind.config.cjs`)
+- Highlight accent: Tailwind `accent` (`#2f6bff` in `index.css` `@theme`)
 - “Glass” surfaces: `bg-black/40` or `bg-white/60` with subtle borders
 
 Text contrast is tokenized in `lib/typography.ts`:

@@ -1,8 +1,9 @@
 
 import React, { useRef } from 'react';
-import { motion, useReducedMotion, useScroll, useSpring, useTransform, MotionValue } from 'framer-motion';
+import { motion, useReducedMotion, useScroll, useSpring, useTransform, MotionValue } from 'motion/react';
 import { Project } from '../../types';
 import { useIsDesktop } from '../../hooks/useMediaQuery';
+import { cardReveal, easing, scrollSpring } from '../../lib/motionTokens';
 
 // GPU-friendly stacked card animation
 // We avoid layout shifts and expensive filters (blur)
@@ -25,10 +26,10 @@ export const StackedCards: React.FC<StackedCardsProps> = ({ items, renderItem })
                     <motion.div
                         key={item.id || i}
                         className="w-full"
-                        initial={{ opacity: 0, y: 24 }}
+                        initial={{ opacity: 0, y: cardReveal.distance }}
                         whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, margin: '-60px' }}
-                        transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1], delay: i * 0.05 }}
+                        viewport={{ once: true, margin: cardReveal.viewportMargin }}
+                        transition={{ duration: cardReveal.duration, ease: easing.reveal, delay: i * cardReveal.stagger }}
                     >
                         {renderItem(item, i)}
                     </motion.div>
@@ -48,7 +49,7 @@ const StackedCardsDesktop: React.FC<StackedCardsProps> = ({ items, renderItem })
         target: containerRef,
         offset: ['start start', 'end end']
     });
-    const smoothProgress = useSpring(scrollYProgress, { stiffness: 120, damping: 30, mass: 0.8 });
+    const smoothProgress = useSpring(scrollYProgress, scrollSpring);
     const gapRem = 6;
     const tailRem = 6;
     const gapCount = Math.max(items.length - 1, 0);
@@ -99,8 +100,8 @@ const CardWithTransform = ({ index, total, item, renderItem, scrollProgress, red
     // - stickyTop: adjust the sticky offset per breakpoint
     // - scaleDrop: smaller values = subtler stacking
     const stickyTop = "top-24 sm:top-28 lg:top-32";
-    const scaleDrop = reduceMotion ? 0 : 0.06;
-    const opacityDrop = reduceMotion ? 0 : 0.08;
+    const scaleDrop = reduceMotion ? 0 : 0.025;
+    const opacityDrop = reduceMotion ? 0 : 0.04;
     const start = index / total;
 
     const scale = useTransform(scrollProgress, [start, 1], [1, 1 - scaleDrop]);

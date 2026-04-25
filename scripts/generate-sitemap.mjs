@@ -1,61 +1,32 @@
-/**
- * IMPORTANT: Routes in this file must be manually synchronized with:
- * - App.tsx (route definitions)
- * - content.ts (project/blog slugs)
- * 
- * Add new routes here when adding pages to the app.
- */
-import { access, writeFile } from 'node:fs/promises';
+import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import { resolveBuildSiteUrl, withStaticRouteSeo } from './load-static-seo.mjs';
 
-const raw = process.env.VITE_SITE_URL;
-const isPlaceholder = !raw || raw.includes('%VITE_SITE_URL%');
-const isCi = process.env.CI === 'true' || process.env.NODE_ENV === 'production';
-
-let baseUrl = raw ?? '';
-if (isPlaceholder) {
-  if (isCi) {
-    console.error('VITE_SITE_URL is required to generate sitemap.xml in CI/production.');
-    process.exit(1);
-  }
-  const outputPath = path.resolve(process.cwd(), 'public', 'sitemap.xml');
-  try {
-    await access(outputPath);
-    console.warn(`VITE_SITE_URL is missing; keeping existing sitemap at ${outputPath}.`);
-    process.exit(0);
-  } catch {
-    console.warn('VITE_SITE_URL is missing; skipping sitemap generation outside CI.');
-    process.exit(0);
-  }
+const { siteUrl, usingFallback } = resolveBuildSiteUrl();
+if (usingFallback) {
+  console.warn(`VITE_SITE_URL is missing; defaulting sitemap base to ${siteUrl}.`);
 }
 
-const siteUrl = baseUrl.replace(/\/+$/, '');
+const distDir = path.resolve(process.cwd(), 'dist');
+await mkdir(distDir, { recursive: true });
 
-const routes = [
-  '/',
-  '/about',
-  '/projects',
-  '/projects/nodel-restaurant-system',
-  '/projects/homecare-medical-app',
-  '/projects/aura-lifestyle-ecom',
-  '/projects/cosmos-design-system',
-  '/projects/sahab-government-portal',
-  '/blog',
-  '/blog/the-future-of-ai-in-ux',
-  '/blog/mastering-glassmorphism',
-  '/blog/why-motion-matters'
-];
+await withStaticRouteSeo(async (staticRouteSeo) => {
+  const routes = Array.from(new Set(staticRouteSeo.map((entry) => entry.path)));
+  const urls = routes.map((route) => `${siteUrl}${route.startsWith('/') ? route : `/${route}`}`);
 
-const urls = routes.map((route) => {
-  const normalized = route.startsWith('/') ? route : `/${route}`;
-  return `${siteUrl}${normalized}`;
+  const sitemap = `<?xml version="1.0" encoding="UTF-8"?>\n` +
+    `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
+    `${urls.map((loc) => `  <url><loc>${loc}</loc></url>`).join('\n')}\n` +
+    `</urlset>\n`;
+
+  const robots = `User-agent: *\nAllow: /\n\nSitemap: ${siteUrl}/sitemap.xml\n`;
+
+  const sitemapPath = path.join(distDir, 'sitemap.xml');
+  const robotsPath = path.join(distDir, 'robots.txt');
+
+  await writeFile(sitemapPath, sitemap, 'utf8');
+  await writeFile(robotsPath, robots, 'utf8');
+
+  console.log(`Generated ${sitemapPath}`);
+  console.log(`Generated ${robotsPath}`);
 });
-
-const xml = `<?xml version="1.0" encoding="UTF-8"?>\n` +
-  `<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n` +
-  `${urls.map((loc) => `  <url><loc>${loc}</loc></url>`).join('\n')}\n` +
-  `</urlset>\n`;
-
-const outputPath = path.resolve(process.cwd(), 'public', 'sitemap.xml');
-await writeFile(outputPath, xml, 'utf8');
-console.log(`Generated ${outputPath}`);

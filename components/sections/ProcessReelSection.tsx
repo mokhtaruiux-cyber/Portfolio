@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { motion, useInView, useReducedMotion } from 'framer-motion';
+import { motion, useInView, useReducedMotion } from 'motion/react';
 import { siteContent } from '../../content';
 import { useTheme } from '../../context/ThemeContext';
 import { Section } from '../layout/Section';
-import { BlurIn } from '../motion/BlurIn';
+import { SectionTitle } from '../motion/SectionTitle';
 import { Reveal } from '../motion/Reveal';
 import { typography } from '../../lib/typography';
 import { cn } from '../../lib/utils';
-import { stagger, viewportDefaults } from '../../lib/motionTokens';
+import { sectionPacing, stagger, viewportDefaults } from '../../lib/motionTokens';
 
 type ProcessReelSectionProps = {
   autoPlay?: boolean;
@@ -19,12 +19,13 @@ type ProcessReelSectionProps = {
 
 export const ProcessReelSection: React.FC<ProcessReelSectionProps> = ({
   autoPlay = true,
-  stepDurationMs = 2500,
+  stepDurationMs = 3200,
   pauseOnHover = true,
   pauseOnFocus = true,
   loop = true,
 }) => {
   const { darkMode } = useTheme();
+  const pacing = sectionPacing.feature;
   const steps = siteContent.process.steps;
   const reduceMotion = useReducedMotion();
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -136,10 +137,14 @@ export const ProcessReelSection: React.FC<ProcessReelSectionProps> = ({
     <Section id="process" eyebrow={siteContent.process.eyebrow}>
       <div ref={containerRef}>
         <div className="text-left mb-10">
-          <BlurIn as="h2" className={cn(typography.h2, "font-black max-w-[28ch] mb-6", darkMode ? "text-white" : "text-black")}>
-            {siteContent.process.title} <br /> <span className="text-accent">{siteContent.process.highlight}</span>
-          </BlurIn>
-          <Reveal delay={0.2}>
+          <SectionTitle
+            title={siteContent.process.title}
+            highlight={siteContent.process.highlight}
+            delay={pacing.title}
+            stackHighlight
+            className={cn('mb-6', darkMode ? 'text-white' : 'text-black')}
+          />
+          <Reveal delay={pacing.body}>
             <p className={cn(typography.body, "max-w-[60ch] font-medium", typography.textSubtle, darkMode ? "text-gray-300" : "text-gray-600")}>
               {siteContent.process.description}
             </p>
@@ -157,7 +162,7 @@ export const ProcessReelSection: React.FC<ProcessReelSectionProps> = ({
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
           onKeyDown={handleTabKeyDown}
-          variants={stagger.container(0.1, 0.08)}
+          variants={stagger.container(0.05, 0.04)}
           initial="initial"
           whileInView="animate"
           viewport={viewportDefaults}

@@ -37,7 +37,7 @@ const BlogCardComponent: React.FC<BlogCardProps> = ({ post, onClick }) => {
           width={1600}
           height={1000}
           sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
-          className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+          className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-[1.03]"
         />
         <div className={cn('absolute top-6 left-6 px-3 py-1 rounded-mini glass border border-white/10 bg-black/40 text-white', typography.labelSm)}>
           {post.category}
@@ -54,7 +54,7 @@ const BlogCardComponent: React.FC<BlogCardProps> = ({ post, onClick }) => {
         <p className={cn(typography.body, 'font-medium mb-8 line-clamp-3', typography.textSubtle)}>
           {post.excerpt}
         </p>
-        <div className={cn('mt-auto flex items-center gap-2 text-accent group-hover:gap-4 transition-all duration-300', typography.labelXs, 'tracking-[0.2em]')}>
+        <div className={cn('mt-auto flex items-center gap-2 text-accent transition-colors duration-300', typography.labelXs, 'tracking-[0.2em]')}>
           {siteContent.writing.readArticleLabel} <ArrowUpRight size={16} />
         </div>
       </div>
@@ -62,7 +62,7 @@ const BlogCardComponent: React.FC<BlogCardProps> = ({ post, onClick }) => {
   );
   return (
     <Reveal className="h-full">
-      {isDesktop ? <TiltCard intensity={8} className="h-full">{cardButton}</TiltCard> : cardButton}
+      {isDesktop ? <TiltCard intensity={4} className="h-full">{cardButton}</TiltCard> : cardButton}
     </Reveal>
   );
 };

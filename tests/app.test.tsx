@@ -35,9 +35,9 @@ describe('App routing and landmarks', () => {
     expect(heading).toBeInTheDocument();
   });
 
-  it('renders the blog index route', () => {
+  it('renders the blog index route', async () => {
     renderWithRoute('/blog');
-    const heading = screen.getByRole('heading', {
+    const heading = await screen.findByRole('heading', {
       name: new RegExp(siteContent.writing.index.title, 'i'),
     });
     expect(heading).toBeInTheDocument();

@@ -3,7 +3,9 @@ import { BlogContentBlock, BlogPost } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
 import { Section } from '../layout/Section';
 import { Reveal } from '../motion/Reveal';
+import { BlurIn } from '../motion/BlurIn';
 import { typography } from '../../lib/typography';
+import { masterTitleReveal } from '../../lib/motionTokens';
 import { cn } from '../../lib/utils';
 
 const BlogBlock = ({ block, darkMode }: { block: BlogContentBlock; darkMode: boolean }) => {
@@ -74,13 +76,19 @@ export const BlogArticlePage = ({
       <Section className="pt-28 md:pt-36">
         <div className="mx-auto flex w-full max-w-[60ch] flex-col items-start text-left space-y-10">
           <div className="space-y-4">
-            <div className={cn('flex items-center gap-4', typography.labelXs, typography.textSubtle)}>
-              <span className="px-3 py-1 rounded-mini bg-accent/20 border border-accent/30 text-accent">{post.category}</span>
-              <span>{post.date}</span>
-              <span>{post.readTime}</span>
-            </div>
-            <h1 className={cn(typography.h1, 'font-black max-w-[18ch] tracking-normal', darkMode ? 'text-white' : 'text-black')}>{post.title}</h1>
-            <p className={cn(typography.body, 'font-medium', typography.textSubtle, darkMode ? 'text-white' : 'text-black')}>{post.excerpt}</p>
+            <Reveal>
+              <div className={cn('flex items-center gap-4', typography.labelXs, typography.textSubtle)}>
+                <span className="px-3 py-1 rounded-mini bg-accent/20 border border-accent/30 text-accent">{post.category}</span>
+                <span>{post.date}</span>
+                <span>{post.readTime}</span>
+              </div>
+            </Reveal>
+            <BlurIn as="h1" delay={masterTitleReveal.headingDelay} className={cn(typography.h1, 'font-black max-w-[18ch] tracking-normal', darkMode ? 'text-white' : 'text-black')}>
+              {post.title}
+            </BlurIn>
+            <Reveal delay={0.16}>
+              <p className={cn(typography.body, 'font-medium', typography.textSubtle, darkMode ? 'text-white' : 'text-black')}>{post.excerpt}</p>
+            </Reveal>
           </div>
 
           <div className={cn('w-full rounded-surface overflow-hidden border', darkMode ? 'border-white/10' : 'border-black/10')}>
@@ -112,9 +120,9 @@ export const BlogArticlePage = ({
       {nextPost && (
         <Section>
           <div className="w-full text-left">
-            <h3 className={cn(typography.h3, 'font-black mb-4 text-white')}>
+            <BlurIn as="h3" delay={masterTitleReveal.headingDelay} className={cn(typography.h3, 'font-black mb-4 text-white')}>
               Up Next
-            </h3>
+            </BlurIn>
             <button
               type="button"
               onClick={() => onNextPost?.(nextPost.slug)}

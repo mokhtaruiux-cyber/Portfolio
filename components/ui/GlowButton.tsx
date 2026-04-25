@@ -1,5 +1,5 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { useTheme } from '../../context/ThemeContext';
 import { cn } from '../../lib/utils';
 import { typography } from '../../lib/typography';
@@ -64,8 +64,8 @@ export const GlowButton: React.FC<GlowButtonProps> = ({
         >
           <motion.span
             className={cn('flex items-center justify-center gap-3', typography.button)}
-            whileHover={{ x: 3 }}
-            transition={transitions.spring}
+            whileHover={{ x: 1 }}
+            transition={transitions.quick}
           >
             {children}
           </motion.span>
@@ -95,8 +95,8 @@ export const GlowButton: React.FC<GlowButtonProps> = ({
       >
         <motion.span
           className={cn('flex items-center justify-center gap-3', typography.button)}
-          whileHover={{ x: 3 }}
-          transition={transitions.spring}
+          whileHover={{ x: 1 }}
+          transition={transitions.quick}
         >
           {children}
         </motion.span>

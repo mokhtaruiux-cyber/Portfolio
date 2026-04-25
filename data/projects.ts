@@ -317,6 +317,7 @@ export const projects: Project[] = [
   {
     id: '7',
     slug: 'dashboard-placeholder-01',
+    isDraft: true,
     title: 'Dashboard Project (Placeholder 01)',
     category: 'Dashboards',
     type: 'Analytics Dashboard',
@@ -379,6 +380,7 @@ export const projects: Project[] = [
   {
     id: '8',
     slug: 'dashboard-placeholder-02',
+    isDraft: true,
     title: 'Dashboard Project (Placeholder 02)',
     category: 'Dashboards',
     type: 'Operations Dashboard',

@@ -1,6 +1,16 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-accent: #2f6bff;
+  --radius-surface: 24px;
+  --radius-panel: 16px;
+  --radius-control: 12px;
+  --radius-mini: 10px;
+  --z-index-top: 1000;
+  --z-index-nav: 100;
+  --z-index-overlay: 90;
+  --z-index-floating: 70;
+}
 
 html {
   scroll-behavior: auto;
@@ -15,16 +25,8 @@ html.lenis body {
   scroll-behavior: auto !important;
 }
 
-.lenis.lenis-smooth [data-lenis-prevent] {
-  overscroll-behavior: contain;
-}
-
 .lenis.lenis-stopped {
   overflow: hidden;
-}
-
-.lenis.lenis-scrolling iframe {
-  pointer-events: none;
 }
 
 /* Hide scrollbars for horizontal tab scrollers */
@@ -97,6 +99,10 @@ html.lenis body {
 }
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
   .hero-blob {
     animation: none !important;
   }

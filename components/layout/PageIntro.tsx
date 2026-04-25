@@ -2,6 +2,9 @@ import React from 'react';
 
 import { cn } from '../../lib/utils';
 import { typography } from '../../lib/typography';
+import { masterTitleReveal } from '../../lib/motionTokens';
+import { BlurIn } from '../motion/BlurIn';
+import { Reveal } from '../motion/Reveal';
 
 interface PageIntroProps {
   eyebrow?: string;
@@ -33,8 +36,10 @@ export const PageIntro: React.FC<PageIntroProps> = ({
         </p>
       )}
 
-      <h1
+      <BlurIn
+        as="h1"
         aria-label={highlight ? `${title} ${highlight}` : title}
+        delay={masterTitleReveal.headingDelay}
         className={cn(
           typography.h1,
           'max-w-[18ch] text-balance font-black',
@@ -48,18 +53,20 @@ export const PageIntro: React.FC<PageIntroProps> = ({
             <span className="text-accent">{highlight}</span>
           </>
         ) : null}
-      </h1>
+      </BlurIn>
 
       {description && (
-        <p
-          className={cn(
-            typography.body,
-            'mt-6 max-w-2xl text-pretty font-medium',
-            darkMode ? 'text-white/70' : 'text-black/65'
-          )}
-        >
-          {description}
-        </p>
+        <Reveal delay={0.16}>
+          <p
+            className={cn(
+              typography.body,
+              'mt-6 max-w-2xl text-pretty font-medium',
+              darkMode ? 'text-white/70' : 'text-black/65'
+            )}
+          >
+            {description}
+          </p>
+        </Reveal>
       )}
     </div>
   );

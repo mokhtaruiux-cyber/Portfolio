@@ -1,15 +1,17 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { Project } from '../../types';
 import { siteContent } from '../../content';
 import { useTheme } from '../../context/ThemeContext';
 import { Section } from '../layout/Section';
+import { BlurIn } from '../motion/BlurIn';
+import { Reveal } from '../motion/Reveal';
 import { typography } from '../../lib/typography';
 import { cn } from '../../lib/utils';
 import { GlowButton } from '../ui/GlowButton';
 import { ProjectImageViewer } from '../ui/ProjectImageViewer';
 import { ProjectTagChips } from '../ui/ProjectTagChips';
-import { stagger, viewportDefaults } from '../../lib/motionTokens';
+import { masterTitleReveal, stagger, viewportDefaults } from '../../lib/motionTokens';
 
 type ViewerImage = {
   src: string;
@@ -111,7 +113,7 @@ export const ProjectDetailPage = ({
   return (
     <>
       <ProjectImageViewer
-        key={`${project.slug}-${isViewerOpen ? initialViewerIndex : 'closed'}`}
+        key={`${project.slug}-${isViewerOpen ? 'open' : 'closed'}-${initialViewerIndex}`}
         images={viewerImages}
         initialIndex={initialViewerIndex}
         projectTitle={project.title}
@@ -123,14 +125,20 @@ export const ProjectDetailPage = ({
       <Section className={cn('pt-28 md:pt-36', isBehanceStyleGallery && 'pb-0')}>
         <div className="text-left space-y-10">
           <div className="space-y-4">
-            <span className={cn(typography.labelXs, 'tracking-[0.3em] text-accent')}>{project.category}</span>
-            <h1 className={cn(typography.h1Display, 'font-black max-w-[18ch] tracking-normal', darkMode ? 'text-white' : 'text-black')}>{project.title}</h1>
-            <p className={cn(typography.body, 'max-w-[60ch] font-medium', typography.textSubtle, darkMode ? 'text-white' : 'text-black')}>{project.description}</p>
+            <BlurIn as="span" className={cn(typography.labelXs, 'tracking-[0.3em] text-accent')}>
+              {project.category}
+            </BlurIn>
+            <BlurIn as="h1" delay={masterTitleReveal.headingDelay} className={cn(typography.h1Display, 'font-black max-w-[18ch] tracking-normal', darkMode ? 'text-white' : 'text-black')}>
+              {project.title}
+            </BlurIn>
+            <Reveal delay={0.16}>
+              <p className={cn(typography.body, 'max-w-[60ch] font-medium', typography.textSubtle, darkMode ? 'text-white' : 'text-black')}>{project.description}</p>
+            </Reveal>
           </div>
 
           <motion.div
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
-            variants={stagger.container(0.1, 0.08)}
+            variants={stagger.container()}
             initial="initial"
             whileInView="animate"
             viewport={viewportDefaults}
@@ -157,7 +165,7 @@ export const ProjectDetailPage = ({
         <Section className="pb-0 pt-6 md:pt-8">
           <motion.div
             className="space-y-0"
-            variants={stagger.container(0.1, 0.08)}
+            variants={stagger.container()}
             initial="initial"
             whileInView="animate"
             viewport={viewportDefaults}
@@ -193,7 +201,7 @@ export const ProjectDetailPage = ({
         <Section eyebrow={siteContent.projectDetail.galleryEyebrow}>
           <motion.div
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
-            variants={stagger.container(0.1, 0.08)}
+            variants={stagger.container()}
             initial="initial"
             whileInView="animate"
             viewport={viewportDefaults}
@@ -214,7 +222,7 @@ export const ProjectDetailPage = ({
       <Section eyebrow={siteContent.projectDetail.caseStudyEyebrow}>
         <motion.div
           className="space-y-12 text-left"
-          variants={stagger.container(0.1, 0.08)}
+          variants={stagger.container()}
           initial="initial"
           whileInView="animate"
           viewport={viewportDefaults}
@@ -231,7 +239,7 @@ export const ProjectDetailPage = ({
       <Section eyebrow={siteContent.projectDetail.metricsEyebrow}>
         <motion.div
           className="grid grid-cols-2 sm:grid-cols-3 gap-4 md:gap-6 text-left"
-          variants={stagger.container(0.1, 0.08)}
+          variants={stagger.container()}
           initial="initial"
           whileInView="animate"
           viewport={viewportDefaults}
@@ -248,9 +256,9 @@ export const ProjectDetailPage = ({
       {nextProject && (
         <Section>
           <div className="w-full text-left">
-            <h3 className={cn(typography.h3, 'font-black mb-4 text-white')}>
+            <BlurIn as="h3" delay={masterTitleReveal.headingDelay} className={cn(typography.h3, 'font-black mb-4 text-white')}>
               Up Next
-            </h3>
+            </BlurIn>
             <button
               type="button"
               onClick={() => onNextProject(nextProject.slug)}

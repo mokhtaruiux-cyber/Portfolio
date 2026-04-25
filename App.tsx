@@ -1,19 +1,20 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { Suspense, lazy, useCallback, useEffect, useMemo, useState } from 'react';
+import { motion, AnimatePresence } from 'motion/react';
+import { useLenis } from 'lenis/react';
 import { Route, Routes, useLocation, useMatch, useNavigate } from 'react-router-dom';
 
 import { siteContent } from './content';
 import { PageKey } from './types';
-import { transitions, variants } from './lib/motionTokens';
+import { pageTransitionVariants } from './lib/motion';
+import { sectionPacing } from './lib/motionTokens';
+import { applySeoToDocument, buildRuntimeSeo } from './lib/seo';
 import { typography } from './lib/typography';
 import { cn } from './lib/utils';
-import { applySeoMetadata } from './lib/seo';
-import { useAppScroll } from './hooks/useAppScroll';
 
 import { LivingBackground } from './components/background/LivingBackground';
 import { ScrollProgress } from './components/motion/ScrollProgress';
 import { Reveal } from './components/motion/Reveal';
-import { BlurIn } from './components/motion/BlurIn';
+import { SectionTitle } from './components/motion/SectionTitle';
 import { StackedCards } from './components/motion/StackedCards';
 
 import { Section } from './components/layout/Section';
@@ -30,16 +31,12 @@ import { BlogSection } from './components/sections/BlogSection';
 import { TestimonialsSection } from './components/sections/TestimonialsSection';
 
 import { ProjectCardWrapper } from './components/cards/ProjectCardWrapper';
-import { BlogIndexPage } from './components/pages/BlogIndexPage';
-import { BlogArticlePage } from './components/pages/BlogArticlePage';
-import { ProjectDetailPage } from './components/pages/ProjectDetailPage';
-import { NotFoundPage } from './components/pages/NotFoundPage';
 import { PageIntro } from './components/layout/PageIntro';
-
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 import { ThemeProvider } from './context/ThemeContext';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { NotFoundPage } from './components/pages/NotFoundPage';
 
 const pageToPath = (page: PageKey, slug = '') => {
   switch (page) {
@@ -61,8 +58,24 @@ const pageToPath = (page: PageKey, slug = '') => {
   }
 };
 
+const BlogIndexPage = lazy(async () => {
+  const module = await import('./components/pages/BlogIndexPage');
+  return { default: module.BlogIndexPage };
+});
+
+const BlogArticlePage = lazy(async () => {
+  const module = await import('./components/pages/BlogArticlePage');
+  return { default: module.BlogArticlePage };
+});
+
+const ProjectDetailPage = lazy(async () => {
+  const module = await import('./components/pages/ProjectDetailPage');
+  return { default: module.ProjectDetailPage };
+});
+
 export default function App() {
-  const { scrollTo, scrollToId } = useAppScroll();
+  const lenis = useLenis();
+
   const [hasManualTheme, setHasManualTheme] = useState(() => {
     if (typeof window === 'undefined') return true;
     try {
@@ -92,9 +105,6 @@ export default function App() {
   const blogMatch = useMatch({ path: '/blog', end: true });
   const aboutMatch = useMatch({ path: '/about', end: true });
   const homeMatch = useMatch({ path: '/', end: true });
-
-  const projectSlug = projectDetailMatch?.params.slug ?? '';
-  const blogSlug = blogDetailMatch?.params.slug ?? '';
 
   const routePage: PageKey = projectDetailMatch
     ? 'project-details'
@@ -157,12 +167,20 @@ export default function App() {
   useEffect(() => {
     const key = `scrollY:${location.pathname}`;
     let restored = false;
+    const scrollToPosition = (value: number) => {
+      if (lenis) {
+        lenis.scrollTo(value, { immediate: true });
+        return;
+      }
+      document.documentElement.scrollTop = value;
+      document.body.scrollTop = value;
+    };
     try {
       const storedY = window.sessionStorage.getItem(key);
       if (storedY !== null) {
         const y = Number.parseInt(storedY, 10);
         if (!Number.isNaN(y)) {
-          scrollTo(y, { immediate: true });
+          scrollToPosition(y);
           restored = true;
         }
         window.sessionStorage.removeItem(key);
@@ -171,22 +189,31 @@ export default function App() {
       // Ignore storage errors.
     }
     if (!restored) {
-      scrollTo(0, { immediate: true });
+      scrollToPosition(0);
     }
-  }, [location.pathname, scrollTo]);
+  }, [lenis, location.pathname]);
 
   useEffect(() => {
     const key = `scrollY:${location.pathname}`;
     const handleBeforeUnload = () => {
       try {
-        window.sessionStorage.setItem(key, String(window.scrollY));
+        window.sessionStorage.setItem(key, String(lenis?.scroll ?? window.scrollY));
       } catch {
         // Ignore storage errors.
       }
     };
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, [location.pathname]);
+  }, [lenis, location.pathname]);
+
+  const scrollToElement = useCallback((target: HTMLElement | null, duration = 0.75) => {
+    if (!target) return;
+    if (lenis) {
+      lenis.scrollTo(target, { duration });
+      return;
+    }
+    target.scrollIntoView({ behavior: 'auto', block: 'start' });
+  }, [lenis]);
 
   useEffect(() => {
     if (routePage !== 'home') return;
@@ -202,7 +229,7 @@ export default function App() {
     const intervalId = window.setInterval(() => {
       const target = document.getElementById(targetId);
       if (target) {
-        scrollTo(target, { offset: 112 });
+        scrollToElement(target, 0.75);
         try {
           window.sessionStorage.removeItem('scrollToSection');
         } catch {
@@ -224,7 +251,7 @@ export default function App() {
     return () => {
       window.clearInterval(intervalId);
     };
-  }, [routePage, scrollTo]);
+  }, [routePage, scrollToElement]);
 
   const navigateTo = useCallback((page: PageKey, slug = '') => {
     navigate(pageToPath(page, slug));
@@ -256,8 +283,12 @@ export default function App() {
     if (!activeFilter || !allProjectsFilter || activeFilter.category === allProjectsFilter.category) {
       return orderedProjects;
     }
-    return orderedProjects.filter((project) => project.category === activeFilter.category);
+    const filtered = orderedProjects.filter((project) => project.category === activeFilter.category);
+    return filtered.length > 0 ? filtered : orderedProjects;
   }, [filter, workFilters, allProjectsFilter, orderedProjects]);
+
+  const projectSlug = projectDetailMatch?.params.slug ?? '';
+  const blogSlug = blogDetailMatch?.params.slug ?? '';
 
   const activeProject = useMemo(
     () => orderedProjects.find((project) => project.slug === projectSlug),
@@ -287,57 +318,17 @@ export default function App() {
       : routePage;
 
   const seo = useMemo(() => {
-    const baseTitle = siteContent.seo.title;
-    if (activeProject) {
-      return {
-        title: `${activeProject.title} — ${baseTitle}`,
-        description: activeProject.description,
-      };
-    }
-    if (activePost) {
-      return {
-        title: `${activePost.title} — ${baseTitle}`,
-        description: activePost.excerpt,
-      };
-    }
-    if (currentPage === 'blog') {
-      return {
-        title: `${siteContent.writing.index.title} — ${baseTitle}`,
-        description: siteContent.writing.index.description,
-      };
-    }
-    if (currentPage === 'work') {
-      return {
-        title: `${siteContent.featuredWork.archive.title} — ${baseTitle}`,
-        description: siteContent.seo.description,
-      };
-    }
-    if (currentPage === 'about') {
-      return {
-        title: `About — ${baseTitle}`,
-        description: siteContent.about.subtitle,
-      };
-    }
-    if (currentPage === 'not-found') {
-      return {
-        title: `404 — ${baseTitle}`,
-        description: `The page ${location.pathname} could not be found.`,
-      };
-    }
-    return {
-      title: baseTitle,
-      description: siteContent.seo.description,
-    };
+    return buildRuntimeSeo({
+      currentPage,
+      activeProject,
+      activePost,
+      path: location.pathname,
+    });
   }, [activePost, activeProject, currentPage, location.pathname]);
 
   useEffect(() => {
-    applySeoMetadata({
-      title: seo.title,
-      description: seo.description,
-      pathname: location.pathname,
-      robots: currentPage === 'not-found' ? 'noindex, follow' : 'index, follow',
-    });
-  }, [currentPage, location.pathname, seo.description, seo.title]);
+    applySeoToDocument(seo);
+  }, [seo]);
 
   const routeAnnouncement = useMemo(() => {
     if (activeProject) return `Project ${activeProject.title} page loaded`;
@@ -351,17 +342,21 @@ export default function App() {
 
   const homeElement = (
     <>
-      <Hero onWorkClick={() => scrollToId('work', { offset: 112 })} />
+      <Hero onWorkClick={() => scrollToElement(document.getElementById('work'), 0.75)} />
       <CompaniesLogos />
       <AboutSection />
       <HowIHelpSection />
       <ExperienceSection />
       <ProcessReelSection />
-      <Section id="work" eyebrow={siteContent.featuredWork.eyebrow} motion="fade">
+      <Section id="work" eyebrow={siteContent.featuredWork.eyebrow} reveal={false}>
         <div className="mb-10 text-left">
-          <BlurIn as="h2" className={cn(typography.h2, 'font-black max-w-[24ch] text-balance', darkMode ? 'text-white' : 'text-black')}>
-            {siteContent.featuredWork.title} <br /> <span className="text-accent">{siteContent.featuredWork.highlight}</span>
-          </BlurIn>
+          <SectionTitle
+            title={siteContent.featuredWork.title}
+            highlight={siteContent.featuredWork.highlight}
+            delay={sectionPacing.support.title}
+            stackHighlight
+            className={cn(darkMode ? 'text-white' : 'text-black')}
+          />
         </div>
 
         <div className="sticky top-28 sm:top-32 z-40 mb-8 py-2 pointer-events-none">
@@ -448,43 +443,57 @@ export default function App() {
 
         <main id="main-content" className="relative">
           <ErrorBoundary>
-            <AnimatePresence mode="wait">
-              <motion.div key={currentPage} variants={variants.fadeIn} initial="initial" animate="animate" exit="exit" transition={transitions.smooth}>
-                <Routes location={location}>
-                  <Route path="/" element={homeElement} />
-                  <Route path="/projects" element={workElement} />
-                  <Route
-                    path="/projects/:slug"
-                    element={
-                      activeProject ? (
-                        <ProjectDetailPage
-                          project={activeProject}
-                          nextProject={nextProject}
-                          onNextProject={handleProjectClick}
-                        />
-                      ) : (
-                        notFoundElement
-                      )
-                    }
-                  />
-                  <Route path="/blog" element={<BlogIndexPage onPostClick={handleBlogClick} />} />
-                  <Route
-                    path="/blog/:slug"
-                    element={
-                      activePost ? (
-                        <BlogArticlePage
-                          post={activePost}
-                          nextPost={nextPost}
-                          onNextPost={handleBlogClick}
-                        />
-                      ) : (
-                        notFoundElement
-                      )
-                    }
-                  />
-                  <Route path="/about" element={aboutElement} />
-                  <Route path="*" element={notFoundElement} />
-                </Routes>
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={location.pathname}
+                variants={pageTransitionVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+              >
+                <Suspense
+                  fallback={(
+                    <section className="min-h-[60vh] w-full px-6 py-24 sm:px-10" aria-busy="true" aria-live="polite">
+                      <p className={cn(typography.body, darkMode ? 'text-white/70' : 'text-black/70')}>Loading page...</p>
+                    </section>
+                  )}
+                >
+                  <Routes location={location}>
+                    <Route path="/" element={homeElement} />
+                    <Route path="/projects" element={workElement} />
+                    <Route
+                      path="/projects/:slug"
+                      element={
+                        activeProject ? (
+                          <ProjectDetailPage
+                            project={activeProject}
+                            nextProject={nextProject}
+                            onNextProject={handleProjectClick}
+                          />
+                        ) : (
+                          notFoundElement
+                        )
+                      }
+                    />
+                    <Route path="/blog" element={<BlogIndexPage onPostClick={handleBlogClick} />} />
+                    <Route
+                      path="/blog/:slug"
+                      element={
+                        activePost ? (
+                          <BlogArticlePage
+                            post={activePost}
+                            nextPost={nextPost}
+                            onNextPost={handleBlogClick}
+                          />
+                        ) : (
+                          notFoundElement
+                        )
+                      }
+                    />
+                    <Route path="/about" element={aboutElement} />
+                    <Route path="*" element={notFoundElement} />
+                  </Routes>
+                </Suspense>
               </motion.div>
             </AnimatePresence>
           </ErrorBoundary>

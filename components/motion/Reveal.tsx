@@ -1,7 +1,8 @@
 
 import React from "react";
-import { motion, Variants, useReducedMotion } from "framer-motion";
-import { durations, easing, stagger, viewportDefaults } from "../../lib/motionTokens";
+import { motion, Variants, useReducedMotion } from "motion/react";
+import { distances, durations, easing, stagger } from "../../lib/motionTokens";
+import { VIEWPORT_REVEAL } from "../../lib/motion";
 
 interface RevealProps {
   children: React.ReactNode;
@@ -24,7 +25,7 @@ export const Reveal: React.FC<RevealProps> = ({
 }) => {
   const reduce = useReducedMotion() ?? false;
 
-  const distance = 20;
+  const distance = distances.sm;
   const directionMap = {
     up: { y: distance, x: 0 },
     down: { y: -distance, x: 0 },
@@ -37,34 +38,36 @@ export const Reveal: React.FC<RevealProps> = ({
   const revealVariants: Variants = staggerChildren
     ? (stagger.container(delay) as Variants)
     : ({
-        initial: reduce ? { opacity: 0 } : { opacity: 0, ...axis },
-        animate: reduce
-          ? {
-            opacity: 1,
-            transition: {
-              duration: durations.fast,
-              ease: easing.smooth,
-              delay,
-            },
-          }
-          : {
-            opacity: 1,
-            x: 0,
-            y: 0,
-            transition: {
-              duration: durations.medium,
-              ease: easing.smooth,
-              delay,
-            },
+      initial: reduce
+        ? { opacity: 1 }
+        : { opacity: 0, ...axis },
+      animate: reduce
+        ? {
+          opacity: 1,
+          transition: {
+            duration: durations.fast,
+            ease: easing.smooth,
+            delay,
           },
-      } as Variants);
+        }
+        : {
+          opacity: 1,
+          x: 0,
+          y: 0,
+          transition: {
+            duration: durations.medium,
+            ease: easing.smooth,
+            delay,
+          },
+        },
+    } as Variants);
 
   return (
     <motion.div
       variants={revealVariants}
       initial="initial"
       whileInView="animate"
-      viewport={viewportDefaults}
+      viewport={VIEWPORT_REVEAL}
       className={className}
     >
       {children}

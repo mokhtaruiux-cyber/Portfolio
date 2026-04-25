@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
+import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
 import { useLenis } from 'lenis/react';
 import { X } from 'lucide-react';
 
@@ -75,7 +75,6 @@ export const ProjectImageViewer: React.FC<ProjectImageViewerProps> = ({
     body.style.top = `-${scrollY}px`;
     body.style.width = '100%';
     body.style.overflow = 'hidden';
-    lenis?.stop();
     if (scrollbarWidth > 0) {
       body.style.paddingRight = `${scrollbarWidth}px`;
     }
@@ -86,8 +85,11 @@ export const ProjectImageViewer: React.FC<ProjectImageViewerProps> = ({
       body.style.width = original.width;
       body.style.overflow = original.overflow;
       body.style.paddingRight = original.paddingRight;
-      lenis?.start();
-      window.scrollTo(0, scrollY);
+      if (lenis) {
+        lenis.scrollTo(scrollY, { immediate: true });
+      } else {
+        window.scrollTo(0, scrollY);
+      }
     };
   }, [isOpen, lenis]);
 
@@ -225,7 +227,6 @@ export const ProjectImageViewer: React.FC<ProjectImageViewerProps> = ({
 
           <div
             ref={scrollRef}
-            data-lenis-prevent
             className="relative h-dvh overflow-y-auto px-4 pb-10 pt-[max(.75rem,env(safe-area-inset-top))] sm:px-8 sm:pb-12 md:px-10 lg:px-12"
             onClick={(event) => {
               if (event.target === event.currentTarget) onClose();

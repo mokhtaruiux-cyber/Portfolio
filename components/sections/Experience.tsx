@@ -1,11 +1,11 @@
 import React from 'react';
-import { motion } from 'framer-motion';
+import { motion } from 'motion/react';
 import { siteContent } from '../../content';
 import { useTheme } from '../../context/ThemeContext';
 import { Section } from '../layout/Section';
-import { BlurIn } from '../motion/BlurIn';
+import { SectionTitle } from '../motion/SectionTitle';
 import { Reveal } from '../motion/Reveal';
-import { durations, easing, viewportDefaults } from '../../lib/motionTokens';
+import { sectionPacing, stagger, viewportDefaults } from '../../lib/motionTokens';
 import { cn } from '../../lib/utils';
 import { typography } from '../../lib/typography';
 
@@ -13,30 +13,29 @@ const listVariants = {
   initial: {},
   animate: {
     transition: {
-      staggerChildren: 0.08,
-      delayChildren: 0.05,
+      ...stagger.container(0.03, 0.045).animate.transition,
     },
   },
 };
 
 const rowVariants = {
-  initial: { opacity: 0, y: 12 },
-  animate: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: durations.fast, ease: easing.smooth },
-  },
+  ...stagger.item,
 };
 
 export const ExperienceSection: React.FC = () => {
   const { darkMode } = useTheme();
+  const pacing = sectionPacing.support;
   return (
-    <Section id="experience" eyebrow={siteContent.experience.eyebrow}>
+    <Section id="experience" eyebrow={siteContent.experience.eyebrow} motion="fade">
       <div className="text-left mb-10">
-        <BlurIn as="h2" className={cn(typography.h2, "font-black max-w-[24ch] mb-6", darkMode ? 'text-white' : 'text-black')}>
-          {siteContent.experience.title} <br /> <span className="text-accent">{siteContent.experience.highlight}</span>
-        </BlurIn>
-        <Reveal delay={0.15}>
+        <SectionTitle
+          title={siteContent.experience.title}
+          highlight={siteContent.experience.highlight}
+          delay={pacing.title}
+          stackHighlight
+          className={cn('mb-6', darkMode ? 'text-white' : 'text-black')}
+        />
+        <Reveal delay={pacing.body}>
           <p className={cn(typography.body, "font-medium max-w-[60ch]", typography.textSubtle, darkMode ? 'text-gray-300' : 'text-gray-600')}>
             {siteContent.experience.intro}
           </p>

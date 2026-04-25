@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
+import { useLenis } from 'lenis/react';
 import { siteContent } from '../../content';
 import { PageKey } from '../../types';
 import { Container } from './Container';
 import { useTheme } from '../../context/ThemeContext';
 import { typography } from '../../lib/typography';
 import { cn } from '../../lib/utils';
-import { useAppScroll } from '../../hooks/useAppScroll';
+import { scrollTiming } from '../../lib/motionTokens';
 
 type FooterNavLink = (typeof siteContent.footer.columns)[number]['links'][number];
 
@@ -18,7 +19,7 @@ export const Footer = ({
   onNavigate: (page: PageKey) => void;
   spacing?: 'compact' | 'default' | 'expanded';
 }) => {
-  const { scrollToId } = useAppScroll();
+  const lenis = useLenis();
   const { darkMode } = useTheme();
   const footerColumns = siteContent.footer.columns;
   const { cal } = siteContent;
@@ -30,13 +31,23 @@ export const Footer = ({
         ? 'pt-24 pb-12 sm:pt-36'
         : 'pt-16 pb-12 sm:pt-24';
 
+  const scrollToSection = useCallback((sectionId: string) => {
+    const target = document.getElementById(sectionId);
+    if (!target) return;
+    if (lenis) {
+      lenis.scrollTo(target, { duration: scrollTiming.anchorDuration });
+      return;
+    }
+    target.scrollIntoView({ behavior: 'auto', block: 'start' });
+  }, [lenis]);
+
   useEffect(() => {
     if (currentPage !== 'home' || !pendingSection) return;
     requestAnimationFrame(() => {
-      scrollToId(pendingSection, { offset: 112 });
+      scrollToSection(pendingSection);
       setPendingSection(null);
     });
-  }, [currentPage, pendingSection, scrollToId]);
+  }, [currentPage, pendingSection, scrollToSection]);
 
   const handleFooterNavigation = (link: FooterNavLink) => {
     if (link.sectionId) {
@@ -44,7 +55,7 @@ export const Footer = ({
         setPendingSection(link.sectionId);
         onNavigate('home');
       } else {
-        scrollToId(link.sectionId, { offset: 112 });
+        scrollToSection(link.sectionId);
       }
       return;
     }

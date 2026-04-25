@@ -1,8 +1,9 @@
 'use client';
-import { motion, useInView, useReducedMotion } from 'framer-motion';
+import { motion, useInView, useReducedMotion } from 'motion/react';
 import * as React from 'react';
 import { cn } from '../../lib/utils';
-import { durations, easing, viewportDefaults } from '../../lib/motionTokens';
+import { distances, durations, easing } from '../../lib/motionTokens';
+import { VIEWPORT_REVEAL } from '../../lib/motion';
 
 interface FadeInUpProps {
     children: React.ReactNode;
@@ -12,12 +13,18 @@ interface FadeInUpProps {
     offset?: number;
 }
 
-export const FadeInUp = ({ children, className, delay = 0, disableTransform = false, offset = 24 }: FadeInUpProps) => {
+export const FadeInUp = ({
+    children,
+    className,
+    delay = 0,
+    disableTransform = false,
+    offset = distances.md,
+}: FadeInUpProps) => {
     const ref = React.useRef(null);
-    const isInView = useInView(ref, viewportDefaults);
+    const isInView = useInView(ref, VIEWPORT_REVEAL);
     const reduceMotion = useReducedMotion() ?? false;
     const initial = reduceMotion
-        ? { opacity: 0 }
+        ? { opacity: 1 }
         : disableTransform
             ? { opacity: 0 }
             : { opacity: 0, y: offset };

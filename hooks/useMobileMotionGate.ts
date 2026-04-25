@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useReducedMotion } from 'framer-motion';
+import { useReducedMotion } from 'motion/react';
 
 const MOBILE_MOTION_QUERY = '(max-width: 768px), (pointer: coarse), (hover: none)';
 

@@ -1,13 +1,16 @@
 # Mokhtar Portfolio
 
-A premium portfolio site built with React, Vite, Tailwind CSS, and Framer Motion.
+A premium portfolio site built with React, Vite, Tailwind CSS, and Motion.
 
 ## Tech Stack
 - React 19 + TypeScript
-- Vite 6
-- Tailwind CSS 3
-- Framer Motion 12
+- Vite 8
+- Tailwind CSS 4
+- Motion 12
 - React Router DOM 7
+- Vitest 4 + Testing Library
+- Playwright 1.59
+- ESLint 9 + TypeScript ESLint 8
 
 ## Getting Started
 
@@ -15,6 +18,8 @@ A premium portfolio site built with React, Vite, Tailwind CSS, and Framer Motion
 npm install
 npm run dev
 ```
+
+Before production builds, set `VITE_SITE_URL` to the deployed origin so canonical and social metadata are generated correctly.
 
 ## Scripts
 - `npm run dev` — local development

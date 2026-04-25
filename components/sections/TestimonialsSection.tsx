@@ -1,15 +1,16 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { motion, useInView, useReducedMotion } from 'framer-motion';
+import { motion, useInView, useReducedMotion } from 'motion/react';
 import { Zap } from 'lucide-react';
 import { Testimonial } from '../../types';
 import { siteContent } from '../../content';
 import { useTheme } from '../../context/ThemeContext';
 import { typography } from '../../lib/typography';
 import { cn } from '../../lib/utils';
+import { sectionPacing } from '../../lib/motionTokens';
 import { Container } from '../layout/Container';
 import { Reveal } from '../motion/Reveal';
-import { BlurIn } from '../motion/BlurIn';
 import { FadeInUp } from '../motion/FadeInUp';
+import { SectionTitle } from '../motion/SectionTitle';
 
 interface TestimonialCardProps {
   testimonial: Testimonial;
@@ -20,10 +21,10 @@ interface TestimonialCardProps {
 const TestimonialCard: React.FC<TestimonialCardProps> = ({ testimonial, darkMode, ariaHidden }) => (
   <div
     className={cn(
-      'w-[300px] sm:w-[450px] flex-shrink-0 p-8 sm:p-12 rounded-surface glass border flex flex-col justify-between transition-transform duration-500 hover:scale-[1.01] group transform-gpu [backface-visibility:hidden] [will-change:transform]',
+      'w-[300px] sm:w-[450px] flex-shrink-0 p-8 sm:p-12 rounded-surface glass border flex flex-col justify-between transform-gpu [backface-visibility:hidden]',
       darkMode
-        ? 'bg-white/5 border-white/10 hover:border-white/20 shadow-[0_20px_60px_-50px_rgba(0,0,0,0.4)]'
-        : 'bg-white/40 border-black/5 hover:border-black/20 shadow-[0_20px_60px_-50px_rgba(0,0,0,0.18)]'
+        ? 'bg-white/5 border-white/10 shadow-[0_20px_60px_-50px_rgba(0,0,0,0.4)]'
+        : 'bg-white/40 border-black/5 shadow-[0_20px_60px_-50px_rgba(0,0,0,0.18)]'
     )}
     aria-hidden={ariaHidden ? true : undefined}
   >
@@ -42,10 +43,10 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({ testimonial, darkMode
             src={testimonial.avatar}
             alt={testimonial.name}
             className={cn(
-              "w-full h-full object-cover object-center transition-transform duration-500",
+              "w-full h-full object-cover object-center",
               testimonial.id === '1'
-                ? "scale-[1.08] group-hover:scale-[1.15]"
-                : "group-hover:scale-110"
+                ? "scale-[1.08]"
+                : ""
             )}
           />
         </div>
@@ -68,6 +69,7 @@ const TestimonialMarqueeRow = ({
   shouldAnimate,
   isMobile,
   phaseOffset,
+  rowDuration = 56,
 }: {
   items: Testimonial[];
   direction: 'left' | 'right';
@@ -75,9 +77,9 @@ const TestimonialMarqueeRow = ({
   shouldAnimate: boolean;
   isMobile: boolean;
   phaseOffset?: number;
+  rowDuration?: number;
 }) => {
   const [isPaused, setIsPaused] = useState(false);
-  const duration = 45;
   const rowPhaseOffset = phaseOffset ?? 0;
   const baseCount = items.length;
   const marqueeItems = useMemo(() => {
@@ -103,7 +105,7 @@ const TestimonialMarqueeRow = ({
         style={{
           width: 'fit-content',
           animationName: shouldAnimate ? 'company-marquee' : 'none',
-          animationDuration: shouldAnimate ? `${duration}s` : undefined,
+          animationDuration: shouldAnimate ? `${rowDuration}s` : undefined,
           animationTimingFunction: shouldAnimate ? 'linear' : undefined,
           animationIterationCount: shouldAnimate ? 'infinite' : undefined,
           animationDelay: rowPhaseOffset ? `${rowPhaseOffset}s` : '0s',
@@ -132,14 +134,14 @@ const TestimonialMarqueeRow = ({
 
 export const TestimonialsSection = () => {
   const { darkMode } = useTheme();
+  const pacing = sectionPacing.feature;
   const reduceMotion = useReducedMotion() ?? false;
   const sectionRef = useRef<HTMLElement | null>(null);
   const isInView = useInView(sectionRef, { amount: 0.2 });
   const [isPageVisible, setIsPageVisible] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const row1 = siteContent.testimonials.items.slice(0, 3);
-  const row2 = siteContent.testimonials.items.slice(3, 6);
-  const row3 = siteContent.testimonials.items.slice(6, 9);
+  const row2 = siteContent.testimonials.items.slice(3);
   const shouldAnimate = !reduceMotion && isInView && isPageVisible;
 
   useEffect(() => {
@@ -163,43 +165,46 @@ export const TestimonialsSection = () => {
 
   return (
     <section ref={sectionRef} id="testimonials" className="py-16 md:py-24 relative z-10 overflow-hidden">
-      <FadeInUp>
-        <Container className="relative z-20 mb-10">
-          <div className="flex flex-col items-start text-left">
-            <BlurIn as="span" className={cn(typography.labelXs, 'text-accent mb-4 sm:mb-6')}>{siteContent.testimonials.eyebrow}</BlurIn>
-            <BlurIn as="h3" delay={0.1} className={cn(typography.h2, 'font-black mb-6 max-w-[24ch]', darkMode ? 'text-white' : 'text-black')}>
-              {siteContent.testimonials.title} <br />
-              <span className="text-accent">{siteContent.testimonials.highlight}</span>
-            </BlurIn>
-            <Reveal delay={0.2}>
-              <p className={cn(typography.body, 'max-w-xl font-medium', typography.textSubtle, darkMode ? 'text-gray-300' : 'text-gray-600')}>
-                {siteContent.testimonials.description}
-              </p>
-            </Reveal>
+      <Container>
+        <FadeInUp>
+          <div className="relative z-20 mb-10">
+            <div className="flex flex-col items-start text-left">
+              <SectionTitle
+                eyebrow={siteContent.testimonials.eyebrow}
+                title={siteContent.testimonials.title}
+                highlight={siteContent.testimonials.highlight}
+                delay={pacing.title}
+                stackHighlight
+                eyebrowClassName="text-accent"
+                className={cn('mb-6', darkMode ? 'text-white' : 'text-black')}
+              />
+              <Reveal delay={pacing.body}>
+                <p className={cn(typography.body, 'max-w-xl font-medium', typography.textSubtle, darkMode ? 'text-gray-300' : 'text-gray-600')}>
+                  {siteContent.testimonials.description}
+                </p>
+              </Reveal>
+            </div>
           </div>
-        </Container>
-        <div className="relative">
-          <div className={cn(
-            'absolute inset-y-0 left-0 w-32 sm:w-64 z-10 bg-gradient-to-r pointer-events-none',
-            darkMode ? 'from-[#030303] via-[#030303]/40 to-transparent' : 'from-[#fafafa] via-[#fafafa]/40 to-transparent'
-          )} />
-          <div className={cn(
-            'absolute inset-y-0 right-0 w-32 sm:w-64 z-10 bg-gradient-to-l pointer-events-none',
-            darkMode ? 'from-[#030303] via-[#030303]/40 to-transparent' : 'from-[#fafafa] via-[#fafafa]/40 to-transparent'
-          )} />
-          <div className="space-y-2">
-            <Reveal delay={0.1}>
-              <TestimonialMarqueeRow items={row1} direction="right" darkMode={darkMode} shouldAnimate={shouldAnimate} isMobile={isMobile} phaseOffset={0} />
-            </Reveal>
-            <Reveal delay={0.2}>
-              <TestimonialMarqueeRow items={row2} direction="left" darkMode={darkMode} shouldAnimate={shouldAnimate} isMobile={isMobile} phaseOffset={-15} />
-            </Reveal>
-            <Reveal delay={0.3}>
-              <TestimonialMarqueeRow items={row3} direction="right" darkMode={darkMode} shouldAnimate={shouldAnimate} isMobile={isMobile} phaseOffset={-30} />
-            </Reveal>
+          <div className="relative">
+            <div className={cn(
+              'absolute inset-y-0 left-0 w-32 sm:w-64 z-10 bg-gradient-to-r pointer-events-none',
+              darkMode ? 'from-[#030303] via-[#030303]/40 to-transparent' : 'from-[#fafafa] via-[#fafafa]/40 to-transparent'
+            )} />
+            <div className={cn(
+              'absolute inset-y-0 right-0 w-32 sm:w-64 z-10 bg-gradient-to-l pointer-events-none',
+              darkMode ? 'from-[#030303] via-[#030303]/40 to-transparent' : 'from-[#fafafa] via-[#fafafa]/40 to-transparent'
+            )} />
+            <div className="space-y-2">
+              <Reveal delay={pacing.content}>
+                <TestimonialMarqueeRow items={row1} direction="right" darkMode={darkMode} shouldAnimate={shouldAnimate} isMobile={isMobile} phaseOffset={0} rowDuration={58} />
+              </Reveal>
+              <Reveal delay={pacing.content + 0.04}>
+                <TestimonialMarqueeRow items={row2} direction="left" darkMode={darkMode} shouldAnimate={shouldAnimate} isMobile={isMobile} phaseOffset={-18} rowDuration={64} />
+              </Reveal>
+            </div>
           </div>
-        </div>
-      </FadeInUp>
+        </FadeInUp>
+      </Container>
     </section>
   );
 };

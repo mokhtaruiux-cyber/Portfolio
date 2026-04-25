@@ -42,6 +42,7 @@ export interface Project {
   }[];
   tags: string[];
   caseStudySections: CaseStudySection[];
+  isDraft?: boolean;
 }
 
 export interface Experience {
