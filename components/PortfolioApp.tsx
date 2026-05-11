@@ -8,7 +8,6 @@ import { usePathname, useRouter } from 'next/navigation';
 import { siteContent } from '../content';
 import { PageKey } from '../types';
 import { pageTransitionVariants } from '../lib/motion';
-import { sectionPacing } from '../lib/motionTokens';
 import { titleReveal } from '../lib/motion/motionPresets';
 import { applySeoToDocument, buildRuntimeSeo } from '../lib/seo';
 import { typography } from '../lib/typography';

@@ -10,8 +10,8 @@
  * - Expo deceleration [0.22, 1, 0.36, 1] — snappy start, soft land
  * - staggerChildren: 0.12 — tight but clearly sequential
  *
- * Architecture rule: AnimatedSection is the ONLY whileInView.
- * Children use variants here — they receive 'visible' from the parent cascade.
+ * Children use variants here — they receive 'visible' from parent cascades
+ * or 'animate' from legacy Reveal wrappers.
  */
 
 import type { Variants } from 'motion/react';
@@ -45,7 +45,19 @@ export const fadeUp: Variants = {
     opacity: 0,
     y: 60,
   },
+  initial: {
+    opacity: 0,
+    y: 60,
+  },
   visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: DUR.slow,
+      ease: EXPO,
+    },
+  },
+  animate: {
     opacity: 1,
     y: 0,
     transition: {
@@ -63,7 +75,19 @@ export const fadeUpTight: Variants = {
     opacity: 0,
     y: 36,
   },
+  initial: {
+    opacity: 0,
+    y: 36,
+  },
   visible: {
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: DUR.base,
+      ease: EXPO,
+    },
+  },
+  animate: {
     opacity: 1,
     y: 0,
     transition: {
@@ -82,7 +106,21 @@ export const scaleIn: Variants = {
     y: 40,
     scale: 0.95,
   },
+  initial: {
+    opacity: 0,
+    y: 40,
+    scale: 0.95,
+  },
   visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: {
+      duration: DUR.slow,
+      ease: EXPO,
+    },
+  },
+  animate: {
     opacity: 1,
     y: 0,
     scale: 1,
@@ -97,7 +135,12 @@ export const scaleIn: Variants = {
 // For decorative/overlay elements that shouldn't move.
 export const fadeIn: Variants = {
   hidden:  { opacity: 0 },
+  initial: { opacity: 0 },
   visible: {
+    opacity: 1,
+    transition: { duration: DUR.base, ease: SMOOTH },
+  },
+  animate: {
     opacity: 1,
     transition: { duration: DUR.base, ease: SMOOTH },
   },
@@ -106,7 +149,13 @@ export const fadeIn: Variants = {
 // ─── SLIDE IN FROM LEFT ────────────────────────────────────────────────────
 export const slideInLeft: Variants = {
   hidden:  { opacity: 0, x: -40 },
+  initial: { opacity: 0, x: -40 },
   visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: DUR.slow, ease: EXPO },
+  },
+  animate: {
     opacity: 1,
     x: 0,
     transition: { duration: DUR.slow, ease: EXPO },
@@ -116,7 +165,13 @@ export const slideInLeft: Variants = {
 // ─── SLIDE IN FROM RIGHT ───────────────────────────────────────────────────
 export const slideInRight: Variants = {
   hidden:  { opacity: 0, x: 40 },
+  initial: { opacity: 0, x: 40 },
   visible: {
+    opacity: 1,
+    x: 0,
+    transition: { duration: DUR.slow, ease: EXPO },
+  },
+  animate: {
     opacity: 1,
     x: 0,
     transition: { duration: DUR.slow, ease: EXPO },
@@ -130,9 +185,16 @@ export const slideInRight: Variants = {
 // → cards (360ms+) → CTA (last).
 export const sectionContainer: Variants = {
   hidden: {},
+  initial: {},
   visible: {
     transition: {
       staggerChildren: STAGGER.loose,   // 0.12s between each direct child
+      delayChildren:   0,
+    },
+  },
+  animate: {
+    transition: {
+      staggerChildren: STAGGER.loose,
       delayChildren:   0,
     },
   },
@@ -143,9 +205,16 @@ export const sectionContainer: Variants = {
 // Tighter stagger — cards flow fast after parent delay.
 export const staggerContainer: Variants = {
   hidden: {},
+  initial: {},
   visible: {
     transition: {
       staggerChildren: STAGGER.base,   // 0.10s between cards
+      delayChildren:   0,
+    },
+  },
+  animate: {
+    transition: {
+      staggerChildren: STAGGER.base,
       delayChildren:   0,
     },
   },
@@ -155,9 +224,16 @@ export const staggerContainer: Variants = {
 // For badges, nav items, inline small lists.
 export const staggerContainerTight: Variants = {
   hidden: {},
+  initial: {},
   visible: {
     transition: {
       staggerChildren: STAGGER.tight,  // 0.06s — rapid fire, decorative
+      delayChildren:   0,
+    },
+  },
+  animate: {
+    transition: {
+      staggerChildren: STAGGER.tight,
       delayChildren:   0,
     },
   },

@@ -8,7 +8,7 @@ import { Section } from '../layout/Section';
 import { AnimatedSection } from '../motion/AnimatedSection';
 import { BlurIn } from '../motion/BlurIn';
 import { sectionPacing } from '../../lib/motionTokens';
-import { titleReveal } from '../../lib/motion/motionPresets';
+import { cardReveal } from '../../lib/motion/motionPresets';
 import { cn } from '../../lib/utils';
 import { typography } from '../../lib/typography';
 import {
@@ -66,6 +66,9 @@ export const ExperienceSection: React.FC = () => {
         <motion.div
           className="divide-y"
           variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={cardReveal.viewport}
         >
           {siteContent.experience.items.map((item, idx) => (
             <motion.div

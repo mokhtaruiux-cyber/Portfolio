@@ -7,15 +7,13 @@ import { AnimatedSection } from '../motion/AnimatedSection';
 import { BlurIn } from '../motion/BlurIn';
 import { cn } from '../../lib/utils';
 import { typography } from '../../lib/typography';
-import { titleReveal } from '../../lib/motion/motionPresets';
+import { mediaReveal, titleReveal } from '../../lib/motion/motionPresets';
 import { fadeUp, scaleIn } from '../../lib/motion/variants';
-import { sectionPacing } from '../../lib/motionTokens';
 
 const marqueeStyle: React.CSSProperties = { width: 'fit-content' };
 
 export const CompaniesLogos: React.FC = () => {
   const { darkMode } = useTheme();
-  const pacing = sectionPacing.support;
   const reduceMotion = useReducedMotion();
   const [tooltip, setTooltip] = useState<{ label: string; left: number; top: number } | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -118,7 +116,12 @@ export const CompaniesLogos: React.FC = () => {
         </motion.div>
 
         {/* 3 — Marquee logos */}
-        <motion.div variants={scaleIn}>
+        <motion.div
+          variants={scaleIn}
+          initial="hidden"
+          whileInView="visible"
+          viewport={mediaReveal.viewport}
+        >
         <div ref={containerRef} className="mt-10 relative">
           <div
             className="relative overflow-x-hidden"

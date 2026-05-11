@@ -10,7 +10,7 @@ import { AnimatedSection } from '../motion/AnimatedSection';
 import { BlurIn } from '../motion/BlurIn';
 import { cn } from '../../lib/utils';
 import { typography } from '../../lib/typography';
-import { titleReveal } from '../../lib/motion/motionPresets';
+import { cardReveal, titleReveal } from '../../lib/motion/motionPresets';
 import {
   fadeUp,
   scaleIn,
@@ -69,6 +69,9 @@ export const HowIHelpSection: React.FC = () => {
         <motion.div
           className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8"
           variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={cardReveal.viewport}
         >
           {howIHelp.cards.map((card) => (
             <motion.div

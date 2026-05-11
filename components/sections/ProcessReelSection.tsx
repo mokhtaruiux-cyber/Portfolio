@@ -7,8 +7,7 @@ import { AnimatedSection } from '../motion/AnimatedSection';
 import { BlurIn } from '../motion/BlurIn';
 import { typography } from '../../lib/typography';
 import { cn } from '../../lib/utils';
-import { sectionPacing } from '../../lib/motionTokens';
-import { titleReveal } from '../../lib/motion/motionPresets';
+import { cardReveal, titleReveal } from '../../lib/motion/motionPresets';
 import { fadeUp, scaleIn, staggerContainer } from '../../lib/motion/variants';
 
 type ProcessReelSectionProps = {
@@ -27,7 +26,6 @@ export const ProcessReelSection: React.FC<ProcessReelSectionProps> = ({
   loop = true,
 }) => {
   const { darkMode } = useTheme();
-  const pacing = sectionPacing.feature;
   const steps = siteContent.process.steps;
   const reduceMotion = useReducedMotion();
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -185,6 +183,9 @@ export const ProcessReelSection: React.FC<ProcessReelSectionProps> = ({
             onTouchEnd={handleTouchEnd}
             onKeyDown={handleTabKeyDown}
             variants={staggerContainer}
+            initial="hidden"
+            whileInView="visible"
+            viewport={cardReveal.viewport}
           >
           {steps.map((step, index) => {
             const isActive = index === activeIndex;

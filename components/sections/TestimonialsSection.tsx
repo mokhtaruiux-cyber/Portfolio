@@ -9,7 +9,7 @@ import { cn } from '../../lib/utils';
 import { Container } from '../layout/Container';
 import { AnimatedSection } from '../motion/AnimatedSection';
 import { BlurIn } from '../motion/BlurIn';
-import { titleReveal } from '../../lib/motion/motionPresets';
+import { mediaReveal, titleReveal } from '../../lib/motion/motionPresets';
 import { fadeUp, scaleIn } from '../../lib/motion/variants';
 
 interface TestimonialCardProps {
@@ -200,7 +200,12 @@ export const TestimonialsSection = () => {
           </motion.p>
 
           {/* 4 — Marquee rows */}
-          <motion.div variants={scaleIn}>
+          <motion.div
+            variants={scaleIn}
+            initial="hidden"
+            whileInView="visible"
+            viewport={mediaReveal.viewport}
+          >
             <div className="relative">
               <div className={cn(
                 'absolute inset-y-0 left-0 w-32 sm:w-64 z-10 bg-gradient-to-r pointer-events-none',

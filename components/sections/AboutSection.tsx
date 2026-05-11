@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { motion, useReducedMotion } from 'motion/react';
+import { motion } from 'motion/react';
 import { siteContent } from '../../content';
 import { useTheme } from '../../context/ThemeContext';
 import { Section } from '../layout/Section';
@@ -9,7 +9,7 @@ import { AnimatedSection } from '../motion/AnimatedSection';
 import { typography } from '../../lib/typography';
 import { cn } from '../../lib/utils';
 import { BlurIn } from '../motion/BlurIn';
-import { titleReveal } from '../../lib/motion/motionPresets';
+import { cardReveal, titleReveal } from '../../lib/motion/motionPresets';
 import {
   fadeUp,
   scaleIn,
@@ -81,6 +81,9 @@ export const AboutSection: React.FC = () => {
         <motion.div
           className="grid grid-cols-1 lg:grid-cols-3 gap-4"
           variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={cardReveal.viewport}
         >
           {siteContent.about.highlights.map((item) => (
             <motion.div

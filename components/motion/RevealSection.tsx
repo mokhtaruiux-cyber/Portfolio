@@ -34,18 +34,16 @@ export const RevealSection: React.FC<RevealSectionProps> = ({
       };
     }
     if (disableTransform) {
-      // Pure fade — used when sections opt out of lift (Hero, Testimonials)
-      // Fast fade so it doesn't block perception of child animations
       return {
-        initial: { opacity: 0 },
+        initial: { opacity: 1 },
         animate: {
           opacity: 1,
-          transition: { duration: 0.35, ease: easing.smooth, delay },
+          transition: { duration: durations.fast, ease: easing.smooth, delay },
         },
       };
     }
     return {
-      initial: { opacity: 0, y: distances.md },
+      initial: { opacity: 1, y: distances.md },
       animate: {
         opacity: 1,
         y: 0,

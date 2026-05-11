@@ -10,7 +10,7 @@ import { BlurIn } from '../motion/BlurIn';
 import { BlogCard } from '../blog/BlogCard';
 import { typography } from '../../lib/typography';
 import { cn } from '../../lib/utils';
-import { titleReveal } from '../../lib/motion/motionPresets';
+import { cardReveal, titleReveal } from '../../lib/motion/motionPresets';
 import {
   fadeUp,
   scaleIn,
@@ -65,6 +65,9 @@ export const BlogSection = ({ onPostClick }: { onPostClick: (slug: string) => vo
         <motion.div
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
           variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={cardReveal.viewport}
         >
           {siteContent.writing.items.map((post) => (
             <motion.div key={post.id} variants={scaleIn} className="h-full">

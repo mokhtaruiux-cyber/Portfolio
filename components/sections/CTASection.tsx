@@ -12,7 +12,7 @@ import { typography } from '../../lib/typography';
 import { cn } from '../../lib/utils';
 import { GlowButton } from '../ui/GlowButton';
 import { titleReveal } from '../../lib/motion/motionPresets';
-import { fadeUp, scaleIn } from '../../lib/motion/variants';
+import { fadeUp, scaleIn, staggerContainer } from '../../lib/motion/variants';
 
 export const CTASection = () => {
   const { darkMode } = useTheme();
@@ -36,7 +36,7 @@ export const CTASection = () => {
             darkMode ? 'bg-black/40 border-white/10' : 'bg-white/60 border-black/5'
           )}
         >
-          <div className="flex flex-col items-start text-left gap-6">
+          <motion.div className="flex flex-col items-start text-left gap-6" variants={staggerContainer}>
             {/* Badge */}
             <motion.div
               variants={fadeUp}
@@ -94,7 +94,7 @@ export const CTASection = () => {
                 {siteContent.finalCta.secondaryLabel}
               </a>
             </motion.div>
-          </div>
+          </motion.div>
         </motion.div>
       </AnimatedSection>
     </Section>

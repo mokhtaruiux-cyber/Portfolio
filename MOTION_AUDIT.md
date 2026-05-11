@@ -102,3 +102,78 @@ Duration: slow from 0.58→**0.75s** for cards, **0.65s** for content
 14. Rewrite CTA section in PortfolioApp — AnimatedSection choreography
 15. Verify build passes
 16. Browser validate all sections
+
+---
+
+## Section Choreography Pass
+
+**Date:** May 11, 2026
+**Scope:** Completed the body/content reveal pass without changing layout, spacing, color, typography, content, or title animation behavior.
+
+### What was still broken
+
+- Some body/card/media reveals used `initial/animate` variants under newer `hidden/visible` parents, so child choreography could silently fail.
+- Some grouped section data inherited only the section-level trigger, so cards/media could finish animating before the user reached them.
+- Legacy `RevealSection` could still set an entire section wrapper to `opacity: 0`; if Lenis/viewport timing missed the trigger, article/detail content could remain invisible even though it existed in the DOM.
+- `npx playwright test` had a flaky read-only audit wait using `networkidle`, which can hang when external embeds keep network activity alive.
+
+### What was fixed
+
+- `lib/motion/motionVariants.ts` now emits both `initial/animate` and `hidden/visible` states for shared `contentReveal`, `cardReveal`, `mediaReveal`, and `staggerContainer` variants.
+- `lib/motion/variants.ts` now also supports both state pairs for `fadeUp`, `scaleIn`, and stagger containers.
+- Data-heavy groups now have their own viewport reveal trigger using shared presets, while titles remain on the existing `BlurIn`/`titleReveal` system.
+- `RevealSection` no longer hides entire sections with wrapper opacity; child/body/card/media presets now control the visible fade-up choreography.
+- `e2e/ui-audit.spec.ts` now waits for `load` instead of `networkidle`, avoiding unrelated external-network timeouts.
+
+### Page / Section Matrix
+
+| Page / Section | Title animation | Body/content animation | Cards/media animation | Presets used | Remaining issue |
+|---|---:|---:|---:|---|---|
+| Home hero | Yes | Yes | Yes | `titleReveal`, `fadeUp`, `scaleIn`, `staggerContainerTight` | None |
+| Companies / Logos | Yes | N/A | Yes | `titleReveal`, `fadeUp`, `scaleIn`, `mediaReveal` viewport | None |
+| About | Yes | Yes | Yes | `titleReveal`, `fadeUp`, `staggerContainer`, `scaleIn`, `cardReveal` viewport | None |
+| How I help | Yes | Yes | Yes | `titleReveal`, `fadeUp`, `staggerContainer`, `scaleIn`, `cardReveal` viewport | None |
+| Experience | Yes | Yes | Yes | `fadeUp`, `staggerContainer`, `scaleIn`, `cardReveal` viewport | None |
+| Process | Yes | Yes | Yes | `titleReveal`, `fadeUp`, `staggerContainer`, `scaleIn`, `cardReveal` viewport | None |
+| Selected projects | Yes | Yes | Yes | `titleReveal`, `fadeUp`, `cardReveal`, `mediaReveal`, `staggerContainer` | None |
+| Blog preview | Yes | Yes | Yes | `titleReveal`, `fadeUp`, `staggerContainer`, `scaleIn`, `cardReveal` viewport | None |
+| Testimonials | Yes | Yes | Yes | `titleReveal`, `fadeUp`, `scaleIn`, `mediaReveal` viewport | None |
+| CTA | Yes | Yes | Yes | `titleReveal`, `scaleIn`, `staggerContainer`, `fadeUp` | None |
+| Projects listing | Yes | Yes | Yes | `PageIntro`, `titleReveal`, `cardReveal`, `mediaReveal`, `staggerContainer` | None |
+| Project detail pages | Yes | Yes | Yes | `titleReveal`, `contentReveal`, `cardReveal`, `mediaReveal`, `staggerContainer` | None |
+| Blog listing | Yes | Yes | Yes | `PageIntro`, `titleReveal`, `cardReveal`, `mediaReveal`, `staggerContainer` | None |
+| Blog article pages | Yes | Yes | Yes | `titleReveal`, `contentReveal`, `mediaReveal`, `cardReveal`, `staggerContainer` | None |
+| Not found page | Yes | Yes | Yes | `PageIntro`, `titleReveal`, `contentReveal`, `cardReveal` | None |
+
+### Files changed in this pass
+
+- `lib/motion/motionVariants.ts`
+- `lib/motion/variants.ts`
+- `components/motion/RevealSection.tsx`
+- `components/sections/AboutSection.tsx`
+- `components/sections/HowIHelpSection.tsx`
+- `components/sections/Experience.tsx`
+- `components/sections/ProcessReelSection.tsx`
+- `components/sections/BlogSection.tsx`
+- `components/sections/CompaniesLogos.tsx`
+- `components/sections/TestimonialsSection.tsx`
+- `components/sections/CTASection.tsx`
+- `components/PortfolioApp.tsx`
+- `e2e/ui-audit.spec.ts`
+- `MOTION_AUDIT.md`
+
+### Validation results
+
+- `npm run lint` — passed.
+- `npm run test` — passed, 2 test files / 9 tests.
+- `npm run build` — passed, TypeScript passed and 13 static routes generated.
+- Production browser validation on `http://localhost:3000` — desktop route scroll-through passed with no console errors after the reveal fixes.
+- Custom production Playwright scroll validation — passed across desktop, tablet, and mobile for `/`, `/projects`, `/projects/homecare-medical-app`, `/blog`, `/blog/how-social-media-is-reshaping-your-brain`, and `/does-not-exist`; no in-viewport body/card/media content remained stuck at `opacity: 0`.
+- `npx playwright test` — passed, 14 tests.
+
+### Lenis status
+
+- One `ReactLenis` root instance remains in `SmoothScrollProvider`.
+- One manual RAF loop remains active with `autoRaf: false`.
+- Route changes still restore scroll through `lenis.scrollTo(..., { immediate: true })`.
+- The section wrapper opacity masking issue was removed so Lenis/Framer viewport timing cannot leave entire body sections invisible.

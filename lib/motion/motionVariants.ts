@@ -101,6 +101,32 @@ export const titleRevealWordVariants: Variants = {
             ease: easing.reveal,
           },
         },
+  hidden: (custom: TitleRevealWordCustom = {}) =>
+    custom.reduceMotion
+      ? { opacity: 1 }
+      : {
+          opacity: 0,
+          y: titleReveal.distance,
+          filter: `blur(${titleReveal.blur}px)`,
+        },
+  visible: (custom: TitleRevealWordCustom = {}) =>
+    custom.reduceMotion
+      ? {
+          opacity: 1,
+          transition: {
+            duration: durations.fast,
+          },
+        }
+      : {
+          opacity: 1,
+          y: 0,
+          filter: "blur(0px)",
+          transition: {
+            duration: titleReveal.duration,
+            delay: resolveTitleWordDelay(custom.baseDelay, custom.wordIndex),
+            ease: easing.reveal,
+          },
+        },
 };
 
 export const buildRevealVariants = ({
@@ -111,28 +137,32 @@ export const buildRevealVariants = ({
   reduceMotion = false,
 }: RevealVariantOptions = {}): Variants => {
   const axis = resolveDirectionalOffset(direction, distance);
+  const initial = reduceMotion ? { opacity: 1 } : { opacity: 0, ...axis };
+  const animate = reduceMotion
+    ? {
+        opacity: 1,
+        transition: {
+          duration: durations.fast,
+          ease: easing.smooth,
+          delay,
+        },
+      }
+    : {
+        opacity: 1,
+        x: 0,
+        y: 0,
+        transition: {
+          duration,
+          ease: easing.smooth,
+          delay,
+        },
+      };
 
   return {
-    initial: reduceMotion ? { opacity: 1 } : { opacity: 0, ...axis },
-    animate: reduceMotion
-      ? {
-          opacity: 1,
-          transition: {
-            duration: durations.fast,
-            ease: easing.smooth,
-            delay,
-          },
-        }
-      : {
-          opacity: 1,
-          x: 0,
-          y: 0,
-          transition: {
-            duration,
-            ease: easing.smooth,
-            delay,
-          },
-        },
+    initial,
+    animate,
+    hidden: initial,
+    visible: animate,
   };
 };
 
@@ -144,28 +174,37 @@ export const buildBlurFadeUpVariants = ({
   reduceMotion = false,
 }: RevealVariantOptions = {}): Variants => {
   if (reduceMotion) {
+    const initial = { opacity: 1, y: 0 };
+    const animate = {
+      opacity: 1,
+      y: 0,
+      transition: revealTransition(0, durations.fast),
+    };
+
     return {
-      initial: { opacity: 1, y: 0 },
-      animate: {
-        opacity: 1,
-        y: 0,
-        transition: revealTransition(0, durations.fast),
-      },
+      initial,
+      animate,
+      hidden: initial,
+      visible: animate,
     };
   }
 
   const withBlur = blur > 0;
+  const initial = withBlur
+    ? { opacity: 0, y: distance, filter: `blur(${blur}px)` }
+    : { opacity: 0, y: distance };
+  const animate = {
+    opacity: 1,
+    y: 0,
+    ...(withBlur ? { filter: "blur(0px)" } : {}),
+    transition: revealTransition(delay, duration),
+  };
 
   return {
-    initial: withBlur
-      ? { opacity: 0, y: distance, filter: `blur(${blur}px)` }
-      : { opacity: 0, y: distance },
-    animate: {
-      opacity: 1,
-      y: 0,
-      ...(withBlur ? { filter: "blur(0px)" } : {}),
-      transition: revealTransition(delay, duration),
-    },
+    initial,
+    animate,
+    hidden: initial,
+    visible: animate,
   };
 };
 
@@ -202,19 +241,32 @@ export const buildContentRevealVariants = ({
 export const buildStaggerContainerVariants = (
   delayChildren = 0,
   staggerChildren = staggerValues.section,
-): Variants => ({
-  initial: {},
-  animate: {
+): Variants => {
+  const initial = {};
+  const animate = {
     transition: {
       delayChildren,
       staggerChildren,
     },
-  },
-});
+  };
+
+  return {
+    initial,
+    animate,
+    hidden: initial,
+    visible: animate,
+  };
+};
 
 export const staggerItemVariants: Variants = {
   initial: { opacity: 0, y: distances.md },
   animate: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: durations.medium, ease: easing.reveal },
+  },
+  hidden: { opacity: 0, y: distances.md },
+  visible: {
     opacity: 1,
     y: 0,
     transition: { duration: durations.medium, ease: easing.reveal },
@@ -244,9 +296,9 @@ export const pageTransitionVariants: Variants = {
 export const buildCardRevealVariants = ({
   delay = 0,
   reduceMotion = false,
-}: IndexedRevealVariantOptions = {}): Variants => ({
-  initial: reduceMotion ? { opacity: 1 } : { opacity: 0, y: cardRevealTokens.distance },
-  animate: {
+}: IndexedRevealVariantOptions = {}): Variants => {
+  const initial = reduceMotion ? { opacity: 1 } : { opacity: 0, y: cardRevealTokens.distance };
+  const animate = {
     opacity: 1,
     y: 0,
     transition: {
@@ -254,23 +306,30 @@ export const buildCardRevealVariants = ({
       ease: easing.reveal,
       delay: reduceMotion ? 0 : delay,
     },
-  },
-});
+  };
+
+  return {
+    initial,
+    animate,
+    hidden: initial,
+    visible: animate,
+  };
+};
 
 export const cardRevealVariants = buildCardRevealVariants();
 
 export const buildMediaRevealVariants = ({
   delay = 0,
   reduceMotion = false,
-}: IndexedRevealVariantOptions = {}): Variants => ({
-  initial: reduceMotion
+}: IndexedRevealVariantOptions = {}): Variants => {
+  const initial = reduceMotion
     ? { opacity: 1 }
     : {
         opacity: 0,
         y: mediaRevealTokens.distance,
         scale: mediaRevealTokens.scale,
-      },
-  animate: {
+      };
+  const animate = {
     opacity: 1,
     y: 0,
     scale: 1,
@@ -279,5 +338,12 @@ export const buildMediaRevealVariants = ({
       ease: easing.reveal,
       delay: reduceMotion ? 0 : delay,
     },
-  },
-});
+  };
+
+  return {
+    initial,
+    animate,
+    hidden: initial,
+    visible: animate,
+  };
+};

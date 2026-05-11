@@ -64,7 +64,7 @@ test.describe('UI audit (read-only visual proof)', () => {
   test('A) navbar overlap proof on home work sticky bar', async ({ page }) => {
     for (const vp of viewports) {
       await page.setViewportSize({ width: vp.width, height: vp.height });
-      await page.goto('/', { waitUntil: 'networkidle' });
+      await page.goto('/', { waitUntil: 'load' });
       await page.waitForTimeout(300);
       const stickyBar = page.locator('main div.sticky').first();
       await expect(stickyBar).toHaveCount(1);
@@ -87,7 +87,7 @@ test.describe('UI audit (read-only visual proof)', () => {
   test('B) duplicate back controls on project detail', async ({ page }) => {
     for (const vp of viewports) {
       await page.setViewportSize({ width: vp.width, height: vp.height });
-      await page.goto(routes.projectDetail, { waitUntil: 'networkidle' });
+      await page.goto(routes.projectDetail, { waitUntil: 'load' });
       await page.waitForTimeout(300);
 
       const backButton = page.locator('button', { hasText: /back/i });
@@ -129,7 +129,7 @@ test.describe('UI audit (read-only visual proof)', () => {
     if (!desktop) return;
     await page.setViewportSize({ width: desktop.width, height: desktop.height });
 
-    await page.goto(routes.projects, { waitUntil: 'networkidle' });
+    await page.goto(routes.projects, { waitUntil: 'load' });
     await page.waitForTimeout(300);
 
     const firstProjectCard = page.locator('main button:has(img)').first();
@@ -148,7 +148,7 @@ test.describe('UI audit (read-only visual proof)', () => {
     await shot(page, 'C-desktop-projects-full');
     await firstProjectCard.screenshot({ path: outPath('C-desktop-projects-card') });
 
-    await page.goto(routes.blog, { waitUntil: 'networkidle' });
+    await page.goto(routes.blog, { waitUntil: 'load' });
     await page.waitForTimeout(300);
 
     const firstBlogCard = page.locator('main button:has(img)').first();
