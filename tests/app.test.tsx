@@ -1,17 +1,28 @@
 import React from 'react';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import { MemoryRouter } from 'react-router-dom';
 
-import App from '../App';
+import { PortfolioApp } from '../components/PortfolioApp';
 import { siteContent } from '../content';
 
+let mockPathname = '/';
+const push = vi.fn((href: string) => {
+  mockPathname = href;
+});
+
+vi.mock('next/navigation', () => ({
+  usePathname: () => mockPathname,
+  useRouter: () => ({
+    push,
+    replace: vi.fn(),
+    prefetch: vi.fn(),
+  }),
+}));
+
 const renderWithRoute = (route: string) => {
-  return render(
-    <MemoryRouter initialEntries={[route]}>
-      <App />
-    </MemoryRouter>
-  );
+  mockPathname = route;
+  push.mockClear();
+  return render(<PortfolioApp />);
 };
 
 describe('App routing and landmarks', () => {

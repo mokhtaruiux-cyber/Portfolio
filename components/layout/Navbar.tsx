@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useMotionValueEvent, useScroll, useVelocity } from 'motion/react';
 import { useLenis } from 'lenis/react';
 import { Sun, Moon, Menu, X } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import Link from 'next/link';
 import { siteContent } from '../../content';
 import { useTheme } from '../../context/ThemeContext';
 import { PageKey } from '../../types';
@@ -155,7 +155,7 @@ export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
         >
           <div className="flex items-center justify-between h-full px-4 sm:px-6">
             <Link
-              to="/"
+              href="/"
               className={cn(
                 'flex items-center gap-3 cursor-pointer bg-transparent no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 focus-visible:ring-offset-2',
                 darkMode ? 'focus-visible:ring-offset-[#030303]' : 'focus-visible:ring-offset-[#fafafa]'

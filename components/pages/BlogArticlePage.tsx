@@ -1,11 +1,17 @@
 import React from 'react';
+import { motion, useReducedMotion } from 'motion/react';
 import { BlogContentBlock, BlogPost } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
 import { Section } from '../layout/Section';
 import { Reveal } from '../motion/Reveal';
 import { BlurIn } from '../motion/BlurIn';
 import { typography } from '../../lib/typography';
-import { masterTitleReveal } from '../../lib/motionTokens';
+import {
+  contentReveal,
+  mediaReveal,
+  staggerContainer,
+  titleReveal,
+} from '../../lib/motion/motionPresets';
 import { cn } from '../../lib/utils';
 
 const BlogBlock = ({ block, darkMode }: { block: BlogContentBlock; darkMode: boolean }) => {
@@ -71,102 +77,116 @@ export const BlogArticlePage = ({
   onNextPost?: (slug: string) => void;
 }) => {
   const { darkMode } = useTheme();
+  const reduceMotion = useReducedMotion() ?? false;
   return (
     <>
       <Section className="pt-28 md:pt-36">
         <div className="mx-auto flex w-full max-w-[60ch] flex-col items-start text-left space-y-10">
           <div className="space-y-4">
-            <Reveal>
+            <Reveal delay={titleReveal.sectionDelay}>
               <div className={cn('flex items-center gap-4', typography.labelXs, typography.textSubtle)}>
                 <span className="px-3 py-1 rounded-mini bg-accent/20 border border-accent/30 text-accent">{post.category}</span>
                 <span>{post.date}</span>
                 <span>{post.readTime}</span>
               </div>
             </Reveal>
-            <BlurIn as="h1" delay={masterTitleReveal.headingDelay} className={cn(typography.h1, 'font-black max-w-[18ch] tracking-normal', darkMode ? 'text-white' : 'text-black')}>
+            <BlurIn as="h1" delay={titleReveal.headingDelay} className={cn(typography.h1, 'font-black max-w-[18ch] tracking-normal', darkMode ? 'text-white' : 'text-black')}>
               {post.title}
             </BlurIn>
-            <Reveal delay={0.16}>
+            <Reveal delay={titleReveal.headingDelay}>
               <p className={cn(typography.body, 'font-medium', typography.textSubtle, darkMode ? 'text-white' : 'text-black')}>{post.excerpt}</p>
             </Reveal>
           </div>
 
-          <div className={cn('w-full rounded-surface overflow-hidden border', darkMode ? 'border-white/10' : 'border-black/10')}>
-            <img
-              src={post.coverImage}
-              alt={post.title}
-              loading="eager"
-              decoding="async"
-              fetchPriority="high"
-              width={1600}
-              height={1000}
-              sizes="(max-width: 768px) 100vw, 60ch"
-              className="w-full h-full object-cover"
-            />
-          </div>
+          <Reveal preset="media" delay={titleReveal.titleDelay()} className="w-full">
+            <div className={cn('w-full rounded-surface overflow-hidden border', darkMode ? 'border-white/10' : 'border-black/10')}>
+              <img
+                src={post.coverImage}
+                alt={post.title}
+                loading="eager"
+                decoding="async"
+                fetchPriority="high"
+                width={1600}
+                height={1000}
+                sizes="(max-width: 768px) 100vw, 60ch"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </Reveal>
         </div>
       </Section>
 
       <Section>
-        <div className="max-w-[60ch] mx-auto space-y-8 text-left">
+        <motion.div
+          className="max-w-[60ch] mx-auto space-y-8 text-left"
+          variants={staggerContainer(titleReveal.sectionDelay)}
+          initial="initial"
+          whileInView="animate"
+          viewport={contentReveal.viewport}
+        >
           {post.contentBlocks.map((block, index) => (
-            <Reveal key={`${post.slug}-block-${index}`} delay={index * 0.05}>
+            <motion.div
+              key={`${post.slug}-block-${index}`}
+              variants={block.type === 'image' ? mediaReveal.variants({ reduceMotion }) : contentReveal.variants({ reduceMotion })}
+            >
               <BlogBlock block={block} darkMode={darkMode} />
-            </Reveal>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </Section>
 
       {nextPost && (
         <Section>
           <div className="w-full text-left">
-            <BlurIn as="h3" delay={masterTitleReveal.headingDelay} className={cn(typography.h3, 'font-black mb-4 text-white')}>
+            <BlurIn as="h3" delay={titleReveal.headingDelay} className={cn(typography.h3, 'font-black mb-4 text-white')}>
               Up Next
             </BlurIn>
-            <button
-              type="button"
-              onClick={() => onNextPost?.(nextPost.slug)}
-              className={cn(
-                'group w-full text-left rounded-surface glass border overflow-hidden transition-all duration-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 focus-visible:ring-offset-2',
-                darkMode
-                  ? 'bg-black/40 border-white/10 hover:border-accent/30 focus-visible:ring-offset-[#030303]'
-                  : 'bg-white/60 border-black/5 hover:border-accent/30 shadow-xl focus-visible:ring-offset-[#fafafa]'
-              )}
-            >
-              <div className="flex w-full flex-row items-stretch gap-4 p-4 sm:gap-6 sm:p-8">
-                <div
-                  className={cn(
-                    "self-stretch aspect-[16/10] w-[42%] min-w-[132px] max-w-[180px] rounded-mini overflow-hidden border flex-shrink-0 sm:w-auto sm:max-w-[45%]",
-                    darkMode ? "border-white/10" : "border-black/10"
-                  )}
-                >
-                  <img
-                    src={nextPost.coverImage}
-                    alt={nextPost.title}
-                    loading="lazy"
-                    decoding="async"
-                    width={1600}
-                    height={1000}
-                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-                  />
-                </div>
-                <div className="flex min-w-0 flex-1 flex-col justify-center">
-                  <div className={cn('mb-2 flex items-center gap-2 sm:mb-3 sm:gap-3', typography.labelXs, typography.textMuted)}>
-                    <span className="px-2.5 py-1 rounded-mini bg-accent/20 border border-accent/30 text-accent">
-                      {nextPost.category}
-                    </span>
-                    <span>{nextPost.date}</span>
-                    <span>{nextPost.readTime}</span>
+            <Reveal preset="card" delay={titleReveal.headingDelay}>
+              <button
+                type="button"
+                onClick={() => onNextPost?.(nextPost.slug)}
+                className={cn(
+                  'group w-full text-left rounded-surface glass border overflow-hidden transition-all duration-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 focus-visible:ring-offset-2',
+                  darkMode
+                    ? 'bg-black/40 border-white/10 hover:border-accent/30 focus-visible:ring-offset-[#030303]'
+                    : 'bg-white/60 border-black/5 hover:border-accent/30 shadow-xl focus-visible:ring-offset-[#fafafa]'
+                )}
+              >
+                <div className="flex w-full flex-row items-stretch gap-4 p-4 sm:gap-6 sm:p-8">
+                  <div
+                    className={cn(
+                      "self-stretch aspect-[16/10] w-[42%] min-w-[132px] max-w-[180px] rounded-mini overflow-hidden border flex-shrink-0 sm:w-auto sm:max-w-[45%]",
+                      darkMode ? "border-white/10" : "border-black/10"
+                    )}
+                  >
+                    <img
+                      src={nextPost.coverImage}
+                      alt={nextPost.title}
+                      loading="lazy"
+                      decoding="async"
+                      width={1600}
+                      height={1000}
+                      className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                    />
                   </div>
-                  <h3 className={cn(typography.h3Display, 'mb-2 line-clamp-2 group-hover:text-accent transition-colors sm:mb-3', darkMode ? 'text-white' : 'text-black')}>
-                    {nextPost.title}
-                  </h3>
-                  <p className={cn(typography.body, 'font-medium line-clamp-3', typography.textSubtle)}>
-                    {nextPost.excerpt}
-                  </p>
+                  <div className="flex min-w-0 flex-1 flex-col justify-center">
+                    <div className={cn('mb-2 flex items-center gap-2 sm:mb-3 sm:gap-3', typography.labelXs, typography.textMuted)}>
+                      <span className="px-2.5 py-1 rounded-mini bg-accent/20 border border-accent/30 text-accent">
+                        {nextPost.category}
+                      </span>
+                      <span>{nextPost.date}</span>
+                      <span>{nextPost.readTime}</span>
+                    </div>
+                    <h3 className={cn(typography.h3Display, 'mb-2 line-clamp-2 group-hover:text-accent transition-colors sm:mb-3', darkMode ? 'text-white' : 'text-black')}>
+                      {nextPost.title}
+                    </h3>
+                    <p className={cn(typography.body, 'font-medium line-clamp-3', typography.textSubtle)}>
+                      {nextPost.excerpt}
+                    </p>
+                  </div>
                 </div>
-              </div>
-            </button>
+              </button>
+            </Reveal>
           </div>
         </Section>
       )}

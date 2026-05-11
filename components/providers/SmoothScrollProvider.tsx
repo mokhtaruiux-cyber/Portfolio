@@ -1,9 +1,9 @@
+'use client';
+
 import React, { useEffect, useRef } from 'react';
 import { ReactLenis } from 'lenis/react';
 import type { LenisRef } from 'lenis/react';
 import { smoothScroll } from '../../lib/motionTokens';
-
-import 'lenis/dist/lenis.css';
 
 export const SmoothScrollProvider = ({ children }: { children: React.ReactNode }) => {
   const lenisRef = useRef<LenisRef | null>(null);

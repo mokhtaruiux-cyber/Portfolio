@@ -3,7 +3,9 @@ import React from 'react';
 import { cn } from '../../lib/utils';
 import { Container } from './Container';
 import { RevealSection } from '../motion/RevealSection';
+import { BlurIn } from '../motion/BlurIn';
 import { typography } from '../../lib/typography';
+import { titleReveal } from '../../lib/motion/motionPresets';
 
 interface SectionProps {
     children: React.ReactNode;
@@ -19,19 +21,23 @@ export const Section: React.FC<SectionProps> = ({
     className,
     id,
     eyebrow,
-    motion = "fade",
+    motion = "lift",
     reveal = true,
 }) => {
     const content = (
       <>
         {eyebrow && (
-          <span className={cn(
+          <BlurIn
+            as="span"
+            delay={titleReveal.sectionDelay}
+            className={cn(
               typography.labelXs,
               "mb-4 sm:mb-6 block",
               "text-accent"
-          )}>
+            )}
+          >
               {eyebrow}
-          </span>
+          </BlurIn>
         )}
         {children}
       </>

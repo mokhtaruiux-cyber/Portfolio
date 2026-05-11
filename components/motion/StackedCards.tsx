@@ -3,7 +3,8 @@ import React, { useRef } from 'react';
 import { motion, useReducedMotion, useScroll, useSpring, useTransform, MotionValue } from 'motion/react';
 import { Project } from '../../types';
 import { useIsDesktop } from '../../hooks/useMediaQuery';
-import { cardReveal, easing, scrollSpring } from '../../lib/motionTokens';
+import { scrollSpring } from '../../lib/motionTokens';
+import { cardReveal } from '../../lib/motion/motionPresets';
 
 // GPU-friendly stacked card animation
 // We avoid layout shifts and expensive filters (blur)
@@ -17,6 +18,7 @@ interface StackedCardsProps {
 
 export const StackedCards: React.FC<StackedCardsProps> = ({ items, renderItem }) => {
     const isDesktop = useIsDesktop();
+    const reduceMotion = useReducedMotion() ?? false;
 
     // Mobile: Subtle fade+up animation for each card
     if (!isDesktop) {
@@ -26,10 +28,11 @@ export const StackedCards: React.FC<StackedCardsProps> = ({ items, renderItem })
                     <motion.div
                         key={item.id || i}
                         className="w-full"
-                        initial={{ opacity: 0, y: cardReveal.distance }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true, margin: cardReveal.viewportMargin }}
-                        transition={{ duration: cardReveal.duration, ease: easing.reveal, delay: i * cardReveal.stagger }}
+                        custom={i}
+                        variants={cardReveal.variants({ reduceMotion })}
+                        initial="initial"
+                        whileInView="animate"
+                        viewport={cardReveal.viewport}
                     >
                         {renderItem(item, i)}
                     </motion.div>
@@ -123,7 +126,15 @@ const CardWithTransform = ({ index, total, item, renderItem, scrollProgress, red
                 }}
                 className="w-full origin-top transform-gpu bg-transparent"
             >
-                {renderItem(item, index)}
+                <motion.div
+                    custom={index}
+                    variants={cardReveal.variants({ reduceMotion })}
+                    initial="initial"
+                    whileInView="animate"
+                    viewport={cardReveal.viewport}
+                >
+                    {renderItem(item, index)}
+                </motion.div>
             </motion.div>
         </div>
     )

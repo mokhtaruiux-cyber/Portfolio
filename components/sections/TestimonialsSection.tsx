@@ -6,11 +6,11 @@ import { siteContent } from '../../content';
 import { useTheme } from '../../context/ThemeContext';
 import { typography } from '../../lib/typography';
 import { cn } from '../../lib/utils';
-import { sectionPacing } from '../../lib/motionTokens';
 import { Container } from '../layout/Container';
-import { Reveal } from '../motion/Reveal';
-import { FadeInUp } from '../motion/FadeInUp';
-import { SectionTitle } from '../motion/SectionTitle';
+import { AnimatedSection } from '../motion/AnimatedSection';
+import { BlurIn } from '../motion/BlurIn';
+import { titleReveal } from '../../lib/motion/motionPresets';
+import { fadeUp, scaleIn } from '../../lib/motion/variants';
 
 interface TestimonialCardProps {
   testimonial: Testimonial;
@@ -134,7 +134,6 @@ const TestimonialMarqueeRow = ({
 
 export const TestimonialsSection = () => {
   const { darkMode } = useTheme();
-  const pacing = sectionPacing.feature;
   const reduceMotion = useReducedMotion() ?? false;
   const sectionRef = useRef<HTMLElement | null>(null);
   const isInView = useInView(sectionRef, { amount: 0.2 });
@@ -166,44 +165,58 @@ export const TestimonialsSection = () => {
   return (
     <section ref={sectionRef} id="testimonials" className="py-16 md:py-24 relative z-10 overflow-hidden">
       <Container>
-        <FadeInUp>
-          <div className="relative z-20 mb-10">
-            <div className="flex flex-col items-start text-left">
-              <SectionTitle
-                eyebrow={siteContent.testimonials.eyebrow}
-                title={siteContent.testimonials.title}
-                highlight={siteContent.testimonials.highlight}
-                delay={pacing.title}
-                stackHighlight
-                eyebrowClassName="text-accent"
-                className={cn('mb-6', darkMode ? 'text-white' : 'text-black')}
-              />
-              <Reveal delay={pacing.body}>
-                <p className={cn(typography.body, 'max-w-xl font-medium', typography.textSubtle, darkMode ? 'text-gray-300' : 'text-gray-600')}>
-                  {siteContent.testimonials.description}
-                </p>
-              </Reveal>
-            </div>
-          </div>
-          <div className="relative">
-            <div className={cn(
-              'absolute inset-y-0 left-0 w-32 sm:w-64 z-10 bg-gradient-to-r pointer-events-none',
-              darkMode ? 'from-[#030303] via-[#030303]/40 to-transparent' : 'from-[#fafafa] via-[#fafafa]/40 to-transparent'
-            )} />
-            <div className={cn(
-              'absolute inset-y-0 right-0 w-32 sm:w-64 z-10 bg-gradient-to-l pointer-events-none',
-              darkMode ? 'from-[#030303] via-[#030303]/40 to-transparent' : 'from-[#fafafa] via-[#fafafa]/40 to-transparent'
-            )} />
-            <div className="space-y-2">
-              <Reveal delay={pacing.content}>
+        <AnimatedSection amount={0.1}>
+          {/* 1 — Eyebrow */}
+          <motion.p
+            variants={fadeUp}
+            className={cn(typography.labelXs, 'text-accent tracking-widest mb-2')}
+          >
+            {siteContent.testimonials.eyebrow}
+          </motion.p>
+
+          {/* 2 — Title */}
+          <motion.div variants={fadeUp} className="mb-4">
+            <BlurIn
+              as="h2"
+              delay={titleReveal.headingDelay}
+              className={cn('font-black tracking-tighter text-4xl sm:text-5xl', darkMode ? 'text-white' : 'text-black')}
+            >
+              {siteContent.testimonials.title}
+              {siteContent.testimonials.highlight && (
+                <>
+                  {' '}
+                  <span className="text-accent">{siteContent.testimonials.highlight}</span>
+                </>
+              )}
+            </BlurIn>
+          </motion.div>
+
+          {/* 3 — Body */}
+          <motion.p
+            variants={fadeUp}
+            className={cn(typography.body, 'max-w-xl font-medium mb-12', darkMode ? 'text-gray-300' : 'text-gray-600')}
+          >
+            {siteContent.testimonials.description}
+          </motion.p>
+
+          {/* 4 — Marquee rows */}
+          <motion.div variants={scaleIn}>
+            <div className="relative">
+              <div className={cn(
+                'absolute inset-y-0 left-0 w-32 sm:w-64 z-10 bg-gradient-to-r pointer-events-none',
+                darkMode ? 'from-[#030303] via-[#030303]/40 to-transparent' : 'from-[#fafafa] via-[#fafafa]/40 to-transparent'
+              )} />
+              <div className={cn(
+                'absolute inset-y-0 right-0 w-32 sm:w-64 z-10 bg-gradient-to-l pointer-events-none',
+                darkMode ? 'from-[#030303] via-[#030303]/40 to-transparent' : 'from-[#fafafa] via-[#fafafa]/40 to-transparent'
+              )} />
+              <div className="space-y-2">
                 <TestimonialMarqueeRow items={row1} direction="right" darkMode={darkMode} shouldAnimate={shouldAnimate} isMobile={isMobile} phaseOffset={0} rowDuration={58} />
-              </Reveal>
-              <Reveal delay={pacing.content + 0.04}>
                 <TestimonialMarqueeRow items={row2} direction="left" darkMode={darkMode} shouldAnimate={shouldAnimate} isMobile={isMobile} phaseOffset={-18} rowDuration={64} />
-              </Reveal>
+              </div>
             </div>
-          </div>
-        </FadeInUp>
+          </motion.div>
+        </AnimatedSection>
       </Container>
     </section>
   );

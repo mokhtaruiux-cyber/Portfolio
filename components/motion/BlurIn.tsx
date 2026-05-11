@@ -3,8 +3,8 @@
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import * as React from 'react';
 import { cn } from '../../lib/utils';
-import { durations, easing, titleReveal } from '../../lib/motionTokens';
 import { VIEWPORT_REVEAL } from '../../lib/motion';
+import { titleReveal } from '../../lib/motion/motionPresets';
 
 type BlurInProps = {
     as?: React.ElementType;
@@ -18,7 +18,6 @@ type BlurInProps = {
 
 const wordClass = 'inline-block will-change-transform';
 const wordContainerClass = 'flex flex-wrap gap-x-[0.25em]';
-const titleStartDelay = titleReveal.startDelayMs / 1000;
 
 type RenderContext = {
     delay: number;
@@ -63,19 +62,10 @@ const renderAnimatedChildren = (
                             <motion.span
                                 key={`${word}-${wordIndex}`}
                                 className={cn(wordClass, context.stackWords && 'basis-full')}
-                                initial={context.reduceMotion ? false : { opacity: 0, y: titleReveal.distance, filter: `blur(${titleReveal.blur}px)` }}
-                                animate={
-                                    context.reduceMotion
-                                        ? { opacity: 1 }
-                                        : context.isInView
-                                            ? { opacity: 1, y: 0, filter: 'blur(0px)' }
-                                            : { opacity: 0, y: titleReveal.distance, filter: `blur(${titleReveal.blur}px)` }
-                                }
-                                transition={{
-                                    duration: context.reduceMotion ? durations.fast : titleReveal.duration,
-                                    delay: context.isInView ? context.delay + titleStartDelay + wordIndex * titleReveal.stagger : 0,
-                                    ease: easing.reveal,
-                                }}
+                                custom={titleReveal.getWordCustom(context.delay, wordIndex, context.reduceMotion)}
+                                variants={titleReveal.wordVariants}
+                                initial={context.reduceMotion ? false : 'initial'}
+                                animate={context.isInView ? 'animate' : 'initial'}
                             >
                                 {word}
                             </motion.span>

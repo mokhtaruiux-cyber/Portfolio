@@ -1,42 +1,46 @@
+'use client';
+
 import React, { Suspense, lazy, useCallback, useEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useLenis } from 'lenis/react';
-import { Route, Routes, useLocation, useMatch, useNavigate } from 'react-router-dom';
+import { usePathname, useRouter } from 'next/navigation';
 
-import { siteContent } from './content';
-import { PageKey } from './types';
-import { pageTransitionVariants } from './lib/motion';
-import { sectionPacing } from './lib/motionTokens';
-import { applySeoToDocument, buildRuntimeSeo } from './lib/seo';
-import { typography } from './lib/typography';
-import { cn } from './lib/utils';
+import { siteContent } from '../content';
+import { PageKey } from '../types';
+import { pageTransitionVariants } from '../lib/motion';
+import { sectionPacing } from '../lib/motionTokens';
+import { titleReveal } from '../lib/motion/motionPresets';
+import { applySeoToDocument, buildRuntimeSeo } from '../lib/seo';
+import { typography } from '../lib/typography';
+import { cn } from '../lib/utils';
 
-import { LivingBackground } from './components/background/LivingBackground';
-import { ScrollProgress } from './components/motion/ScrollProgress';
-import { Reveal } from './components/motion/Reveal';
-import { SectionTitle } from './components/motion/SectionTitle';
-import { StackedCards } from './components/motion/StackedCards';
+import { LivingBackground } from './background/LivingBackground';
+import { ScrollProgress } from './motion/ScrollProgress';
+import { AnimatedSection } from './motion/AnimatedSection';
+import { BlurIn } from './motion/BlurIn';
+import { StackedCards } from './motion/StackedCards';
+import { fadeUp } from '../lib/motion/variants';
 
-import { Section } from './components/layout/Section';
-import { SegmentTabs } from './components/ui/SegmentTabs';
+import { Section } from './layout/Section';
+import { SegmentTabs } from './ui/SegmentTabs';
 
-import { AboutSection } from './components/sections/AboutSection';
-import { CompaniesLogos } from './components/sections/CompaniesLogos';
-import { ExperienceSection } from './components/sections/Experience';
-import { ProcessReelSection } from './components/sections/ProcessReelSection';
-import { HowIHelpSection } from './components/sections/HowIHelpSection';
-import { CTASection } from './components/sections/CTASection';
-import { Hero } from './components/sections/Hero';
-import { BlogSection } from './components/sections/BlogSection';
-import { TestimonialsSection } from './components/sections/TestimonialsSection';
+import { AboutSection } from './sections/AboutSection';
+import { CompaniesLogos } from './sections/CompaniesLogos';
+import { ExperienceSection } from './sections/Experience';
+import { ProcessReelSection } from './sections/ProcessReelSection';
+import { HowIHelpSection } from './sections/HowIHelpSection';
+import { CTASection } from './sections/CTASection';
+import { Hero } from './sections/Hero';
+import { BlogSection } from './sections/BlogSection';
+import { TestimonialsSection } from './sections/TestimonialsSection';
 
-import { ProjectCardWrapper } from './components/cards/ProjectCardWrapper';
-import { PageIntro } from './components/layout/PageIntro';
-import { Navbar } from './components/layout/Navbar';
-import { Footer } from './components/layout/Footer';
-import { ThemeProvider } from './context/ThemeContext';
-import { ErrorBoundary } from './components/ErrorBoundary';
-import { NotFoundPage } from './components/pages/NotFoundPage';
+import { ProjectCardWrapper } from './cards/ProjectCardWrapper';
+import { PageIntro } from './layout/PageIntro';
+import { Navbar } from './layout/Navbar';
+import { Footer } from './layout/Footer';
+import { ThemeProvider } from '../context/ThemeContext';
+import { ErrorBoundary } from './ErrorBoundary';
+import { NotFoundPage } from './pages/NotFoundPage';
 
 const pageToPath = (page: PageKey, slug = '') => {
   switch (page) {
@@ -59,52 +63,40 @@ const pageToPath = (page: PageKey, slug = '') => {
 };
 
 const BlogIndexPage = lazy(async () => {
-  const module = await import('./components/pages/BlogIndexPage');
+  const module = await import('./pages/BlogIndexPage');
   return { default: module.BlogIndexPage };
 });
 
 const BlogArticlePage = lazy(async () => {
-  const module = await import('./components/pages/BlogArticlePage');
+  const module = await import('./pages/BlogArticlePage');
   return { default: module.BlogArticlePage };
 });
 
 const ProjectDetailPage = lazy(async () => {
-  const module = await import('./components/pages/ProjectDetailPage');
+  const module = await import('./pages/ProjectDetailPage');
   return { default: module.ProjectDetailPage };
 });
 
-export default function App() {
+const normalizePathname = (value: string | null) => {
+  if (!value) return '/';
+  const withoutTrailingSlash = value.length > 1 ? value.replace(/\/+$/, '') : value;
+  return withoutTrailingSlash || '/';
+};
+
+export function PortfolioApp() {
   const lenis = useLenis();
+  const router = useRouter();
+  const pathname = normalizePathname(usePathname());
 
-  const [hasManualTheme, setHasManualTheme] = useState(() => {
-    if (typeof window === 'undefined') return true;
-    try {
-      return window.localStorage.getItem('theme') !== null;
-    } catch {
-      return true;
-    }
-  });
-  const [darkMode, setDarkMode] = useState(() => {
-    if (typeof window === 'undefined') return true;
-    try {
-      const stored = window.localStorage.getItem('theme');
-      if (stored === 'dark') return true;
-      if (stored === 'light') return false;
-    } catch {
-      // Ignore storage errors and fall back to system preference.
-    }
-    return window.matchMedia?.('(prefers-color-scheme: dark)')?.matches ?? true;
-  });
+  const [hasManualTheme, setHasManualTheme] = useState(true);
+  const [darkMode, setDarkMode] = useState(true);
 
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  const projectDetailMatch = useMatch('/projects/:slug');
-  const blogDetailMatch = useMatch('/blog/:slug');
-  const workMatch = useMatch({ path: '/projects', end: true });
-  const blogMatch = useMatch({ path: '/blog', end: true });
-  const aboutMatch = useMatch({ path: '/about', end: true });
-  const homeMatch = useMatch({ path: '/', end: true });
+  const projectDetailMatch = pathname.match(/^\/projects\/([^/]+)$/);
+  const blogDetailMatch = pathname.match(/^\/blog\/([^/]+)$/);
+  const workMatch = pathname === '/projects';
+  const blogMatch = pathname === '/blog';
+  const aboutMatch = pathname === '/about';
+  const homeMatch = pathname === '/';
 
   const routePage: PageKey = projectDetailMatch
     ? 'project-details'
@@ -119,6 +111,26 @@ export default function App() {
             : homeMatch
               ? 'home'
               : 'not-found';
+
+  useEffect(() => {
+    const frameId = window.requestAnimationFrame(() => {
+      try {
+        const stored = window.localStorage.getItem('theme');
+        if (stored === 'dark' || stored === 'light') {
+          setHasManualTheme(true);
+          setDarkMode(stored === 'dark');
+          return;
+        }
+        setHasManualTheme(false);
+        setDarkMode(window.matchMedia?.('(prefers-color-scheme: dark)')?.matches ?? true);
+      } catch {
+        setHasManualTheme(true);
+        setDarkMode(true);
+      }
+    });
+
+    return () => window.cancelAnimationFrame(frameId);
+  }, []);
 
   const workFilters = siteContent.featuredWork.filters;
   const allProjectsFilter = workFilters[0];
@@ -165,7 +177,7 @@ export default function App() {
   }, [hasManualTheme]);
 
   useEffect(() => {
-    const key = `scrollY:${location.pathname}`;
+    const key = `scrollY:${pathname}`;
     let restored = false;
     const scrollToPosition = (value: number) => {
       if (lenis) {
@@ -191,10 +203,10 @@ export default function App() {
     if (!restored) {
       scrollToPosition(0);
     }
-  }, [lenis, location.pathname]);
+  }, [lenis, pathname]);
 
   useEffect(() => {
-    const key = `scrollY:${location.pathname}`;
+    const key = `scrollY:${pathname}`;
     const handleBeforeUnload = () => {
       try {
         window.sessionStorage.setItem(key, String(lenis?.scroll ?? window.scrollY));
@@ -204,7 +216,7 @@ export default function App() {
     };
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, [lenis, location.pathname]);
+  }, [lenis, pathname]);
 
   const scrollToElement = useCallback((target: HTMLElement | null, duration = 0.75) => {
     if (!target) return;
@@ -254,8 +266,8 @@ export default function App() {
   }, [routePage, scrollToElement]);
 
   const navigateTo = useCallback((page: PageKey, slug = '') => {
-    navigate(pageToPath(page, slug));
-  }, [navigate]);
+    router.push(pageToPath(page, slug));
+  }, [router]);
 
   const handleSetDarkMode = useCallback<React.Dispatch<React.SetStateAction<boolean>>>((value) => {
     setHasManualTheme(true);
@@ -268,7 +280,7 @@ export default function App() {
       }
       return next;
     });
-  }, []);
+  }, [setDarkMode, setHasManualTheme]);
 
   const handleProjectClick = useCallback((slug: string) => {
     navigateTo('project-details', slug);
@@ -287,8 +299,8 @@ export default function App() {
     return filtered.length > 0 ? filtered : orderedProjects;
   }, [filter, workFilters, allProjectsFilter, orderedProjects]);
 
-  const projectSlug = projectDetailMatch?.params.slug ?? '';
-  const blogSlug = blogDetailMatch?.params.slug ?? '';
+  const projectSlug = projectDetailMatch?.[1] ?? '';
+  const blogSlug = blogDetailMatch?.[1] ?? '';
 
   const activeProject = useMemo(
     () => orderedProjects.find((project) => project.slug === projectSlug),
@@ -322,9 +334,9 @@ export default function App() {
       currentPage,
       activeProject,
       activePost,
-      path: location.pathname,
+      path: pathname,
     });
-  }, [activePost, activeProject, currentPage, location.pathname]);
+  }, [activePost, activeProject, currentPage, pathname]);
 
   useEffect(() => {
     applySeoToDocument(seo);
@@ -349,32 +361,45 @@ export default function App() {
       <ExperienceSection />
       <ProcessReelSection />
       <Section id="work" eyebrow={siteContent.featuredWork.eyebrow} reveal={false}>
-        <div className="mb-10 text-left">
-          <SectionTitle
-            title={siteContent.featuredWork.title}
-            highlight={siteContent.featuredWork.highlight}
-            delay={sectionPacing.support.title}
-            stackHighlight
-            className={cn(darkMode ? 'text-white' : 'text-black')}
-          />
-        </div>
+        <AnimatedSection amount={0.1}>
+          {/* Title */}
+          <motion.div variants={fadeUp} className="mb-10 text-left">
+            <BlurIn
+              as="h2"
+              delay={titleReveal.headingDelay}
+              className={cn('font-black tracking-tighter text-4xl sm:text-5xl', darkMode ? 'text-white' : 'text-black')}
+            >
+              {siteContent.featuredWork.title}
+              {siteContent.featuredWork.highlight && (
+                <>
+                  <br />
+                  <span className="text-accent">{siteContent.featuredWork.highlight}</span>
+                </>
+              )}
+            </BlurIn>
+          </motion.div>
 
-        <div className="sticky top-28 sm:top-32 z-40 mb-8 py-2 pointer-events-none">
-          <Reveal delay={0.2} className="pointer-events-auto flex justify-start">
-            <SegmentTabs
-              tabs={workFilters.map((item) => item.label)}
-              activeTab={filter}
-              onChange={setFilter}
+          {/* Filter tabs */}
+          <motion.div variants={fadeUp} className="sticky top-28 sm:top-32 z-40 mb-8 py-2 pointer-events-none">
+            <div className="pointer-events-auto flex justify-start">
+              <SegmentTabs
+                tabs={workFilters.map((item) => item.label)}
+                activeTab={filter}
+                onChange={setFilter}
+              />
+            </div>
+          </motion.div>
+
+          {/* Cards grid */}
+          <motion.div variants={fadeUp}>
+            <StackedCards
+              items={filteredProjects}
+              renderItem={(project) => (
+                <ProjectCardWrapper project={project} onClick={handleProjectClick} />
+              )}
             />
-          </Reveal>
-        </div>
-
-        <StackedCards
-          items={filteredProjects}
-          renderItem={(project) => (
-            <ProjectCardWrapper project={project} onClick={handleProjectClick} />
-          )}
-        />
+          </motion.div>
+        </AnimatedSection>
       </Section>
       <BlogSection onPostClick={handleBlogClick} />
       <TestimonialsSection />
@@ -392,13 +417,19 @@ export default function App() {
       />
 
       <div className="sticky top-28 sm:top-32 z-40 mb-8 py-2 pointer-events-none">
-        <Reveal delay={0.15} className="pointer-events-auto flex justify-start">
+        <motion.div
+          variants={fadeUp}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.5 }}
+          className="pointer-events-auto flex justify-start"
+        >
           <SegmentTabs
             tabs={workFilters.map((item) => item.label)}
             activeTab={filter}
             onChange={setFilter}
           />
-        </Reveal>
+        </motion.div>
       </div>
 
       <StackedCards
@@ -419,13 +450,40 @@ export default function App() {
 
   const notFoundElement = (
     <NotFoundPage
-      pathname={location.pathname}
+      pathname={pathname}
       darkMode={darkMode}
       onGoHome={() => navigateTo('home')}
       onViewWork={() => navigateTo('work')}
       onReadBlog={() => navigateTo('blog')}
     />
   );
+
+  const routeElement =
+    currentPage === 'home'
+      ? homeElement
+      : currentPage === 'work'
+        ? workElement
+        : currentPage === 'project-details' && activeProject
+          ? (
+            <ProjectDetailPage
+              project={activeProject}
+              nextProject={nextProject}
+              onNextProject={handleProjectClick}
+            />
+          )
+          : currentPage === 'blog'
+            ? <BlogIndexPage onPostClick={handleBlogClick} />
+            : currentPage === 'blog-details' && activePost
+              ? (
+                <BlogArticlePage
+                  post={activePost}
+                  nextPost={nextPost}
+                  onNextPost={handleBlogClick}
+                />
+              )
+              : currentPage === 'about'
+                ? aboutElement
+                : notFoundElement;
 
   return (
     <ThemeProvider value={{ darkMode, setDarkMode: handleSetDarkMode }}>
@@ -445,7 +503,7 @@ export default function App() {
           <ErrorBoundary>
             <AnimatePresence mode="wait" initial={false}>
               <motion.div
-                key={location.pathname}
+                key={pathname}
                 variants={pageTransitionVariants}
                 initial="initial"
                 animate="animate"
@@ -458,41 +516,7 @@ export default function App() {
                     </section>
                   )}
                 >
-                  <Routes location={location}>
-                    <Route path="/" element={homeElement} />
-                    <Route path="/projects" element={workElement} />
-                    <Route
-                      path="/projects/:slug"
-                      element={
-                        activeProject ? (
-                          <ProjectDetailPage
-                            project={activeProject}
-                            nextProject={nextProject}
-                            onNextProject={handleProjectClick}
-                          />
-                        ) : (
-                          notFoundElement
-                        )
-                      }
-                    />
-                    <Route path="/blog" element={<BlogIndexPage onPostClick={handleBlogClick} />} />
-                    <Route
-                      path="/blog/:slug"
-                      element={
-                        activePost ? (
-                          <BlogArticlePage
-                            post={activePost}
-                            nextPost={nextPost}
-                            onNextPost={handleBlogClick}
-                          />
-                        ) : (
-                          notFoundElement
-                        )
-                      }
-                    />
-                    <Route path="/about" element={aboutElement} />
-                    <Route path="*" element={notFoundElement} />
-                  </Routes>
+                  {routeElement}
                 </Suspense>
               </motion.div>
             </AnimatePresence>

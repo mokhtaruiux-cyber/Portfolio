@@ -1,8 +1,10 @@
+'use client';
+
 import React from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { cn } from '../../lib/utils';
-import { VIEWPORT_SECTION_REVEAL, buildSectionRevealVariants } from '../../lib/motion';
-import { sectionReveal } from '../../lib/motionTokens';
+import { VIEWPORT_SECTION_REVEAL } from '../../lib/motion';
+import { durations, easing, distances } from '../../lib/motion/motionTokens';
 
 type RevealSectionProps = {
   children: React.ReactNode;
@@ -20,17 +22,37 @@ export const RevealSection: React.FC<RevealSectionProps> = ({
   const ref = React.useRef<HTMLDivElement | null>(null);
   const isInView = useInView(ref, VIEWPORT_SECTION_REVEAL);
   const reduceMotion = useReducedMotion() ?? false;
-  const variants = React.useMemo(
-    () =>
-      buildSectionRevealVariants({
-        delay,
-        distance: disableTransform ? 0 : sectionReveal.distance,
-        blur: sectionReveal.blur,
-        duration: sectionReveal.duration,
-        reduceMotion,
-      }),
-    [delay, disableTransform, reduceMotion]
-  );
+
+  // CRITICAL FIX: opacity starts at 1 (not 0) so children's own opacity
+  // animations are visible. Only the Y transform is used here.
+  // This prevents the outer wrapper from masking child reveal animations.
+  const variants = React.useMemo(() => {
+    if (reduceMotion) {
+      return {
+        initial: { opacity: 1, y: 0 },
+        animate: { opacity: 1, y: 0 },
+      };
+    }
+    if (disableTransform) {
+      // Pure fade — used when sections opt out of lift (Hero, Testimonials)
+      // Fast fade so it doesn't block perception of child animations
+      return {
+        initial: { opacity: 0 },
+        animate: {
+          opacity: 1,
+          transition: { duration: 0.35, ease: easing.smooth, delay },
+        },
+      };
+    }
+    return {
+      initial: { opacity: 0, y: distances.md },
+      animate: {
+        opacity: 1,
+        y: 0,
+        transition: { duration: durations.slow, ease: easing.smooth, delay },
+      },
+    };
+  }, [delay, disableTransform, reduceMotion]);
 
   return (
     <motion.div

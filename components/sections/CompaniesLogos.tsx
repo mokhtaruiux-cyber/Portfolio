@@ -3,10 +3,12 @@ import { AnimatePresence, motion, useInView, useReducedMotion } from 'motion/rea
 import { siteContent } from '../../content';
 import { useTheme } from '../../context/ThemeContext';
 import { Section } from '../layout/Section';
-import { SectionTitle } from '../motion/SectionTitle';
-import { Reveal } from '../motion/Reveal';
+import { AnimatedSection } from '../motion/AnimatedSection';
+import { BlurIn } from '../motion/BlurIn';
 import { cn } from '../../lib/utils';
 import { typography } from '../../lib/typography';
+import { titleReveal } from '../../lib/motion/motionPresets';
+import { fadeUp, scaleIn } from '../../lib/motion/variants';
 import { sectionPacing } from '../../lib/motionTokens';
 
 const marqueeStyle: React.CSSProperties = { width: 'fit-content' };
@@ -88,17 +90,35 @@ export const CompaniesLogos: React.FC = () => {
   };
 
   return (
-    <Section motion="fade">
-      <SectionTitle
-        eyebrow={siteContent.socialProof.eyebrow}
-        title={siteContent.socialProof.title}
-        highlight={siteContent.socialProof.highlight}
-        align="left"
-        delay={pacing.title}
-        stackHighlight
-        eyebrowClassName="text-accent/80"
-      />
-      <Reveal delay={pacing.body}>
+    <Section reveal={false}>
+      <AnimatedSection amount={0.12}>
+        {/* 1 — Eyebrow */}
+        <motion.p
+          variants={fadeUp}
+          className={cn(typography.labelXs, 'text-accent/80 mb-2 block tracking-widest')}
+        >
+          {siteContent.socialProof.eyebrow}
+        </motion.p>
+
+        {/* 2 — Title */}
+        <motion.div variants={fadeUp} className="mb-8">
+          <BlurIn
+            as="h2"
+            delay={titleReveal.headingDelay}
+            className={cn('font-black tracking-tighter text-4xl sm:text-5xl', 'text-current')}
+          >
+            {siteContent.socialProof.title}
+            {siteContent.socialProof.highlight && (
+              <>
+                {' '}
+                <span className="text-accent">{siteContent.socialProof.highlight}</span>
+              </>
+            )}
+          </BlurIn>
+        </motion.div>
+
+        {/* 3 — Marquee logos */}
+        <motion.div variants={scaleIn}>
         <div ref={containerRef} className="mt-10 relative">
           <div
             className="relative overflow-x-hidden"
@@ -142,7 +162,7 @@ export const CompaniesLogos: React.FC = () => {
                       if (event.pointerType !== 'touch') return;
                       handleTouchToggle(idx, company.name);
                     }}
-                    aria-describedby={!isDuplicate && activeTooltipIndex === idx ? tooltipId : undefined}
+                    aria-describedby={!isDuplicate ? `company-tooltip-${idx}` : undefined}
                     aria-hidden={isDuplicate ? true : undefined}
                     tabIndex={isDuplicate ? -1 : 0}
                   >
@@ -189,7 +209,8 @@ export const CompaniesLogos: React.FC = () => {
             )}
           </AnimatePresence>
         </div>
-      </Reveal>
+        </motion.div>
+      </AnimatedSection>
     </Section>
   );
 };

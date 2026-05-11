@@ -1,11 +1,12 @@
 import React from 'react';
+import { motion, useReducedMotion } from 'motion/react';
 import { ArrowUpRight, Calendar, Clock } from 'lucide-react';
 import { BlogPost } from '../../types';
 import { siteContent } from '../../content';
 import { useTheme } from '../../context/ThemeContext';
 import { typography } from '../../lib/typography';
 import { cn } from '../../lib/utils';
-import { Reveal } from '../motion/Reveal';
+import { contentReveal, mediaReveal, staggerContainer } from '../../lib/motion/motionPresets';
 import { TiltCard } from '../motion/TiltCard';
 import { useIsDesktop } from '../../hooks/useMediaQuery';
 
@@ -17,6 +18,7 @@ interface BlogCardProps {
 const BlogCardComponent: React.FC<BlogCardProps> = ({ post, onClick }) => {
   const { darkMode } = useTheme();
   const isDesktop = useIsDesktop();
+  const reduceMotion = useReducedMotion() ?? false;
   const cardButton = (
     <button
       type="button"
@@ -28,7 +30,7 @@ const BlogCardComponent: React.FC<BlogCardProps> = ({ post, onClick }) => {
           : 'bg-white/60 border-black/5 hover:border-accent/30 shadow-xl focus-visible:ring-offset-[#fafafa]'
       )}
     >
-      <div className="relative aspect-[16/10] overflow-hidden">
+      <motion.div className="relative aspect-[16/10] overflow-hidden" variants={mediaReveal.variants({ reduceMotion })}>
         <img
           src={post.coverImage}
           alt={post.title}
@@ -42,28 +44,28 @@ const BlogCardComponent: React.FC<BlogCardProps> = ({ post, onClick }) => {
         <div className={cn('absolute top-6 left-6 px-3 py-1 rounded-mini glass border border-white/10 bg-black/40 text-white', typography.labelSm)}>
           {post.category}
         </div>
-      </div>
-      <div className="p-8 sm:p-10 flex flex-col flex-1 text-left">
+      </motion.div>
+      <motion.div className="p-8 sm:p-10 flex flex-col flex-1 text-left" variants={staggerContainer()}>
         <div className={cn('flex items-center gap-4 mb-6', typography.labelXs, typography.textMuted)}>
           <span className="flex items-center gap-1.5"><Calendar size={12} /> {post.date}</span>
           <span className="flex items-center gap-1.5"><Clock size={12} /> {post.readTime}</span>
         </div>
-        <h3 className={cn(typography.h3Display, 'mb-4 group-hover:text-accent transition-colors', darkMode ? 'text-white' : 'text-black')}>
+        <motion.h3 variants={contentReveal.variants({ reduceMotion })} className={cn(typography.h3Display, 'mb-4 group-hover:text-accent transition-colors', darkMode ? 'text-white' : 'text-black')}>
           {post.title}
-        </h3>
-        <p className={cn(typography.body, 'font-medium mb-8 line-clamp-3', typography.textSubtle)}>
+        </motion.h3>
+        <motion.p variants={contentReveal.variants({ reduceMotion })} className={cn(typography.body, 'font-medium mb-8 line-clamp-3', typography.textSubtle)}>
           {post.excerpt}
-        </p>
-        <div className={cn('mt-auto flex items-center gap-2 text-accent transition-colors duration-300', typography.labelXs, 'tracking-[0.2em]')}>
+        </motion.p>
+        <motion.div variants={contentReveal.variants({ reduceMotion })} className={cn('mt-auto flex items-center gap-2 text-accent transition-colors duration-300', typography.labelXs, 'tracking-[0.2em]')}>
           {siteContent.writing.readArticleLabel} <ArrowUpRight size={16} />
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </button>
   );
   return (
-    <Reveal className="h-full">
+    <div className="h-full">
       {isDesktop ? <TiltCard intensity={4} className="h-full">{cardButton}</TiltCard> : cardButton}
-    </Reveal>
+    </div>
   );
 };
 

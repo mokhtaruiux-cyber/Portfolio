@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { motion } from 'motion/react';
+import { motion, useReducedMotion } from 'motion/react';
 import { Project } from '../../types';
 import { siteContent } from '../../content';
 import { useTheme } from '../../context/ThemeContext';
@@ -11,7 +11,13 @@ import { cn } from '../../lib/utils';
 import { GlowButton } from '../ui/GlowButton';
 import { ProjectImageViewer } from '../ui/ProjectImageViewer';
 import { ProjectTagChips } from '../ui/ProjectTagChips';
-import { masterTitleReveal, stagger, viewportDefaults } from '../../lib/motionTokens';
+import {
+  cardReveal,
+  contentReveal,
+  mediaReveal,
+  staggerContainer,
+  titleReveal,
+} from '../../lib/motion/motionPresets';
 
 type ViewerImage = {
   src: string;
@@ -86,6 +92,7 @@ export const ProjectDetailPage = ({
 }) => {
   const { darkMode } = useTheme();
   const isBehanceStyleGallery = project.slug === 'homecare-medical-app';
+  const reduceMotion = useReducedMotion() ?? false;
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   const [initialViewerIndex, setInitialViewerIndex] = useState(0);
   const galleryTriggerRefs = useRef<Array<HTMLButtonElement | null>>([]);
@@ -125,23 +132,23 @@ export const ProjectDetailPage = ({
       <Section className={cn('pt-28 md:pt-36', isBehanceStyleGallery && 'pb-0')}>
         <div className="text-left space-y-10">
           <div className="space-y-4">
-            <BlurIn as="span" className={cn(typography.labelXs, 'tracking-[0.3em] text-accent')}>
+            <BlurIn as="span" delay={titleReveal.sectionDelay} className={cn(typography.labelXs, 'tracking-[0.3em] text-accent')}>
               {project.category}
             </BlurIn>
-            <BlurIn as="h1" delay={masterTitleReveal.headingDelay} className={cn(typography.h1Display, 'font-black max-w-[18ch] tracking-normal', darkMode ? 'text-white' : 'text-black')}>
+            <BlurIn as="h1" delay={titleReveal.headingDelay} className={cn(typography.h1Display, 'font-black max-w-[18ch] tracking-normal', darkMode ? 'text-white' : 'text-black')}>
               {project.title}
             </BlurIn>
-            <Reveal delay={0.16}>
+            <Reveal delay={titleReveal.headingDelay}>
               <p className={cn(typography.body, 'max-w-[60ch] font-medium', typography.textSubtle, darkMode ? 'text-white' : 'text-black')}>{project.description}</p>
             </Reveal>
           </div>
 
           <motion.div
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
-            variants={stagger.container()}
+            variants={staggerContainer()}
             initial="initial"
             whileInView="animate"
-            viewport={viewportDefaults}
+            viewport={cardReveal.viewport}
           >
             {[{
               label: siteContent.projectDetail.metaLabels.role,
@@ -153,7 +160,7 @@ export const ProjectDetailPage = ({
               label: siteContent.projectDetail.metaLabels.tools,
               value: project.tools.join(' • ')
             }].map((item) => (
-              <motion.div key={item.label} variants={stagger.item}>
+              <motion.div key={item.label} variants={cardReveal.variants({ reduceMotion })}>
                 <ProjectMetaItem label={item.label} value={item.value} darkMode={darkMode} />
               </motion.div>
             ))}
@@ -165,13 +172,13 @@ export const ProjectDetailPage = ({
         <Section className="pb-0 pt-6 md:pt-8">
           <motion.div
             className="space-y-0"
-            variants={stagger.container()}
+            variants={staggerContainer()}
             initial="initial"
             whileInView="animate"
-            viewport={viewportDefaults}
+            viewport={mediaReveal.viewport}
           >
             {project.gallery.map((item, index) => (
-              <motion.div key={`${project.slug}-gallery-${index}`} variants={stagger.item} className="w-full">
+              <motion.div key={`${project.slug}-gallery-${index}`} variants={mediaReveal.variants({ reduceMotion })} className="w-full">
                 <button
                   type="button"
                   ref={(node) => {
@@ -201,13 +208,13 @@ export const ProjectDetailPage = ({
         <Section eyebrow={siteContent.projectDetail.galleryEyebrow}>
           <motion.div
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
-            variants={stagger.container()}
+            variants={staggerContainer()}
             initial="initial"
             whileInView="animate"
-            viewport={viewportDefaults}
+            viewport={mediaReveal.viewport}
           >
             {project.gallery.map((item, index) => (
-              <motion.div key={`${project.slug}-gallery-${index}`} variants={stagger.item}>
+              <motion.div key={`${project.slug}-gallery-${index}`} variants={mediaReveal.variants({ reduceMotion })}>
                 <ProjectGalleryItem
                   item={item}
                   darkMode={darkMode}
@@ -222,13 +229,13 @@ export const ProjectDetailPage = ({
       <Section eyebrow={siteContent.projectDetail.caseStudyEyebrow}>
         <motion.div
           className="space-y-12 text-left"
-          variants={stagger.container()}
+          variants={staggerContainer()}
           initial="initial"
           whileInView="animate"
-          viewport={viewportDefaults}
+          viewport={contentReveal.viewport}
         >
           {project.caseStudySections.map((section) => (
-            <motion.div key={section.title} className="space-y-3" variants={stagger.item}>
+            <motion.div key={section.title} className="space-y-3" variants={contentReveal.variants({ reduceMotion })}>
               <h3 className={cn(typography.h3, 'font-black', darkMode ? 'text-white' : 'text-black')}>{section.title}</h3>
               <p className={cn(typography.body, 'max-w-[60ch] font-medium', typography.textSubtle, darkMode ? 'text-white' : 'text-black')}>{section.content}</p>
             </motion.div>
@@ -239,13 +246,13 @@ export const ProjectDetailPage = ({
       <Section eyebrow={siteContent.projectDetail.metricsEyebrow}>
         <motion.div
           className="grid grid-cols-2 sm:grid-cols-3 gap-4 md:gap-6 text-left"
-          variants={stagger.container()}
+          variants={staggerContainer()}
           initial="initial"
           whileInView="animate"
-          viewport={viewportDefaults}
+          viewport={contentReveal.viewport}
         >
           {project.metrics.map((metric) => (
-            <motion.div key={metric.label} variants={stagger.item}>
+            <motion.div key={metric.label} variants={contentReveal.variants({ reduceMotion })}>
               <span className={cn(typography.labelXs, typography.textMuted, 'mb-2 block')}>{metric.label}</span>
               <span className={cn(typography.h3, 'font-black', darkMode ? 'text-white' : 'text-black')}>{metric.value}</span>
             </motion.div>
@@ -256,54 +263,56 @@ export const ProjectDetailPage = ({
       {nextProject && (
         <Section>
           <div className="w-full text-left">
-            <BlurIn as="h3" delay={masterTitleReveal.headingDelay} className={cn(typography.h3, 'font-black mb-4 text-white')}>
+            <BlurIn as="h3" delay={titleReveal.headingDelay} className={cn(typography.h3, 'font-black mb-4 text-white')}>
               Up Next
             </BlurIn>
-            <button
-              type="button"
-              onClick={() => onNextProject(nextProject.slug)}
-              className={cn(
-                'group w-full text-left rounded-surface glass border overflow-hidden transition-all duration-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 focus-visible:ring-offset-2',
-                darkMode
-                  ? 'bg-black/40 border-white/10 hover:border-accent/30 focus-visible:ring-offset-[#030303]'
-                  : 'bg-white/60 border-black/5 hover:border-accent/30 shadow-xl focus-visible:ring-offset-[#fafafa]'
-              )}
-            >
-              <div className="flex w-full flex-col items-stretch gap-4 p-4 sm:gap-6 sm:p-8 md:flex-row">
-                <div
-                  className={cn(
-                    "w-full aspect-[16/10] rounded-mini overflow-hidden border flex-shrink-0 md:w-[42%] md:max-w-[45%] md:aspect-auto md:self-stretch",
-                    darkMode ? "border-white/10" : "border-black/10"
-                  )}
-                >
-                  <img
-                    src={nextProject.image}
-                    alt={nextProject.title}
-                    loading="lazy"
-                    decoding="async"
-                    width={1600}
-                    height={1000}
-                    className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
-                  />
-                </div>
-                <div className="flex min-w-0 flex-1 flex-col md:justify-between">
-                  <div className="space-y-3">
-                    <ProjectTagChips tags={nextProject.tags} className="mb-1" />
-                    <h3 className={cn(typography.h3Display, 'mb-2 line-clamp-2 group-hover:text-accent transition-colors sm:mb-3', darkMode ? 'text-white' : 'text-black')}>
-                      {nextProject.title}
-                    </h3>
-                    <p className={cn(typography.body, 'font-medium line-clamp-3', typography.textSubtle)}>
-                      {nextProject.description}
-                    </p>
+            <Reveal preset="card" delay={titleReveal.headingDelay}>
+              <button
+                type="button"
+                onClick={() => onNextProject(nextProject.slug)}
+                className={cn(
+                  'group w-full text-left rounded-surface glass border overflow-hidden transition-all duration-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 focus-visible:ring-offset-2',
+                  darkMode
+                    ? 'bg-black/40 border-white/10 hover:border-accent/30 focus-visible:ring-offset-[#030303]'
+                    : 'bg-white/60 border-black/5 hover:border-accent/30 shadow-xl focus-visible:ring-offset-[#fafafa]'
+                )}
+              >
+                <div className="flex w-full flex-col items-stretch gap-4 p-4 sm:gap-6 sm:p-8 md:flex-row">
+                  <div
+                    className={cn(
+                      "w-full aspect-[16/10] rounded-mini overflow-hidden border flex-shrink-0 md:w-[42%] md:max-w-[45%] md:aspect-auto md:self-stretch",
+                      darkMode ? "border-white/10" : "border-black/10"
+                    )}
+                  >
+                    <img
+                      src={nextProject.image}
+                      alt={nextProject.title}
+                      loading="lazy"
+                      decoding="async"
+                      width={1600}
+                      height={1000}
+                      className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
+                    />
                   </div>
-                  <div className="mt-5 sm:mt-6">
-                    <GlowButton size="cta" as="span">
-                      {siteContent.projectDetail.nextProjectButton}
-                    </GlowButton>
+                  <div className="flex min-w-0 flex-1 flex-col md:justify-between">
+                    <div className="space-y-3">
+                      <ProjectTagChips tags={nextProject.tags} className="mb-1" />
+                      <h3 className={cn(typography.h3Display, 'mb-2 line-clamp-2 group-hover:text-accent transition-colors sm:mb-3', darkMode ? 'text-white' : 'text-black')}>
+                        {nextProject.title}
+                      </h3>
+                      <p className={cn(typography.body, 'font-medium line-clamp-3', typography.textSubtle)}>
+                        {nextProject.description}
+                      </p>
+                    </div>
+                    <div className="mt-5 sm:mt-6">
+                      <GlowButton size="cta" as="span">
+                        {siteContent.projectDetail.nextProjectButton}
+                      </GlowButton>
+                    </div>
                   </div>
                 </div>
-              </div>
-            </button>
+              </button>
+            </Reveal>
           </div>
         </Section>
       )}

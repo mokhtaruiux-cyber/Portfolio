@@ -1,5 +1,6 @@
 import { siteContent } from '../content';
 import type { BlogPost, PageKey, Project } from '../types';
+import type { Metadata } from 'next';
 
 export type SeoMetadata = {
   path: string;
@@ -31,12 +32,20 @@ const normalizePath = (path: string) => {
 const normalizeSiteUrl = (value?: string) => {
   if (!value) return '';
   const trimmed = value.trim();
-  if (!trimmed || trimmed.includes('%VITE_SITE_URL%')) return '';
+  if (!trimmed || trimmed.includes('%NEXT_PUBLIC_SITE_URL%') || trimmed.includes('%SITE_URL%')) return '';
   return trimmed.replace(/\/+$/, '');
 };
 
-const envSiteUrl = () =>
-  normalizeSiteUrl((import.meta as ImportMeta & { env?: Record<string, string | undefined> }).env?.VITE_SITE_URL);
+const envSiteUrl = () => {
+  if (typeof process === 'undefined') return '';
+  const env = process.env;
+  const vercelUrl = env.VERCEL_PROJECT_PRODUCTION_URL ?? env.VERCEL_URL;
+  return normalizeSiteUrl(
+    env.NEXT_PUBLIC_SITE_URL ??
+    env.SITE_URL ??
+    (vercelUrl ? `https://${vercelUrl}` : undefined)
+  );
+};
 
 export const DEFAULT_SITE_URL = 'https://www.mokhtar.design';
 
@@ -208,4 +217,128 @@ export const applySeoToDocument = (metadata: SeoMetadata, siteUrl = resolveSiteU
   upsertMetaTag('meta[name="twitter:description"]', { name: 'twitter:description' }, metadata.description);
   upsertMetaTag('meta[name="twitter:image"]', { name: 'twitter:image' }, imageUrl);
   upsertMetaTag('meta[name="twitter:image:alt"]', { name: 'twitter:image:alt' }, metadata.imageAlt);
+};
+
+export const buildNextMetadata = (
+  metadata: SeoMetadata,
+  options: { siteUrl?: string; noIndex?: boolean } = {}
+): Metadata => {
+  const siteUrl = resolveSiteUrl(options.siteUrl);
+  const canonicalUrl = toAbsoluteUrl(metadata.path, siteUrl);
+  const imageUrl = toAbsoluteUrl(metadata.image, siteUrl);
+
+  return {
+    title: metadata.title,
+    description: metadata.description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    robots: {
+      index: !options.noIndex,
+      follow: !options.noIndex,
+      googleBot: {
+        index: !options.noIndex,
+        follow: !options.noIndex,
+        'max-image-preview': 'large',
+        'max-snippet': -1,
+      },
+    },
+    openGraph: {
+      title: metadata.title,
+      description: metadata.description,
+      type: metadata.type,
+      url: canonicalUrl,
+      siteName: siteContent.brand.name,
+      images: [
+        {
+          url: imageUrl,
+          alt: metadata.imageAlt,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: metadata.title,
+      description: metadata.description,
+      images: [
+        {
+          url: imageUrl,
+          alt: metadata.imageAlt,
+        },
+      ],
+    },
+  };
+};
+
+export const buildJsonLd = (metadata: SeoMetadata, siteUrl = resolveSiteUrl()) => {
+  const canonicalUrl = toAbsoluteUrl(metadata.path, siteUrl);
+  const imageUrl = toAbsoluteUrl(metadata.image, siteUrl);
+  const project = siteContent.projects.items.find((item) => metadata.path === `/projects/${item.slug}`);
+  const post = siteContent.writing.items.find((item) => metadata.path === `/blog/${item.slug}`);
+
+  const basePerson = {
+    '@context': 'https://schema.org',
+    '@type': 'Person',
+    name: 'Mohammed Mokhtar',
+    url: siteUrl,
+    image: toAbsoluteUrl(siteContent.hero.image.lightSrc, siteUrl),
+    jobTitle: 'Product Designer and Creative Engineer',
+    sameAs: ['https://www.linkedin.com/in/mokhtaruiux/'],
+  };
+
+  if (post) {
+    return [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'BlogPosting',
+        headline: post.title,
+        description: post.excerpt,
+        image: imageUrl,
+        url: canonicalUrl,
+        datePublished: post.date,
+        author: {
+          '@type': 'Person',
+          name: 'Mohammed Mokhtar',
+          url: siteUrl,
+        },
+        publisher: {
+          '@type': 'Person',
+          name: 'Mohammed Mokhtar',
+        },
+      },
+    ];
+  }
+
+  if (project) {
+    return [
+      {
+        '@context': 'https://schema.org',
+        '@type': 'CreativeWork',
+        name: project.title,
+        description: project.description,
+        image: imageUrl,
+        url: canonicalUrl,
+        creator: {
+          '@type': 'Person',
+          name: 'Mohammed Mokhtar',
+          url: siteUrl,
+        },
+      },
+    ];
+  }
+
+  if (metadata.path === '/') {
+    return [
+      basePerson,
+      {
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        name: siteContent.brand.name,
+        url: siteUrl,
+        description: metadata.description,
+      },
+    ];
+  }
+
+  return [basePerson];
 };

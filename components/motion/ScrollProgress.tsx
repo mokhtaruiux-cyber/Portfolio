@@ -25,7 +25,7 @@ const ScrollProgressBar: React.FC = () => {
 };
 
 export const ScrollProgress: React.FC = () => {
-  const [enabled, setEnabled] = React.useState(() => isPageScrollable());
+  const [enabled, setEnabled] = React.useState(false);
 
   React.useEffect(() => {
     const update = () => {

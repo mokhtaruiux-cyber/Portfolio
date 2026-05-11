@@ -1,9 +1,10 @@
 import React from 'react';
-import { motion } from 'motion/react';
+import { motion, useReducedMotion } from 'motion/react';
 import { Project } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
 import { siteContent } from '../../content';
 import { transitions } from '../../lib/motionTokens';
+import { contentReveal, mediaReveal, staggerContainer } from '../../lib/motion/motionPresets';
 import { typography } from '../../lib/typography';
 import { cn } from '../../lib/utils';
 import { TiltCard } from '../motion/TiltCard';
@@ -19,6 +20,7 @@ interface ProjectCardWrapperProps {
 const ProjectCardWrapperComponent: React.FC<ProjectCardWrapperProps> = ({ project, onClick }) => {
   const { darkMode } = useTheme();
   const isDesktop = useIsDesktop();
+  const reduceMotion = useReducedMotion() ?? false;
 
   const cardButton = (
     <button
@@ -31,8 +33,11 @@ const ProjectCardWrapperComponent: React.FC<ProjectCardWrapperProps> = ({ projec
           : 'bg-white/90 border-black/5 shadow-2xl focus-visible:ring-offset-[#fafafa]'
       )}
     >
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-10 items-center">
-        <div className="order-2 lg:order-1 flex flex-col justify-between h-full text-left">
+      <motion.div
+        className="grid grid-cols-1 lg:grid-cols-2 gap-8 md:gap-10 items-center"
+        variants={staggerContainer()}
+      >
+        <motion.div className="order-2 lg:order-1 flex flex-col justify-between h-full text-left" variants={contentReveal.variants({ reduceMotion })}>
           <div>
             <div className={cn('flex flex-wrap items-center gap-3 mb-4', typography.labelXs)}>
               <span className="tracking-[0.3em] text-accent">{project.category}</span>
@@ -63,8 +68,8 @@ const ProjectCardWrapperComponent: React.FC<ProjectCardWrapperProps> = ({ projec
               </GlowButton>
             </div>
           </div>
-        </div>
-        <div className="order-1 lg:order-2 relative rounded-surface overflow-hidden group aspect-[16/10] lg:aspect-[4/3.2]">
+        </motion.div>
+        <motion.div className="order-1 lg:order-2 relative rounded-surface overflow-hidden group aspect-[16/10] lg:aspect-[4/3.2]" variants={mediaReveal.variants({ reduceMotion })}>
           <motion.img
             whileHover={{ scale: 1.008 }}
             transition={transitions.smooth}
@@ -77,8 +82,8 @@ const ProjectCardWrapperComponent: React.FC<ProjectCardWrapperProps> = ({ projec
             sizes="(max-width: 1024px) 100vw, 50vw"
             className="w-full h-full object-contain"
           />
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
     </button>
   );
 

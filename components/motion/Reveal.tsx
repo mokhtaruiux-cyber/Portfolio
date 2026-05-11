@@ -1,73 +1,55 @@
+'use client';
 
 import React from "react";
 import { motion, Variants, useReducedMotion } from "motion/react";
-import { distances, durations, easing, stagger } from "../../lib/motionTokens";
-import { VIEWPORT_REVEAL } from "../../lib/motion";
+import {
+  cardReveal,
+  contentReveal,
+  mediaReveal,
+  staggerContainer,
+} from "../../lib/motion/motionPresets";
 
 interface RevealProps {
   children: React.ReactNode;
   delay?: number;
   direction?: "up" | "down" | "left" | "right";
   className?: string;
+  index?: number;
+  preset?: "content" | "card" | "media";
   staggerChildren?: boolean;
 }
 
-/**
- * Reveal component for scroll-triggered entry animations.
- * Fixes the runtime error by ensuring timings and easing are always defined.
- */
 export const Reveal: React.FC<RevealProps> = ({
   children,
   delay = 0,
   direction = "up",
   className,
-  staggerChildren = false,
+  preset = "content",
+  staggerChildren: useStagger = false,
 }) => {
   const reduce = useReducedMotion() ?? false;
 
-  const distance = distances.sm;
-  const directionMap = {
-    up: { y: distance, x: 0 },
-    down: { y: -distance, x: 0 },
-    left: { y: 0, x: distance },
-    right: { y: 0, x: -distance },
-  };
+  const variants: Variants = useStagger
+    ? (staggerContainer(delay) as Variants)
+    : preset === "card"
+      ? cardReveal.variants({ delay, reduceMotion: reduce })
+      : preset === "media"
+        ? mediaReveal.variants({ delay, reduceMotion: reduce })
+        : contentReveal.variants({ delay, direction, reduceMotion: reduce });
 
-  const axis = directionMap[direction] || directionMap.up;
-
-  const revealVariants: Variants = staggerChildren
-    ? (stagger.container(delay) as Variants)
-    : ({
-      initial: reduce
-        ? { opacity: 1 }
-        : { opacity: 0, ...axis },
-      animate: reduce
-        ? {
-          opacity: 1,
-          transition: {
-            duration: durations.fast,
-            ease: easing.smooth,
-            delay,
-          },
-        }
-        : {
-          opacity: 1,
-          x: 0,
-          y: 0,
-          transition: {
-            duration: durations.medium,
-            ease: easing.smooth,
-            delay,
-          },
-        },
-    } as Variants);
+  const viewport =
+    preset === "card"
+      ? cardReveal.viewport
+      : preset === "media"
+        ? mediaReveal.viewport
+        : contentReveal.viewport;
 
   return (
     <motion.div
-      variants={revealVariants}
+      variants={variants}
       initial="initial"
       whileInView="animate"
-      viewport={VIEWPORT_REVEAL}
+      viewport={viewport}
       className={className}
     >
       {children}

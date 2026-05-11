@@ -3,11 +3,13 @@ import { motion, useInView, useReducedMotion } from 'motion/react';
 import { siteContent } from '../../content';
 import { useTheme } from '../../context/ThemeContext';
 import { Section } from '../layout/Section';
-import { SectionTitle } from '../motion/SectionTitle';
-import { Reveal } from '../motion/Reveal';
+import { AnimatedSection } from '../motion/AnimatedSection';
+import { BlurIn } from '../motion/BlurIn';
 import { typography } from '../../lib/typography';
 import { cn } from '../../lib/utils';
-import { sectionPacing, stagger, viewportDefaults } from '../../lib/motionTokens';
+import { sectionPacing } from '../../lib/motionTokens';
+import { titleReveal } from '../../lib/motion/motionPresets';
+import { fadeUp, scaleIn, staggerContainer } from '../../lib/motion/variants';
 
 type ProcessReelSectionProps = {
   autoPlay?: boolean;
@@ -134,39 +136,56 @@ export const ProcessReelSection: React.FC<ProcessReelSectionProps> = ({
   };
 
   return (
-    <Section id="process" eyebrow={siteContent.process.eyebrow}>
+    <Section id="process" eyebrow={siteContent.process.eyebrow} reveal={false}>
       <div ref={containerRef}>
-        <div className="text-left mb-10">
-          <SectionTitle
-            title={siteContent.process.title}
-            highlight={siteContent.process.highlight}
-            delay={pacing.title}
-            stackHighlight
-            className={cn('mb-6', darkMode ? 'text-white' : 'text-black')}
-          />
-          <Reveal delay={pacing.body}>
-            <p className={cn(typography.body, "max-w-[60ch] font-medium", typography.textSubtle, darkMode ? "text-gray-300" : "text-gray-600")}>
-              {siteContent.process.description}
-            </p>
-          </Reveal>
-        </div>
+        <AnimatedSection amount={0.1}>
+          {/* 1 — Eyebrow */}
+          <motion.p
+            variants={fadeUp}
+            className={cn(typography.labelXs, 'text-accent tracking-widest mb-2')}
+          >
+            {siteContent.process.eyebrow}
+          </motion.p>
 
-        <motion.div
-          role="tablist"
-          aria-orientation="horizontal"
-          className="flex flex-col space-y-4 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-4 md:gap-4"
-          onMouseEnter={() => pauseOnHover && setIsPaused(true)}
-          onMouseLeave={() => pauseOnHover && setIsPaused(false)}
-          onFocusCapture={() => pauseOnFocus && setIsPaused(true)}
-          onBlurCapture={() => pauseOnFocus && setIsPaused(false)}
-          onTouchStart={handleTouchStart}
-          onTouchEnd={handleTouchEnd}
-          onKeyDown={handleTabKeyDown}
-          variants={stagger.container(0.05, 0.04)}
-          initial="initial"
-          whileInView="animate"
-          viewport={viewportDefaults}
-        >
+          {/* 2 — Title */}
+          <motion.div variants={fadeUp} className="mb-4">
+            <BlurIn
+              as="h2"
+              delay={titleReveal.headingDelay}
+              className={cn('font-black tracking-tighter text-4xl sm:text-5xl', darkMode ? 'text-white' : 'text-black')}
+            >
+              {siteContent.process.title}
+              {siteContent.process.highlight && (
+                <>
+                  {' '}
+                  <span className="text-accent">{siteContent.process.highlight}</span>
+                </>
+              )}
+            </BlurIn>
+          </motion.div>
+
+          {/* 3 — Body description */}
+          <motion.p
+            variants={fadeUp}
+            className={cn(typography.body, 'max-w-[60ch] font-medium mb-12', darkMode ? 'text-gray-300' : 'text-gray-600')}
+          >
+            {siteContent.process.description}
+          </motion.p>
+
+          {/* 4 — Process cards: staggerContainer → scaleIn */}
+          <motion.div
+            role="tablist"
+            aria-orientation="horizontal"
+            className="flex flex-col space-y-4 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-4 md:gap-4"
+            onMouseEnter={() => pauseOnHover && setIsPaused(true)}
+            onMouseLeave={() => pauseOnHover && setIsPaused(false)}
+            onFocusCapture={() => pauseOnFocus && setIsPaused(true)}
+            onBlurCapture={() => pauseOnFocus && setIsPaused(false)}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+            onKeyDown={handleTabKeyDown}
+            variants={staggerContainer}
+          >
           {steps.map((step, index) => {
             const isActive = index === activeIndex;
             const tabId = `process-tab-${step.id}`;
@@ -174,7 +193,7 @@ export const ProcessReelSection: React.FC<ProcessReelSectionProps> = ({
             return (
               <motion.div
                 key={step.id}
-                variants={stagger.item}
+                variants={scaleIn}
                 className={cn(
                   "text-left p-6 sm:p-8 rounded-surface glass border transition-all duration-700 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500/40",
                   isActive
@@ -221,6 +240,7 @@ export const ProcessReelSection: React.FC<ProcessReelSectionProps> = ({
             );
           })}
         </motion.div>
+        </AnimatedSection>
       </div>
     </Section>
   );
