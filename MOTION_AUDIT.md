@@ -27,8 +27,8 @@
 - Hero now uses the brief's above-the-fold mount exception with `animate`, not `whileInView`.
 - About, Services, Portfolio, Testimonials, and Contact now reveal heading, body, cards/media, and CTA content progressively.
 - Portfolio final `View All Work` CTA now lives inside the same card-grid reveal sequence and appears after the project cards begin cascading.
-- Lenis now uses one `@studio-freight/lenis` instance and one manual RAF loop in `components/providers/SmoothScrollProvider.tsx`.
-- Removed active `lenis` package usage and replaced old `useLenis` scroll calls with native scroll calls.
+- Lenis now uses one `lenis` package instance and one manual RAF loop in `components/providers/SmoothScrollProvider.tsx`.
+- Removed deprecated `@studio-freight/lenis` usage and replaced old `useLenis` scroll calls with native scroll calls.
 - Reduced motion now forces reveal-hidden inline styles visible with no transform, while preserving stable initial HTML.
 
 ## Section Choreography Pass
@@ -85,5 +85,5 @@
 
 ## Remaining Risks
 
-- The brief requested `@studio-freight/lenis`, so the implementation follows that package even though it is older than the newer `lenis` package.
+- The deprecated `@studio-freight/lenis` package has been replaced with the renamed `lenis` package to remove Vercel install warnings.
 - Older non-brief route/page animations still exist elsewhere in the repo and were not redesigned in this brief pass.
