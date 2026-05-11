@@ -27,13 +27,18 @@ export const AboutSection: React.FC = () => {
       animate={reduceMotion ? undefined : isInView ? 'visible' : 'hidden'}
       className="py-20 md:py-24 relative z-10 scroll-mt-28 sm:scroll-mt-32 mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-10"
     >
-          <motion.p
-            {...reveal.body}
-            className={cn(typography.labelXs, eyebrowChipClass, 'mb-2')}
-          >
-            {siteContent.about.eyebrow}
-          </motion.p>
+      <motion.p
+        {...reveal.body}
+        className={cn(typography.labelXs, eyebrowChipClass, 'mb-2')}
+      >
+        {siteContent.about.eyebrow}
+      </motion.p>
 
+      <motion.div
+        {...reveal.cardGrid}
+        className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 items-start"
+      >
+        <div className="text-left space-y-6">
           <TitleReveal
             as="h2"
             className={cn(
@@ -52,7 +57,7 @@ export const AboutSection: React.FC = () => {
 
           <motion.p
             {...reveal.body}
-            className={cn(typography.h3, 'font-semibold mb-4', darkMode ? 'text-white' : 'text-black')}
+            className={cn(typography.h3, 'font-semibold', darkMode ? 'text-white' : 'text-black')}
           >
             {siteContent.about.subtitle}
           </motion.p>
@@ -61,32 +66,34 @@ export const AboutSection: React.FC = () => {
             {...reveal.body}
             className={cn(
               typography.body,
-              'font-medium max-w-[60ch] mb-12',
+              'font-medium max-w-[60ch]',
               darkMode ? 'text-gray-300' : 'text-gray-600'
             )}
           >
             {siteContent.about.description}
           </motion.p>
+        </div>
 
-          <motion.div
-            {...reveal.cardGrid}
-            className="grid grid-cols-1 lg:grid-cols-3 gap-4"
-          >
-            {siteContent.about.highlights.map((item) => (
-              <motion.div
-                key={item}
-                {...reveal.card}
-                className={cn(
-                  'p-6 sm:p-8 rounded-surface glass border',
-                  darkMode ? 'bg-black/40 border-white/10' : 'bg-white/60 border-black/5'
-                )}
-              >
-                <span className={cn(typography.body, 'font-medium', darkMode ? 'text-white' : 'text-black')}>
-                  {item}
-                </span>
-              </motion.div>
-            ))}
-          </motion.div>
+        <motion.div
+          {...reveal.cardGrid}
+          className="grid grid-cols-1 gap-4"
+        >
+          {siteContent.about.highlights.map((item) => (
+            <motion.div
+              key={item}
+              {...reveal.card}
+              className={cn(
+                'p-6 sm:p-8 rounded-surface glass border',
+                darkMode ? 'bg-black/40 border-white/10' : 'bg-white/60 border-black/5'
+              )}
+            >
+              <span className={cn(typography.body, 'font-medium', darkMode ? 'text-white' : 'text-black')}>
+                {item}
+              </span>
+            </motion.div>
+          ))}
+        </motion.div>
+      </motion.div>
     </motion.section>
   );
 };
