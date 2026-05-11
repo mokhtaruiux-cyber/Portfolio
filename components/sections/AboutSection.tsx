@@ -6,6 +6,7 @@ import { siteContent } from '../../content';
 import { useTheme } from '../../context/ThemeContext';
 import { typography } from '../../lib/typography';
 import { cn } from '../../lib/utils';
+import { eyebrowChipClass } from '../../lib/chipStyles';
 import { reveal } from '../../lib/motion/presets';
 import { sectionOrchestrator } from '../../lib/motion/variants';
 import { motionTokens as t } from '../../lib/motion/tokens';
@@ -28,7 +29,7 @@ export const AboutSection: React.FC = () => {
     >
           <motion.p
             {...reveal.body}
-            className={cn(typography.labelXs, 'text-accent tracking-widest mb-2')}
+            className={cn(typography.labelXs, eyebrowChipClass, 'mb-2')}
           >
             {siteContent.about.eyebrow}
           </motion.p>

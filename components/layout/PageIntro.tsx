@@ -2,6 +2,7 @@ import React from 'react';
 
 import { cn } from '../../lib/utils';
 import { typography } from '../../lib/typography';
+import { eyebrowChipClass } from '../../lib/chipStyles';
 import { titleReveal } from '../../lib/motion/motionPresets';
 import { BlurIn } from '../motion/BlurIn';
 import { Reveal } from '../motion/Reveal';
@@ -31,7 +32,7 @@ export const PageIntro: React.FC<PageIntroProps> = ({
       )}
     >
       {eyebrow && (
-        <BlurIn as="p" delay={titleReveal.sectionDelay} className={cn(typography.labelXs, 'mb-4 text-accent')}>
+        <BlurIn as="p" delay={titleReveal.sectionDelay} className={cn(typography.labelXs, eyebrowChipClass, 'mb-4')}>
           {eyebrow}
         </BlurIn>
       )}
@@ -49,7 +50,7 @@ export const PageIntro: React.FC<PageIntroProps> = ({
         {title}
         {highlight ? (
           <>
-            <br />
+            {' '}
             <span className="text-accent">{highlight}</span>
           </>
         ) : null}

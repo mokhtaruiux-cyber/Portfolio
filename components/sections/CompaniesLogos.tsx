@@ -6,6 +6,7 @@ import { Section } from '../layout/Section';
 import { AnimatedSection } from '../motion/AnimatedSection';
 import { Reveal } from '../motion/Reveal';
 import { TitleReveal } from '../motion/TitleReveal';
+import { eyebrowChipClass } from '../../lib/chipStyles';
 import { cn } from '../../lib/utils';
 import { typography } from '../../lib/typography';
 import { fadeUp } from '../../lib/motion/variants';
@@ -93,7 +94,7 @@ export const CompaniesLogos: React.FC = () => {
         {/* 1 — Eyebrow */}
         <motion.p
           variants={fadeUp}
-          className={cn(typography.labelXs, 'text-accent/80 mb-2 block tracking-widest')}
+          className={cn(typography.labelXs, eyebrowChipClass, 'mb-2')}
         >
           {siteContent.socialProof.eyebrow}
         </motion.p>

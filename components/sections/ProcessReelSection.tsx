@@ -6,6 +6,7 @@ import { Section } from '../layout/Section';
 import { AnimatedSection } from '../motion/AnimatedSection';
 import { BlurIn } from '../motion/BlurIn';
 import { Reveal } from '../motion/Reveal';
+import { eyebrowChipClass } from '../../lib/chipStyles';
 import { typography } from '../../lib/typography';
 import { cn } from '../../lib/utils';
 import { cardReveal, titleReveal } from '../../lib/motion/motionPresets';
@@ -135,13 +136,13 @@ export const ProcessReelSection: React.FC<ProcessReelSectionProps> = ({
   };
 
   return (
-    <Section id="process" eyebrow={siteContent.process.eyebrow} reveal={false}>
+    <Section id="process" reveal={false}>
       <div ref={containerRef}>
         <AnimatedSection amount={0.1}>
           {/* 1 — Eyebrow */}
           <motion.p
             variants={fadeUp}
-            className={cn(typography.labelXs, 'text-accent tracking-widest mb-2')}
+            className={cn(typography.labelXs, eyebrowChipClass, 'mb-2')}
           >
             {siteContent.process.eyebrow}
           </motion.p>

@@ -10,6 +10,7 @@ import { BlurIn } from '../motion/BlurIn';
 import { Reveal } from '../motion/Reveal';
 import { sectionPacing } from '../../lib/motionTokens';
 import { cardReveal } from '../../lib/motion/motionPresets';
+import { eyebrowChipClass } from '../../lib/chipStyles';
 import { cn } from '../../lib/utils';
 import { typography } from '../../lib/typography';
 import {
@@ -21,7 +22,7 @@ export const ExperienceSection: React.FC = () => {
   const pacing = sectionPacing.support;
 
   return (
-    <Section id="experience" eyebrow={siteContent.experience.eyebrow} reveal={false}>
+    <Section id="experience" reveal={false}>
       {/*
         Flat structure: [eyebrow] [title] [body] [rows stagger]
         Each element rises individually — no bulk blocks.
@@ -31,7 +32,7 @@ export const ExperienceSection: React.FC = () => {
         {/* 1 — Eyebrow */}
         <motion.p
           variants={fadeUp}
-          className={cn(typography.labelXs, 'text-accent tracking-widest mb-2')}
+          className={cn(typography.labelXs, eyebrowChipClass, 'mb-2')}
         >
           {siteContent.experience.eyebrow}
         </motion.p>

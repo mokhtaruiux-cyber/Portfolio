@@ -5,6 +5,7 @@ import { Container } from './Container';
 import { RevealSection } from '../motion/RevealSection';
 import { BlurIn } from '../motion/BlurIn';
 import { typography } from '../../lib/typography';
+import { eyebrowChipClass } from '../../lib/chipStyles';
 import { titleReveal } from '../../lib/motion/motionPresets';
 
 interface SectionProps {
@@ -33,7 +34,7 @@ export const Section: React.FC<SectionProps> = ({
             className={cn(
               typography.labelXs,
               "mb-4 sm:mb-6 block",
-              "text-accent"
+              eyebrowChipClass
             )}
           >
               {eyebrow}

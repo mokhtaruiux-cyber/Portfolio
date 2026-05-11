@@ -10,6 +10,7 @@ import { BlurIn } from '../motion/BlurIn';
 import { Reveal } from '../motion/Reveal';
 import { BlogCard } from '../blog/BlogCard';
 import { typography } from '../../lib/typography';
+import { eyebrowChipClass } from '../../lib/chipStyles';
 import { cn } from '../../lib/utils';
 import { cardReveal, titleReveal } from '../../lib/motion/motionPresets';
 import {
@@ -30,7 +31,7 @@ export const BlogSection = ({ onPostClick }: { onPostClick: (slug: string) => vo
         {/* 1 — Eyebrow */}
         <motion.p
           variants={fadeUp}
-          className={cn(typography.labelXs, 'text-accent tracking-widest mb-2')}
+          className={cn(typography.labelXs, eyebrowChipClass, 'mb-2')}
         >
           {siteContent.writing.eyebrow}
         </motion.p>

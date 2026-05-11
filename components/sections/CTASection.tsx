@@ -52,7 +52,7 @@ export const CTASection = () => {
               {ctaTitleLine}
               {ctaHighlightLine && (
                 <>
-                  <br />
+                  {' '}
                   <span className="text-accent">{ctaHighlightLine}</span>
                 </>
               )}

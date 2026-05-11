@@ -4,6 +4,7 @@ import { Zap } from 'lucide-react';
 import { Testimonial } from '../../types';
 import { siteContent } from '../../content';
 import { useTheme } from '../../context/ThemeContext';
+import { eyebrowChipClass } from '../../lib/chipStyles';
 import { typography } from '../../lib/typography';
 import { cn } from '../../lib/utils';
 import { reveal } from '../../lib/motion/presets';
@@ -173,7 +174,7 @@ export const TestimonialsSection = () => {
       animate={reduceMotion ? undefined : revealInView ? 'visible' : 'hidden'}
       className="py-16 md:py-24 relative z-10 overflow-hidden mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-10"
     >
-          <motion.p {...reveal.body} className={cn(typography.labelXs, 'text-accent tracking-widest mb-2')}>
+          <motion.p {...reveal.body} className={cn(typography.labelXs, eyebrowChipClass, 'mb-2')}>
             {siteContent.testimonials.eyebrow}
           </motion.p>
 

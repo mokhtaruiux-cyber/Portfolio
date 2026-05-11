@@ -48,6 +48,7 @@ export const Hero = ({ onWorkClick }: { onWorkClick: () => void }) => {
         <TitleReveal
           as="h1"
           wrapperClassName="w-full"
+          contentClassName="justify-center"
           className={cn(
             typography.h1,
             'font-black max-w-[18ch] block mx-auto !text-center text-balance relative z-10 w-full mt-10 sm:mt-8',

@@ -5,6 +5,7 @@ import { motion, useInView, useReducedMotion } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
 import { siteContent } from '../../content';
 import { useTheme } from '../../context/ThemeContext';
+import { eyebrowChipClass } from '../../lib/chipStyles';
 import { cn } from '../../lib/utils';
 import { typography } from '../../lib/typography';
 import { reveal } from '../../lib/motion/presets';
@@ -32,7 +33,7 @@ export const HowIHelpSection: React.FC = () => {
     >
           <motion.p
             {...reveal.body}
-            className={cn(typography.labelXs, 'text-accent tracking-widest mb-2')}
+            className={cn(typography.labelXs, eyebrowChipClass, 'mb-2')}
           >
             {howIHelp.eyebrow}
           </motion.p>
@@ -44,7 +45,7 @@ export const HowIHelpSection: React.FC = () => {
             {howIHelp.titleLines[0] ?? ''}
             {howIHelp.titleLines[1] && (
               <>
-                <br />
+                {' '}
                 <span className="text-accent">{howIHelp.titleLines[1]}</span>
               </>
             )}

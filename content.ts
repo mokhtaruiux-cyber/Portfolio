@@ -189,7 +189,7 @@ export const siteContent = {
     videoLabel: 'VIDEO',
   },
   writing: {
-    eyebrow: 'Insights',
+    eyebrow: 'Blog',
     title: 'Thoughts &',
     highlight: 'Perspectives.',
     description:

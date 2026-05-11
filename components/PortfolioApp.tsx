@@ -7,6 +7,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { siteContent } from '../content';
 import { PageKey } from '../types';
 import { pageTransitionVariants } from '../lib/motion';
+import { eyebrowChipClass } from '../lib/chipStyles';
 import { applySeoToDocument, buildRuntimeSeo } from '../lib/seo';
 import { typography } from '../lib/typography';
 import { cn } from '../lib/utils';
@@ -424,7 +425,7 @@ export function PortfolioApp() {
         className="py-20 md:py-24 relative z-10 scroll-mt-28 sm:scroll-mt-32 mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-10"
       >
             <span ref={homeWorkTriggerRef} className="absolute left-0 top-0 h-px w-px" aria-hidden="true" />
-            <motion.p {...reveal.body} className={cn(typography.labelXs, 'text-accent tracking-widest mb-4 sm:mb-6')}>
+            <motion.p {...reveal.body} className={cn(typography.labelXs, eyebrowChipClass, 'mb-4 sm:mb-6')}>
               {siteContent.featuredWork.eyebrow}
             </motion.p>
 
@@ -435,7 +436,7 @@ export function PortfolioApp() {
               {siteContent.featuredWork.title}
               {siteContent.featuredWork.highlight && (
                 <>
-                  <br />
+                  {' '}
                   <span className="text-accent">{siteContent.featuredWork.highlight}</span>
                 </>
               )}
@@ -482,7 +483,7 @@ export function PortfolioApp() {
       className="pb-8 pt-32 md:pb-10 md:pt-36 relative z-10 scroll-mt-28 sm:scroll-mt-32 mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-10"
     >
           <span ref={workPageTriggerRef} className="absolute left-0 top-0 h-px w-px" aria-hidden="true" />
-          <motion.p {...reveal.body} className={cn(typography.labelXs, 'mb-4 text-accent')}>
+          <motion.p {...reveal.body} className={cn(typography.labelXs, eyebrowChipClass, 'mb-4')}>
             {siteContent.featuredWork.archive.eyebrow}
           </motion.p>
           <TitleReveal
@@ -495,7 +496,7 @@ export function PortfolioApp() {
             )}
           >
             The
-            <br />
+            {' '}
             <span className="text-accent">Archive.</span>
           </TitleReveal>
           <motion.p
