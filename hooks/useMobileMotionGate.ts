@@ -1,10 +1,8 @@
 import { useEffect, useState } from 'react';
-import { useReducedMotion } from 'motion/react';
 
 const MOBILE_MOTION_QUERY = '(max-width: 768px), (pointer: coarse), (hover: none)';
 
 export const useMobileMotionGate = () => {
-  const prefersReduced = useReducedMotion();
   const [isMobile, setIsMobile] = useState(false);
 
   useEffect(() => {
@@ -20,5 +18,5 @@ export const useMobileMotionGate = () => {
     return () => media.removeListener(update);
   }, []);
 
-  return prefersReduced || isMobile;
+  return isMobile;
 };

@@ -1,88 +1,86 @@
 # Motion Audit
 
 **Date:** May 11, 2026
-**Goal:** Keep the existing visual design unchanged while making section body content reveal with the same premium motion language as the titles.
+**Scope:** Brief-driven GetBitBang-style scroll reveal pass for the sections listed in `codex-animation-brief.docx`.
 
-## Current Motion System
+## Source Of Truth
 
-### Shared sources
+- `lib/motion/tokens.ts` defines the single timing, easing, distance, stagger, and viewport threshold source.
+- `lib/motion/variants.ts` exports `fadeUp`, `fadeUpSubtle`, `scaleReveal`, `staggerParent`, and `sectionOrchestrator`.
+- `lib/motion/presets.ts` exports the `reveal` preset object used by sections and child content.
 
-- `lib/motion/motionTokens.ts` defines easing, durations, distances, stagger values, viewport amounts, Lenis timing, and spring tokens.
-- `lib/motion/motionVariants.ts` builds the reusable Framer Motion variant objects.
-- `lib/motion/motionPresets.ts` exposes the public presets: `titleReveal`, `titleWordReveal`, `sectionReveal`, `contentReveal`, `staggerContainer`, `cardReveal`, and `mediaReveal`.
-- `components/motion/Reveal.tsx` is the shared content/card/media reveal wrapper. It uses `useInView`, shared presets, transform/opacity-only motion, and reduced-motion support.
-- `components/motion/BlurIn.tsx` is the title word-reveal renderer. It now uses `titleWordReveal` directly.
-- `components/motion/AnimatedSection.tsx` still controls the top-level title/intro cascade, while deeper body/card/media groups use `Reveal` so long sections trigger as they enter the viewport.
-
-### Preserved special motion
-
-- Hero mount choreography remains custom because it is not scroll-triggered.
-- Stacked project cards keep their scroll-linked sticky/card behavior.
-- Marquees keep CSS transform animation and pause when offscreen or reduced motion is active.
-- Navbar/menu, modal, hover, tooltip, and button micro-interactions are preserved.
+`presets.ts` keeps the brief API exactly, but uses static ES imports so the existing Vitest/Next toolchain can compile it without CommonJS `require` failures.
 
 ## What Was Broken
 
-- Section titles were animated well, but supporting copy, cards, lists, media, and CTA blocks often depended on the title section trigger and appeared finished before the user reached them.
-- Several groups mixed local `initial` / `whileInView` logic with older variant state names, which made reveal behavior inconsistent.
-- Body/card/media reveal distances were too subtle to read as a premium bottom-to-top section reveal.
-- Stale wrapper components and hooks remained in the repo even though the active system had moved to shared motion presets.
-- `eslint-config-next` was installed but unused, and `@tailwindcss/postcss` was in runtime dependencies even though it is a build tool.
+- Section titles had visible reveal motion, but body copy, cards, CTAs, and media often remained hidden until they suddenly appeared or were already static by the time the user reached them.
+- Portfolio cards and final CTA were not part of one clear reveal sequence.
+- Reduced-motion mode could hydrate without errors after removing full-tree reduced-motion swaps, but server-rendered hidden reveal styles still needed a reduced-motion visibility override.
+- Lenis had been migrated away from the brief's requested setup.
 
 ## What Was Fixed
 
-- `Reveal` now owns section body/card/media viewport triggering through `useInView`.
-- `contentReveal`, `cardReveal`, and `mediaReveal` now use more visible shared bottom-to-top distances and later viewport amounts.
-- Card/list/media groups now use `Reveal` with `staggerContainer` plus `cardReveal` or `mediaReveal`.
-- Titles remain on the existing `BlurIn` + `titleReveal` / `titleWordReveal` path.
-- Removed unused wrappers: `FadeInUp`, `FadeUp`, `ScaleIn`, and `SectionTitle`.
-- Removed unused hooks: `useAppScroll` and `useParallax`.
-- Trimmed stale motion barrel exports and unused helper exports.
-- Removed the unused `eslint-config-next` dependency and moved `@tailwindcss/postcss` to `devDependencies`.
-- Removed untracked local artifacts from previous tool runs: `.agents`, `.playwright-mcp`, `Skills`, `TASK.md`, and `animation-upgrade-guide.md`.
+- Added the brief motion files: `tokens.ts`, `variants.ts`, and `presets.ts`.
+- Rebuilt the listed sections around one section trigger plus inherited child variants.
+- Hero now uses the brief's above-the-fold mount exception with `animate`, not `whileInView`.
+- About, Services, Portfolio, Testimonials, and Contact now reveal heading, body, cards/media, and CTA content progressively.
+- Portfolio final `View All Work` CTA now lives inside the same card-grid reveal sequence and appears after the project cards begin cascading.
+- Lenis now uses one `@studio-freight/lenis` instance and one manual RAF loop in `components/providers/SmoothScrollProvider.tsx`.
+- Removed active `lenis` package usage and replaced old `useLenis` scroll calls with native scroll calls.
+- Reduced motion now forces reveal-hidden inline styles visible with no transform, while preserving stable initial HTML.
 
 ## Section Choreography Pass
 
-| Page / Section | Title animation | Body/content animation | Cards/media animation | Presets used | Remaining issue |
+| Section | Title animation | Body/content animation | Cards/media animation | Presets used | Remaining issue |
 |---|---:|---:|---:|---|---|
-| Home hero | Yes | Yes | Yes | `titleReveal`, `titleWordReveal`, `fadeUp`, `scaleIn` | None |
-| Companies / logos | Yes | N/A | Yes | `titleReveal`, `titleWordReveal`, `mediaReveal` | None |
-| About | Yes | Yes | Yes | `titleReveal`, `titleWordReveal`, `contentReveal`, `staggerContainer`, `cardReveal` | None |
-| How I help | Yes | Yes | Yes | `titleReveal`, `titleWordReveal`, `contentReveal`, `staggerContainer`, `cardReveal` | None |
-| Experience | Yes | Yes | Yes | `titleReveal`, `titleWordReveal`, `contentReveal`, `staggerContainer`, `cardReveal` | None |
-| Process | Yes | Yes | Yes | `titleReveal`, `titleWordReveal`, `contentReveal`, `staggerContainer`, `cardReveal` | None |
-| Selected projects | Yes | Yes | Yes | `titleReveal`, `titleWordReveal`, `contentReveal`, `cardReveal`, `mediaReveal` | None |
-| Blog preview | Yes | Yes | Yes | `titleReveal`, `titleWordReveal`, `contentReveal`, `staggerContainer`, `cardReveal` | None |
-| Testimonials | Yes | Yes | Yes | `titleReveal`, `titleWordReveal`, `contentReveal`, `mediaReveal` | None |
-| CTA | Yes | Yes | Yes | `titleReveal`, `titleWordReveal`, `contentReveal`, `staggerContainer`, `scaleIn` | None |
-| Projects listing | Yes | Yes | Yes | `titleReveal`, `titleWordReveal`, `contentReveal`, `cardReveal`, `mediaReveal` | None |
-| Project detail pages | Yes | Yes | Yes | `titleReveal`, `titleWordReveal`, `contentReveal`, `staggerContainer`, `cardReveal`, `mediaReveal` | None |
-| Blog listing | Yes | Yes | Yes | `titleReveal`, `titleWordReveal`, `staggerContainer`, `cardReveal`, `mediaReveal` | None |
-| Blog article pages | Yes | Yes | Yes | `titleReveal`, `titleWordReveal`, `contentReveal`, `staggerContainer`, `cardReveal`, `mediaReveal` | None |
-| Not found page | Yes | Yes | Yes | `titleReveal`, `titleWordReveal`, `contentReveal`, `cardReveal` | None |
+| Hero | Yes | Yes | Yes | `reveal.heading`, `reveal.body`, `reveal.cardGrid`, `reveal.card` | None |
+| About | Yes | Yes | Yes | `reveal.heading`, `reveal.body`, `reveal.cardGrid`, `reveal.card` | None |
+| Portfolio | Yes | Yes | Yes | `reveal.heading`, `reveal.body`, `reveal.cta`, `reveal.cardGrid`, `reveal.card` | None |
+| Services | Yes | Yes | Yes | `reveal.heading`, `reveal.body`, `reveal.cardGrid`, `reveal.card`, `reveal.cta` | None |
+| Testimonials | Yes | Yes | Yes | `reveal.heading`, `reveal.body`, `reveal.cardGrid`, `reveal.card` | None |
+| Contact | Yes | Yes | N/A | `reveal.heading`, `reveal.body`, `reveal.cta` | None |
 
-## Lenis Status
+## Browser Observations
 
-- One `ReactLenis` root instance remains in `components/providers/SmoothScrollProvider.tsx`.
-- One manual RAF loop remains active with `autoRaf: false`.
-- The RAF loop is stopped on cleanup.
-- Route changes still restore scroll through `lenis.scrollTo(..., { immediate: true })`.
-- Scroll-triggered Framer Motion reveals now use independent `useInView` triggers for section body groups, so Lenis timing does not mask or skip long-section content.
+- Desktop `1440x900`: hero H1 moved from opacity `0.599`, y `11.2` at 80ms to opacity `1`, y `0` by 900ms. Hero buttons remained hidden at 180ms, then staggered at 360ms (`0.763` / `0.344` opacity).
+- About: before scroll, heading/body/cards were opacity `0` with y offsets. During reveal, heading reached `0.741` opacity before body `0.135`, then cards followed (`card0 0.947`, `card1 0.854` at 760ms).
+- Services: heading/body revealed first, cards staggered, and CTA remained hidden until later in the sequence.
+- Portfolio: heading and filters revealed before cards; project card 0 began before card 1; final `View All Work` CTA stayed hidden until the card cascade was underway.
+- Testimonials: heading/body revealed before testimonial cards; card 0 began before card 1.
+- Contact: heading/body revealed before CTA; CTA reached opacity `0.639` at 460ms after heading/body had already started.
+- Re-entering About after scrolling away kept heading/body/card visible at opacity `1`, y `0`; no repeat animation.
+- Reduced motion: hero, About, Services, Portfolio, and Testimonials headings were all opacity `1`, transform `none`; no console errors and no page errors.
+- Tablet `768x1024`: hero animated from opacity `0.358`, y `17.5` to opacity `0.998`, y `0`; About heading/body/card revealed on scroll; no console/page errors and no overflowing text.
+- Mobile `390x844`: hero animated from opacity `0.181`, y `22.8` to opacity `0.998`, y `0.1`; About heading/body/card revealed on scroll; no console/page errors and no overflowing text.
 
-## Cleanup Status
+## Section 9 Checklist
 
-- `npx knip --no-progress` passes with no unused files, dependencies, or exports.
-- Runtime dependencies now contain only app runtime libraries.
-- Build tooling is in `devDependencies`.
+1. `tokens.ts` exists: observed at `lib/motion/tokens.ts`.
+2. `variants.ts` exports the required variants: observed `fadeUp`, `fadeUpSubtle`, `scaleReveal`, `staggerParent`, `sectionOrchestrator`.
+3. `presets.ts` exports `reveal`: observed.
+4. Hero headline fades up on load: observed opacity/y progression in desktop, tablet, and mobile.
+5. Hero buttons stagger: observed primary button ahead of secondary button at 360ms.
+6. About body text appears after heading: observed heading opacity ahead of body at 260ms.
+7. Portfolio cards stagger: observed card 0 ahead of card 1.
+8. Portfolio view-all button appears last: observed hidden while heading/filter/card sequence starts, then revealing after cards are underway.
+9. Services cards stagger: observed card 0 ahead of card 1.
+10. Testimonials items stagger: observed card 0 ahead of card 1.
+11. Contact button appears after text: observed CTA starting after heading/body.
+12. No section reanimates on scroll up: observed About re-entry stayed opacity `1`, y `0`.
+13. Reduced motion all visible: observed opacity `1`, transform `none`.
+14. Lenis smooth scroll no pop-in: observed normal desktop/tablet/mobile scroll-triggered reveal with no missed section triggers.
+15. TypeScript exit 0: `npx tsc --noEmit` passed.
+16. Build exit 0: `npm run build` passed.
 
-## Validation Results
+## Commands Run
 
-- `npx knip --no-progress` — passed.
+- `npx tsc --noEmit` — passed.
 - `npm run lint` — passed.
-- `npm run typecheck` — passed.
 - `npm run test` — passed, 2 files / 9 tests.
-- `npm run build` — passed, 13 static routes generated.
+- `npm run build` — passed, 13 routes generated.
 - `npx playwright test` — passed, 14 tests.
-- Production browser scroll-through on `http://127.0.0.1:3000` passed across desktop, tablet, and mobile for `/`, `/projects`, `/projects/homecare-medical-app`, `/blog`, `/blog/getbitbang-motion-language`, `/about`, and `/does-not-exist`.
-- Browser layout-shift sampling reported `0` CLS for all checked route/viewport combinations.
-- No app console errors were found on normal routes. The only warnings observed were from the external Cal.com embed; the intentional 404 route produced expected failed-resource noise.
+
+## Remaining Risks
+
+- The brief requested `@studio-freight/lenis`, so the implementation follows that package even though it is older than the newer `lenis` package.
+- Older non-brief route/page animations still exist elsewhere in the repo and were not redesigned in this brief pass.

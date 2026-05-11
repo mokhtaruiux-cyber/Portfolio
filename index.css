@@ -221,6 +221,19 @@ html.lenis body {
   .hero-blob {
     animation: none !important;
   }
+
+  [style*="opacity:0"],
+  [style*="opacity: 0"] {
+    opacity: 1 !important;
+  }
+
+  [style*="translateY"],
+  [style*="translate3d"],
+  [style*="scale(0.96)"],
+  [style*="scale(0.97)"],
+  [style*="scale(0.99)"] {
+    transform: none !important;
+  }
 }
 
 /* Glass effect - optimized for mobile performance */

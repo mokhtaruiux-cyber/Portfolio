@@ -1,12 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence, useMotionValueEvent, useScroll, useVelocity } from 'motion/react';
-import { useLenis } from 'lenis/react';
 import { Sun, Moon, Menu, X } from 'lucide-react';
 import Link from 'next/link';
 import { siteContent } from '../../content';
 import { useTheme } from '../../context/ThemeContext';
 import { PageKey } from '../../types';
-import { durations, easing, scrollTiming, transitions } from '../../lib/motionTokens';
+import { durations, easing, transitions } from '../../lib/motionTokens';
 import { cn } from '../../lib/utils';
 import { typography } from '../../lib/typography';
 import { Container } from './Container';
@@ -18,7 +17,6 @@ interface NavbarProps {
 }
 
 export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
-  const lenis = useLenis();
   const { scrollY } = useScroll();
   const scrollVelocity = useVelocity(scrollY);
   const { darkMode, setDarkMode } = useTheme();
@@ -34,12 +32,8 @@ export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
   const scrollToSection = useCallback((sectionId: string) => {
     const target = document.getElementById(sectionId);
     if (!target) return;
-    if (lenis) {
-      lenis.scrollTo(target, { duration: scrollTiming.anchorDuration });
-      return;
-    }
-    target.scrollIntoView({ behavior: 'auto', block: 'start' });
-  }, [lenis]);
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, []);
 
   useMotionValueEvent(scrollY, 'change', (current) => {
     setScrolled(current > 40);

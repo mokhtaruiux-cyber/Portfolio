@@ -1,48 +1,41 @@
 'use client';
 
 import React from 'react';
-import { motion } from 'motion/react';
+import { motion, useInView, useReducedMotion } from 'framer-motion';
 import { siteContent } from '../../content';
 import { useTheme } from '../../context/ThemeContext';
-import { Section } from '../layout/Section';
-import { AnimatedSection } from '../motion/AnimatedSection';
 import { typography } from '../../lib/typography';
 import { cn } from '../../lib/utils';
-import { BlurIn } from '../motion/BlurIn';
-import { Reveal } from '../motion/Reveal';
-import { cardReveal, titleReveal } from '../../lib/motion/motionPresets';
-import {
-  fadeUp,
-} from '../../lib/motion/variants';
+import { reveal } from '../../lib/motion/presets';
+import { sectionOrchestrator } from '../../lib/motion/variants';
+import { motionTokens as t } from '../../lib/motion/tokens';
 
 export const AboutSection: React.FC = () => {
   const { darkMode } = useTheme();
+  const reduceMotion = useReducedMotion();
+  const sectionRef = React.useRef<HTMLElement | null>(null);
+  const isInView = useInView(sectionRef, { once: true, amount: t.threshold });
 
   return (
-    <Section id="about" eyebrow={siteContent.about.eyebrow} reveal={false}>
-      {/*
-        KEY: AnimatedSection is a flat list of motion children.
-        Each child gets staggered +0.12s after the previous.
-        Children: [eyebrow label] [title] [subtitle] [body] [cards grid]
-        Each one slides up 60px individually — this is the getbitbang waterfall.
-      */}
-      <AnimatedSection amount={0.1}>
+    <motion.section
+      ref={sectionRef}
+      id="about"
+      variants={reduceMotion ? undefined : sectionOrchestrator}
+      initial={reduceMotion ? undefined : 'hidden'}
+      animate={reduceMotion ? undefined : isInView ? 'visible' : 'hidden'}
+      className="py-20 md:py-24 relative z-10 scroll-mt-28 sm:scroll-mt-32 mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-10"
+    >
+          <motion.p
+            {...reveal.body}
+            className={cn(typography.labelXs, 'text-accent tracking-widest mb-2')}
+          >
+            {siteContent.about.eyebrow}
+          </motion.p>
 
-        {/* 1 — Eyebrow label */}
-        <motion.p
-          variants={fadeUp}
-          className={cn(typography.labelXs, 'text-accent tracking-widest mb-2')}
-        >
-          {siteContent.about.eyebrow}
-        </motion.p>
-
-        {/* 2 — Title (BlurIn handles per-word animation internally) */}
-        <motion.div variants={fadeUp} className="mb-6">
-          <BlurIn
-            as="h2"
-            delay={titleReveal.headingDelay}
+          <motion.h2
+            {...reveal.heading}
             className={cn(
-              'font-black max-w-[24ch] tracking-tighter text-4xl sm:text-5xl',
+              'font-black max-w-[24ch] tracking-tighter text-4xl sm:text-5xl mb-6',
               darkMode ? 'text-white' : 'text-black'
             )}
           >
@@ -53,51 +46,45 @@ export const AboutSection: React.FC = () => {
                 <span className="text-accent">{siteContent.about.highlight}</span>
               </>
             )}
-          </BlurIn>
-        </motion.div>
+          </motion.h2>
 
-        {/* 3 — Subtitle */}
-        <Reveal
-          as="p"
-          className={cn(typography.h3, 'font-semibold mb-4', darkMode ? 'text-white' : 'text-black')}
-        >
-          {siteContent.about.subtitle}
-        </Reveal>
+          <motion.p
+            {...reveal.body}
+            className={cn(typography.h3, 'font-semibold mb-4', darkMode ? 'text-white' : 'text-black')}
+          >
+            {siteContent.about.subtitle}
+          </motion.p>
 
-        {/* 4 — Body paragraph */}
-        <Reveal
-          as="p"
-          className={cn(
-            typography.body,
-            'font-medium max-w-[60ch] mb-12',
-            darkMode ? 'text-gray-300' : 'text-gray-600'
-          )}
-        >
-          {siteContent.about.description}
-        </Reveal>
+          <motion.p
+            {...reveal.body}
+            className={cn(
+              typography.body,
+              'font-medium max-w-[60ch] mb-12',
+              darkMode ? 'text-gray-300' : 'text-gray-600'
+            )}
+          >
+            {siteContent.about.description}
+          </motion.p>
 
-        {/* 5 — Highlight cards: each card is its own stagger child */}
-        <Reveal
-          preset="card"
-          staggerChildren
-          className="grid grid-cols-1 lg:grid-cols-3 gap-4"
-        >
-          {siteContent.about.highlights.map((item) => (
-            <motion.div
-              key={item}
-              variants={cardReveal.defaultVariants}
-              className={cn(
-                'p-6 sm:p-8 rounded-surface glass border',
-                darkMode ? 'bg-black/40 border-white/10' : 'bg-white/60 border-black/5'
-              )}
-            >
-              <span className={cn(typography.body, 'font-medium', darkMode ? 'text-white' : 'text-black')}>
-                {item}
-              </span>
-            </motion.div>
-          ))}
-        </Reveal>
-      </AnimatedSection>
-    </Section>
+          <motion.div
+            {...reveal.cardGrid}
+            className="grid grid-cols-1 lg:grid-cols-3 gap-4"
+          >
+            {siteContent.about.highlights.map((item) => (
+              <motion.div
+                key={item}
+                {...reveal.card}
+                className={cn(
+                  'p-6 sm:p-8 rounded-surface glass border',
+                  darkMode ? 'bg-black/40 border-white/10' : 'bg-white/60 border-black/5'
+                )}
+              >
+                <span className={cn(typography.body, 'font-medium', darkMode ? 'text-white' : 'text-black')}>
+                  {item}
+                </span>
+              </motion.div>
+            ))}
+          </motion.div>
+    </motion.section>
   );
 };

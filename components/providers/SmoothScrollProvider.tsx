@@ -1,42 +1,29 @@
-'use client';
+"use client";
+import { useEffect } from "react";
+import Lenis from "@studio-freight/lenis";
 
-import React, { useEffect, useRef } from 'react';
-import { ReactLenis } from 'lenis/react';
-import type { LenisRef } from 'lenis/react';
-import { smoothScroll } from '../../lib/motionTokens';
-
-export const SmoothScrollProvider = ({ children }: { children: React.ReactNode }) => {
-  const lenisRef = useRef<LenisRef | null>(null);
-
+export function LenisProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return undefined;
+    const lenis = new Lenis({
+      duration:     1.2,
+      easing:       (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel:  true,
+    });
 
     let frameId = 0;
-    const raf = (time: number) => {
-      lenisRef.current?.lenis?.raf(time);
-      frameId = window.requestAnimationFrame(raf);
-    };
 
-    frameId = window.requestAnimationFrame(raf);
-    return () => window.cancelAnimationFrame(frameId);
+    function raf(time: number) {
+      lenis.raf(time);
+      frameId = requestAnimationFrame(raf);
+    }
+
+    frameId = requestAnimationFrame(raf);
+
+    return () => {
+      cancelAnimationFrame(frameId);
+      lenis.destroy();
+    };
   }, []);
 
-  return (
-    <ReactLenis
-      ref={lenisRef}
-      root
-      options={{
-        autoRaf: false,
-        lerp: smoothScroll.lerp,
-        smoothWheel: true,
-        syncTouch: false,
-        syncTouchLerp: smoothScroll.syncTouchLerp,
-        touchMultiplier: smoothScroll.touchMultiplier,
-        wheelMultiplier: smoothScroll.wheelMultiplier,
-        overscroll: false,
-      }}
-    >
-      {children}
-    </ReactLenis>
-  );
-};
+  return <>{children}</>;
+}

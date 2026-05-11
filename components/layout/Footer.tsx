@@ -1,12 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { useLenis } from 'lenis/react';
 import { siteContent } from '../../content';
 import { PageKey } from '../../types';
 import { Container } from './Container';
 import { useTheme } from '../../context/ThemeContext';
 import { typography } from '../../lib/typography';
 import { cn } from '../../lib/utils';
-import { scrollTiming } from '../../lib/motionTokens';
 
 type FooterNavLink = (typeof siteContent.footer.columns)[number]['links'][number];
 
@@ -19,7 +17,6 @@ export const Footer = ({
   onNavigate: (page: PageKey) => void;
   spacing?: 'compact' | 'default' | 'expanded';
 }) => {
-  const lenis = useLenis();
   const { darkMode } = useTheme();
   const footerColumns = siteContent.footer.columns;
   const { cal } = siteContent;
@@ -34,12 +31,8 @@ export const Footer = ({
   const scrollToSection = useCallback((sectionId: string) => {
     const target = document.getElementById(sectionId);
     if (!target) return;
-    if (lenis) {
-      lenis.scrollTo(target, { duration: scrollTiming.anchorDuration });
-      return;
-    }
-    target.scrollIntoView({ behavior: 'auto', block: 'start' });
-  }, [lenis]);
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, []);
 
   useEffect(() => {
     if (currentPage !== 'home' || !pendingSection) return;

@@ -1,10 +1,11 @@
 
 import React, { useRef } from 'react';
-import { motion, useReducedMotion, useScroll, useSpring, useTransform, MotionValue } from 'motion/react';
+import { motion, useReducedMotion, useScroll, useSpring, useTransform, MotionValue } from 'framer-motion';
 import { Project } from '../../types';
 import { useIsDesktop } from '../../hooks/useMediaQuery';
 import { scrollSpring } from '../../lib/motionTokens';
 import { cardReveal } from '../../lib/motion/motionPresets';
+import { reveal } from '../../lib/motion/presets';
 
 // GPU-friendly stacked card animation
 // We avoid layout shifts and expensive filters (blur)
@@ -14,9 +15,10 @@ import { cardReveal } from '../../lib/motion/motionPresets';
 interface StackedCardsProps {
     items: Project[];
     renderItem: (item: Project, index: number) => React.ReactNode;
+    orchestrated?: boolean;
 }
 
-export const StackedCards: React.FC<StackedCardsProps> = ({ items, renderItem }) => {
+export const StackedCards: React.FC<StackedCardsProps> = ({ items, renderItem, orchestrated = false }) => {
     const isDesktop = useIsDesktop();
     const reduceMotion = useReducedMotion() ?? false;
 
@@ -28,11 +30,15 @@ export const StackedCards: React.FC<StackedCardsProps> = ({ items, renderItem })
                     <motion.div
                         key={item.id || i}
                         className="w-full"
-                        custom={i}
-                        variants={cardReveal.variants({ reduceMotion })}
-                        initial="initial"
-                        whileInView="animate"
-                        viewport={cardReveal.viewport}
+                        {...(orchestrated
+                            ? reveal.card
+                            : {
+                                custom: i,
+                                variants: cardReveal.variants({ reduceMotion }),
+                                initial: 'initial' as const,
+                                whileInView: 'animate' as const,
+                                viewport: cardReveal.viewport,
+                            })}
                     >
                         {renderItem(item, i)}
                     </motion.div>
@@ -41,10 +47,10 @@ export const StackedCards: React.FC<StackedCardsProps> = ({ items, renderItem })
         );
     }
 
-    return <StackedCardsDesktop items={items} renderItem={renderItem} />;
+    return <StackedCardsDesktop items={items} renderItem={renderItem} orchestrated={orchestrated} />;
 };
 
-const StackedCardsDesktop: React.FC<StackedCardsProps> = ({ items, renderItem }) => {
+const StackedCardsDesktop: React.FC<StackedCardsProps> = ({ items, renderItem, orchestrated = false }) => {
     // For a true "one useScroll" implementation as requested:
     const containerRef = useRef<HTMLDivElement>(null);
     const reduceMotion = useReducedMotion() ?? false;
@@ -79,6 +85,7 @@ const StackedCardsDesktop: React.FC<StackedCardsProps> = ({ items, renderItem })
                         renderItem={renderItem}
                         scrollProgress={smoothProgress}
                         reduceMotion={reduceMotion}
+                        orchestrated={orchestrated}
                     />
                 );
             })}
@@ -93,9 +100,10 @@ interface CardWithTransformProps {
     renderItem: (item: Project, index: number) => React.ReactNode;
     scrollProgress: MotionValue<number>;
     reduceMotion: boolean;
+    orchestrated: boolean;
 }
 
-const CardWithTransform = ({ index, total, item, renderItem, scrollProgress, reduceMotion }: CardWithTransformProps) => {
+const CardWithTransform = ({ index, total, item, renderItem, scrollProgress, reduceMotion, orchestrated }: CardWithTransformProps) => {
     // To make it truly GPU friendly and avoid jitter, we rely on sticky positioning for the "stacking"
     // and use the scrollProgress only for subtle scale/opacity of cards *behind* the current one.
 
@@ -127,11 +135,15 @@ const CardWithTransform = ({ index, total, item, renderItem, scrollProgress, red
                 className="w-full origin-top transform-gpu bg-transparent"
             >
                 <motion.div
-                    custom={index}
-                    variants={cardReveal.variants({ reduceMotion })}
-                    initial="initial"
-                    whileInView="animate"
-                    viewport={cardReveal.viewport}
+                    {...(orchestrated
+                        ? reveal.card
+                        : {
+                            custom: index,
+                            variants: cardReveal.variants({ reduceMotion }),
+                            initial: 'initial' as const,
+                            whileInView: 'animate' as const,
+                            viewport: cardReveal.viewport,
+                        })}
                 >
                     {renderItem(item, index)}
                 </motion.div>

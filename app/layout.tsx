@@ -2,11 +2,10 @@ import type { ReactNode } from 'react';
 import type { Metadata, Viewport } from 'next';
 import Script from 'next/script';
 
-import 'lenis/dist/lenis.css';
 import '../index.css';
 
 import { MotionProvider } from '../components/providers/MotionProvider';
-import { SmoothScrollProvider } from '../components/providers/SmoothScrollProvider';
+import { LenisProvider } from '../components/providers/SmoothScrollProvider';
 import { PortfolioApp } from '../components/PortfolioApp';
 import { buildNextMetadata, buildRuntimeSeo, DEFAULT_SITE_URL, resolveSiteUrl } from '../lib/seo';
 
@@ -39,12 +38,12 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         />
       </head>
       <body className="dark overflow-x-hidden" suppressHydrationWarning>
-        <SmoothScrollProvider>
+        <LenisProvider>
           <MotionProvider>
             <PortfolioApp />
             {children}
           </MotionProvider>
-        </SmoothScrollProvider>
+        </LenisProvider>
         <Script
           id="cal-embed"
           strategy="afterInteractive"

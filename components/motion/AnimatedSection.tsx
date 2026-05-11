@@ -21,8 +21,9 @@
  */
 
 import React from 'react';
-import { motion, useReducedMotion } from 'motion/react';
-import { sectionContainer } from '../../lib/motion/variants';
+import { motion, useReducedMotion } from 'framer-motion';
+import { sectionOrchestrator } from '../../lib/motion/variants';
+import { motionTokens as t } from '../../lib/motion/tokens';
 import { cn } from '../../lib/utils';
 
 interface AnimatedSectionProps {
@@ -40,30 +41,21 @@ export const AnimatedSection: React.FC<AnimatedSectionProps> = ({
   children,
   className,
   id,
-  amount = 0.15,
+  amount = t.threshold,
   animate,
   as: Tag = 'div',
 }) => {
   const shouldReduce = useReducedMotion();
   const MotionTag = motion[Tag] as typeof motion.div;
 
-  if (shouldReduce) {
-    const StaticTag = Tag;
-    return (
-      <StaticTag id={id} className={className}>
-        {children}
-      </StaticTag>
-    );
-  }
-
   return (
     <MotionTag
       id={id}
       className={cn('w-full', className)}
-      variants={sectionContainer}
-      initial="hidden"
-      {...(animate ? { animate } : { whileInView: 'visible' })}
-      viewport={animate ? undefined : { once: true, amount }}
+      variants={shouldReduce ? undefined : sectionOrchestrator}
+      initial={shouldReduce ? undefined : 'hidden'}
+      {...(shouldReduce ? {} : animate ? { animate } : { whileInView: 'visible' })}
+      viewport={shouldReduce || animate ? undefined : { once: true, amount }}
     >
       {children}
     </MotionTag>

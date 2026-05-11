@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
-import { useLenis } from 'lenis/react';
 import { X } from 'lucide-react';
 
 type ProjectViewerImage = {
@@ -43,7 +42,6 @@ export const ProjectImageViewer: React.FC<ProjectImageViewerProps> = ({
   isOpen,
   onClose,
 }) => {
-  const lenis = useLenis();
   const reduceMotion = useReducedMotion();
   const dialogRef = useRef<HTMLDivElement | null>(null);
   const closeButtonRef = useRef<HTMLButtonElement | null>(null);
@@ -85,13 +83,9 @@ export const ProjectImageViewer: React.FC<ProjectImageViewerProps> = ({
       body.style.width = original.width;
       body.style.overflow = original.overflow;
       body.style.paddingRight = original.paddingRight;
-      if (lenis) {
-        lenis.scrollTo(scrollY, { immediate: true });
-      } else {
-        window.scrollTo(0, scrollY);
-      }
+      window.scrollTo(0, scrollY);
     };
-  }, [isOpen, lenis]);
+  }, [isOpen]);
 
   useEffect(() => {
     if (!isOpen) return;

@@ -1,27 +1,23 @@
 'use client';
 
-import React, { Suspense, lazy, useCallback, useEffect, useMemo, useState } from 'react';
-import { motion, AnimatePresence } from 'motion/react';
-import { useLenis } from 'lenis/react';
+import React, { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { usePathname, useRouter } from 'next/navigation';
 
 import { siteContent } from '../content';
 import { PageKey } from '../types';
 import { pageTransitionVariants } from '../lib/motion';
-import { titleReveal } from '../lib/motion/motionPresets';
 import { applySeoToDocument, buildRuntimeSeo } from '../lib/seo';
 import { typography } from '../lib/typography';
 import { cn } from '../lib/utils';
 
 import { LivingBackground } from './background/LivingBackground';
 import { ScrollProgress } from './motion/ScrollProgress';
-import { AnimatedSection } from './motion/AnimatedSection';
-import { BlurIn } from './motion/BlurIn';
-import { Reveal } from './motion/Reveal';
 import { StackedCards } from './motion/StackedCards';
-import { fadeUp } from '../lib/motion/variants';
+import { reveal } from '../lib/motion/presets';
+import { sectionOrchestrator } from '../lib/motion/variants';
+import { motionTokens as t } from '../lib/motion/tokens';
 
-import { Section } from './layout/Section';
 import { SegmentTabs } from './ui/SegmentTabs';
 
 import { AboutSection } from './sections/AboutSection';
@@ -35,7 +31,7 @@ import { BlogSection } from './sections/BlogSection';
 import { TestimonialsSection } from './sections/TestimonialsSection';
 
 import { ProjectCardWrapper } from './cards/ProjectCardWrapper';
-import { PageIntro } from './layout/PageIntro';
+import { GlowButton } from './ui/GlowButton';
 import { Navbar } from './layout/Navbar';
 import { Footer } from './layout/Footer';
 import { ThemeProvider } from '../context/ThemeContext';
@@ -84,9 +80,13 @@ const normalizePathname = (value: string | null) => {
 };
 
 export function PortfolioApp() {
-  const lenis = useLenis();
   const router = useRouter();
   const pathname = normalizePathname(usePathname());
+  const reduceMotion = useReducedMotion();
+  const homeWorkTriggerRef = useRef<HTMLSpanElement | null>(null);
+  const workPageTriggerRef = useRef<HTMLSpanElement | null>(null);
+  const [homeWorkInView, setHomeWorkInView] = useState(false);
+  const [workPageInView, setWorkPageInView] = useState(false);
 
   const [hasManualTheme, setHasManualTheme] = useState(true);
   const [darkMode, setDarkMode] = useState(true);
@@ -180,12 +180,7 @@ export function PortfolioApp() {
     const key = `scrollY:${pathname}`;
     let restored = false;
     const scrollToPosition = (value: number) => {
-      if (lenis) {
-        lenis.scrollTo(value, { immediate: true });
-        return;
-      }
-      document.documentElement.scrollTop = value;
-      document.body.scrollTop = value;
+      window.scrollTo(0, value);
     };
     try {
       const storedY = window.sessionStorage.getItem(key);
@@ -203,29 +198,25 @@ export function PortfolioApp() {
     if (!restored) {
       scrollToPosition(0);
     }
-  }, [lenis, pathname]);
+  }, [pathname]);
 
   useEffect(() => {
     const key = `scrollY:${pathname}`;
     const handleBeforeUnload = () => {
       try {
-        window.sessionStorage.setItem(key, String(lenis?.scroll ?? window.scrollY));
+        window.sessionStorage.setItem(key, String(window.scrollY));
       } catch {
         // Ignore storage errors.
       }
     };
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-  }, [lenis, pathname]);
+  }, [pathname]);
 
-  const scrollToElement = useCallback((target: HTMLElement | null, duration = 0.75) => {
+  const scrollToElement = useCallback((target: HTMLElement | null) => {
     if (!target) return;
-    if (lenis) {
-      lenis.scrollTo(target, { duration });
-      return;
-    }
-    target.scrollIntoView({ behavior: 'auto', block: 'start' });
-  }, [lenis]);
+    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, []);
 
   useEffect(() => {
     if (routePage !== 'home') return;
@@ -241,7 +232,7 @@ export function PortfolioApp() {
     const intervalId = window.setInterval(() => {
       const target = document.getElementById(targetId);
       if (target) {
-        scrollToElement(target, 0.75);
+        scrollToElement(target);
         try {
           window.sessionStorage.removeItem('scrollToSection');
         } catch {
@@ -342,6 +333,68 @@ export function PortfolioApp() {
     applySeoToDocument(seo);
   }, [seo]);
 
+  useEffect(() => {
+    if (reduceMotion || homeWorkInView || currentPage !== 'home') return;
+    const node = homeWorkTriggerRef.current;
+    if (!node) return;
+    let frameId = 0;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry?.isIntersecting) return;
+      setHomeWorkInView(true);
+      observer.disconnect();
+    }, { threshold: t.threshold });
+    const revealIfVisible = () => {
+      const rect = node.getBoundingClientRect();
+      if (rect.top >= window.innerHeight || rect.bottom <= 0) return;
+      setHomeWorkInView(true);
+      observer.disconnect();
+      window.removeEventListener('scroll', revealIfVisible);
+      window.removeEventListener('resize', revealIfVisible);
+      if (frameId) window.cancelAnimationFrame(frameId);
+    };
+    observer.observe(node);
+    window.addEventListener('scroll', revealIfVisible, { passive: true });
+    window.addEventListener('resize', revealIfVisible, { passive: true });
+    frameId = window.requestAnimationFrame(revealIfVisible);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('scroll', revealIfVisible);
+      window.removeEventListener('resize', revealIfVisible);
+      if (frameId) window.cancelAnimationFrame(frameId);
+    };
+  }, [currentPage, homeWorkInView, reduceMotion]);
+
+  useEffect(() => {
+    if (reduceMotion || workPageInView || currentPage !== 'work') return;
+    const node = workPageTriggerRef.current;
+    if (!node) return;
+    let frameId = 0;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry?.isIntersecting) return;
+      setWorkPageInView(true);
+      observer.disconnect();
+    }, { threshold: t.threshold });
+    const revealIfVisible = () => {
+      const rect = node.getBoundingClientRect();
+      if (rect.top >= window.innerHeight || rect.bottom <= 0) return;
+      setWorkPageInView(true);
+      observer.disconnect();
+      window.removeEventListener('scroll', revealIfVisible);
+      window.removeEventListener('resize', revealIfVisible);
+      if (frameId) window.cancelAnimationFrame(frameId);
+    };
+    observer.observe(node);
+    window.addEventListener('scroll', revealIfVisible, { passive: true });
+    window.addEventListener('resize', revealIfVisible, { passive: true });
+    frameId = window.requestAnimationFrame(revealIfVisible);
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('scroll', revealIfVisible);
+      window.removeEventListener('resize', revealIfVisible);
+      if (frameId) window.cancelAnimationFrame(frameId);
+    };
+  }, [currentPage, reduceMotion, workPageInView]);
+
   const routeAnnouncement = useMemo(() => {
     if (activeProject) return `Project ${activeProject.title} page loaded`;
     if (activePost) return `Article ${activePost.title} page loaded`;
@@ -354,20 +407,29 @@ export function PortfolioApp() {
 
   const homeElement = (
     <>
-      <Hero onWorkClick={() => scrollToElement(document.getElementById('work'), 0.75)} />
+      <Hero onWorkClick={() => scrollToElement(document.getElementById('work'))} />
       <CompaniesLogos />
       <AboutSection />
       <HowIHelpSection />
       <ExperienceSection />
       <ProcessReelSection />
-      <Section id="work" eyebrow={siteContent.featuredWork.eyebrow} reveal={false}>
-        <AnimatedSection amount={0.1}>
-          {/* Title */}
-          <motion.div variants={fadeUp} className="mb-10 text-left">
-            <BlurIn
-              as="h2"
-              delay={titleReveal.headingDelay}
-              className={cn('font-black tracking-tighter text-4xl sm:text-5xl', darkMode ? 'text-white' : 'text-black')}
+      <motion.section
+        id="work"
+        viewport={{ once: true, amount: 'some' }}
+        onViewportEnter={() => setHomeWorkInView(true)}
+        variants={reduceMotion ? undefined : sectionOrchestrator}
+        initial={reduceMotion ? undefined : 'hidden'}
+        animate={reduceMotion ? undefined : homeWorkInView ? 'visible' : 'hidden'}
+        className="py-20 md:py-24 relative z-10 scroll-mt-28 sm:scroll-mt-32 mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-10"
+      >
+            <span ref={homeWorkTriggerRef} className="absolute left-0 top-0 h-px w-px" aria-hidden="true" />
+            <motion.p {...reveal.body} className={cn(typography.labelXs, 'text-accent tracking-widest mb-4 sm:mb-6')}>
+              {siteContent.featuredWork.eyebrow}
+            </motion.p>
+
+            <motion.h2
+              {...reveal.heading}
+              className={cn('font-black tracking-tighter text-4xl sm:text-5xl mb-10 text-left', darkMode ? 'text-white' : 'text-black')}
             >
               {siteContent.featuredWork.title}
               {siteContent.featuredWork.highlight && (
@@ -376,11 +438,77 @@ export function PortfolioApp() {
                   <span className="text-accent">{siteContent.featuredWork.highlight}</span>
                 </>
               )}
-            </BlurIn>
-          </motion.div>
+            </motion.h2>
 
-          {/* Filter tabs */}
-          <Reveal className="sticky top-28 sm:top-32 z-40 mb-8 py-2 pointer-events-none">
+            <motion.div {...reveal.cta} className="sticky top-28 sm:top-32 z-40 mb-8 py-2 pointer-events-none">
+              <div className="pointer-events-auto flex justify-start">
+                <SegmentTabs
+                  tabs={workFilters.map((item) => item.label)}
+                  activeTab={filter}
+                  onChange={setFilter}
+                />
+              </div>
+            </motion.div>
+
+            <motion.div {...reveal.cardGrid}>
+              <StackedCards
+                orchestrated
+                items={filteredProjects}
+                renderItem={(project) => (
+                  <ProjectCardWrapper project={project} onClick={handleProjectClick} />
+                )}
+              />
+
+              <motion.div {...reveal.cta} className="mt-8 flex justify-start">
+                <GlowButton onClick={() => navigateTo('work')} size="cta" glow={false}>
+                  View All Work
+                </GlowButton>
+              </motion.div>
+            </motion.div>
+      </motion.section>
+      <BlogSection onPostClick={handleBlogClick} />
+      <TestimonialsSection />
+    </>
+  );
+
+  const workElement = (
+    <motion.section
+      viewport={{ once: true, amount: 'some' }}
+      onViewportEnter={() => setWorkPageInView(true)}
+      variants={reduceMotion ? undefined : sectionOrchestrator}
+      initial={reduceMotion ? undefined : 'hidden'}
+      animate={reduceMotion ? undefined : workPageInView ? 'visible' : 'hidden'}
+      className="pb-8 pt-32 md:pb-10 md:pt-36 relative z-10 scroll-mt-28 sm:scroll-mt-32 mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-10"
+    >
+          <span ref={workPageTriggerRef} className="absolute left-0 top-0 h-px w-px" aria-hidden="true" />
+          <motion.p {...reveal.body} className={cn(typography.labelXs, 'mb-4 text-accent')}>
+            {siteContent.featuredWork.archive.eyebrow}
+          </motion.p>
+          <motion.h1
+            {...reveal.heading}
+            aria-label={siteContent.featuredWork.archive.title}
+            className={cn(
+              typography.h1,
+              'max-w-[18ch] text-balance font-black',
+              darkMode ? 'text-white' : 'text-black'
+            )}
+          >
+            The
+            <br />
+            <span className="text-accent">Archive.</span>
+          </motion.h1>
+          <motion.p
+            {...reveal.body}
+            className={cn(
+              typography.body,
+              'mt-6 mb-10 max-w-2xl text-pretty font-medium',
+              darkMode ? 'text-white/70' : 'text-black/65'
+            )}
+          >
+            A full index of selected case studies, systems, and product work across apps, websites, and service platforms.
+          </motion.p>
+
+          <motion.div {...reveal.cta} className="sticky top-28 sm:top-32 z-40 mb-8 py-2 pointer-events-none">
             <div className="pointer-events-auto flex justify-start">
               <SegmentTabs
                 tabs={workFilters.map((item) => item.label)}
@@ -388,51 +516,18 @@ export function PortfolioApp() {
                 onChange={setFilter}
               />
             </div>
-          </Reveal>
+          </motion.div>
 
-          {/* Cards grid */}
-          <div>
+          <motion.div {...reveal.cardGrid}>
             <StackedCards
+              orchestrated
               items={filteredProjects}
               renderItem={(project) => (
                 <ProjectCardWrapper project={project} onClick={handleProjectClick} />
               )}
             />
-          </div>
-        </AnimatedSection>
-      </Section>
-      <BlogSection onPostClick={handleBlogClick} />
-      <TestimonialsSection />
-    </>
-  );
-
-  const workElement = (
-    <Section className="pb-8 pt-32 md:pb-10 md:pt-36" eyebrow={siteContent.featuredWork.archive.eyebrow}>
-      <PageIntro
-        title="The"
-        highlight="Archive."
-        description="A full index of selected case studies, systems, and product work across apps, websites, and service platforms."
-        darkMode={darkMode}
-        className="mb-10"
-      />
-
-      <div className="sticky top-28 sm:top-32 z-40 mb-8 py-2 pointer-events-none">
-        <Reveal className="pointer-events-auto flex justify-start">
-          <SegmentTabs
-            tabs={workFilters.map((item) => item.label)}
-            activeTab={filter}
-            onChange={setFilter}
-          />
-        </Reveal>
-      </div>
-
-      <StackedCards
-        items={filteredProjects}
-        renderItem={(project) => (
-          <ProjectCardWrapper project={project} onClick={handleProjectClick} />
-        )}
-      />
-    </Section>
+          </motion.div>
+    </motion.section>
   );
 
   const aboutElement = (
