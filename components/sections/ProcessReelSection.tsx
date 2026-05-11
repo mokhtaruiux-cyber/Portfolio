@@ -5,10 +5,11 @@ import { useTheme } from '../../context/ThemeContext';
 import { Section } from '../layout/Section';
 import { AnimatedSection } from '../motion/AnimatedSection';
 import { BlurIn } from '../motion/BlurIn';
+import { Reveal } from '../motion/Reveal';
 import { typography } from '../../lib/typography';
 import { cn } from '../../lib/utils';
 import { cardReveal, titleReveal } from '../../lib/motion/motionPresets';
-import { fadeUp, scaleIn, staggerContainer } from '../../lib/motion/variants';
+import { fadeUp } from '../../lib/motion/variants';
 
 type ProcessReelSectionProps = {
   autoPlay?: boolean;
@@ -163,15 +164,17 @@ export const ProcessReelSection: React.FC<ProcessReelSectionProps> = ({
           </motion.div>
 
           {/* 3 — Body description */}
-          <motion.p
-            variants={fadeUp}
+          <Reveal
+            as="p"
             className={cn(typography.body, 'max-w-[60ch] font-medium mb-12', darkMode ? 'text-gray-300' : 'text-gray-600')}
           >
             {siteContent.process.description}
-          </motion.p>
+          </Reveal>
 
-          {/* 4 — Process cards: staggerContainer → scaleIn */}
-          <motion.div
+          {/* 4 — Process cards: staggerContainer → cardReveal */}
+          <Reveal
+            preset="card"
+            staggerChildren
             role="tablist"
             aria-orientation="horizontal"
             className="flex flex-col space-y-4 md:space-y-0 md:grid md:grid-cols-2 lg:grid-cols-4 md:gap-4"
@@ -182,10 +185,6 @@ export const ProcessReelSection: React.FC<ProcessReelSectionProps> = ({
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
             onKeyDown={handleTabKeyDown}
-            variants={staggerContainer}
-            initial="hidden"
-            whileInView="visible"
-            viewport={cardReveal.viewport}
           >
           {steps.map((step, index) => {
             const isActive = index === activeIndex;
@@ -194,7 +193,7 @@ export const ProcessReelSection: React.FC<ProcessReelSectionProps> = ({
             return (
               <motion.div
                 key={step.id}
-                variants={scaleIn}
+                variants={cardReveal.defaultVariants}
                 className={cn(
                   "text-left p-6 sm:p-8 rounded-surface glass border transition-all duration-700 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500/40",
                   isActive
@@ -240,7 +239,7 @@ export const ProcessReelSection: React.FC<ProcessReelSectionProps> = ({
               </motion.div>
             );
           })}
-        </motion.div>
+        </Reveal>
         </AnimatedSection>
       </div>
     </Section>

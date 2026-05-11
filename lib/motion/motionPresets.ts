@@ -20,7 +20,6 @@ import {
   buildStaggerContainerVariants,
   cardRevealVariants,
   resolveTitleWordDelay,
-  staggerItemVariants,
   titleRevealWordVariants,
   type RevealDirection,
   type RevealVariantOptions,
@@ -88,13 +87,6 @@ export const staggerContainer = (
   staggerChildren = staggerValues.section,
 ): Variants => buildStaggerContainerVariants(delayChildren, staggerChildren);
 
-export const staggerItem = staggerItemVariants;
-
-export const stagger = {
-  container: staggerContainer,
-  item: staggerItem,
-};
-
 export const cardReveal = {
   distance: cardRevealTokens.distance,
   duration: cardRevealTokens.duration,
@@ -120,8 +112,3 @@ export const mediaReveal = {
   variants: (options?: IndexedRevealVariantOptions) =>
     buildMediaRevealVariants(options),
 };
-
-export const revealTitle = titleReveal;
-export const revealText = contentReveal;
-export const revealSection = sectionReveal;
-export const revealCard = cardReveal;

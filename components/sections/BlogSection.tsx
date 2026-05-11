@@ -7,14 +7,13 @@ import { useTheme } from '../../context/ThemeContext';
 import { Section } from '../layout/Section';
 import { AnimatedSection } from '../motion/AnimatedSection';
 import { BlurIn } from '../motion/BlurIn';
+import { Reveal } from '../motion/Reveal';
 import { BlogCard } from '../blog/BlogCard';
 import { typography } from '../../lib/typography';
 import { cn } from '../../lib/utils';
 import { cardReveal, titleReveal } from '../../lib/motion/motionPresets';
 import {
   fadeUp,
-  scaleIn,
-  staggerContainer,
 } from '../../lib/motion/variants';
 
 export const BlogSection = ({ onPostClick }: { onPostClick: (slug: string) => void }) => {
@@ -54,27 +53,25 @@ export const BlogSection = ({ onPostClick }: { onPostClick: (slug: string) => vo
         </motion.div>
 
         {/* 3 — Description */}
-        <motion.p
-          variants={fadeUp}
+        <Reveal
+          as="p"
           className={cn(typography.body, 'max-w-2xl font-medium mb-12', darkMode ? 'text-gray-300' : 'text-gray-600')}
         >
           {siteContent.writing.description}
-        </motion.p>
+        </Reveal>
 
         {/* 4 — Blog cards: stagger each card */}
-        <motion.div
+        <Reveal
+          preset="card"
+          staggerChildren
           className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={cardReveal.viewport}
         >
           {siteContent.writing.items.map((post) => (
-            <motion.div key={post.id} variants={scaleIn} className="h-full">
+            <motion.div key={post.id} variants={cardReveal.defaultVariants} className="h-full">
               <BlogCard post={post} onClick={onPostClick} />
             </motion.div>
           ))}
-        </motion.div>
+        </Reveal>
       </AnimatedSection>
     </Section>
   );

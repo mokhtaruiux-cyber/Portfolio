@@ -21,14 +21,6 @@ export const durations = {
   glacial: 0.8,
 };
 
-export const delays = {
-  none: 0,
-  xs: 0.04,
-  sm: 0.08,
-  md: 0.12,
-  lg: 0.18,
-};
-
 export const sectionPacing = {
   hero: {
     lead: 0.1,
@@ -78,9 +70,9 @@ export const viewportDefaults = {
 export const viewportAmounts = {
   title: viewportDefaults.amount,
   section: viewportDefaults.amount,
-  content: viewportDefaults.amount,
-  card: 0.18,
-  media: 0.2,
+  content: 0.3,
+  card: 0.24,
+  media: 0.24,
 } as const;
 
 export const titleReveal = {
@@ -105,8 +97,8 @@ export const sectionReveal = {
 } as const;
 
 export const contentRevealTokens = {
-  distance: distances.md,
-  duration: durations.medium,
+  distance: distances.lg,
+  duration: durations.slow,
 } as const;
 
 export const routeReveal = {
@@ -128,50 +120,22 @@ export const smoothScroll = {
 } as const;
 
 export const cardReveal = {
-  distance: 28,
-  duration: 0.58,
+  distance: distances.lg,
+  duration: durations.slow,
   stagger: 0.10,
-  viewportMargin: "-40px",
+  viewportMargin: "0px 0px -12% 0px",
 } as const;
 
 export const mediaRevealTokens = {
-  distance: distances.sm,
+  distance: distances.md,
   duration: durations.slow,
-  scale: 0.992,
+  scale: 0.99,
 } as const;
 
 export const scrollSpring = {
   stiffness: 90,
   damping: 24,
   mass: 0.9,
-} as const;
-
-export const heroReveal = {
-  startDelayMs: 120,
-  image: {
-    distance: distances.heroImage,
-    rotateX: 8,
-    blur: 18,
-    delay: delays.lg,
-    duration: durations.glacial,
-    pulseScale: 1.018,
-    pulseDuration: 5.5,
-  },
-  body: {
-    distance: distances.sm,
-    delay: 0.92,
-    duration: durations.normal,
-  },
-  actions: {
-    distance: distances.xs,
-    delay: 1.08,
-    duration: durations.normal,
-  },
-  badges: {
-    distance: distances.xs,
-    delay: 1.18,
-    duration: durations.normal,
-  },
 } as const;
 
 export const transitions = {
@@ -202,5 +166,3 @@ export const transitions = {
     ease: easing.hover,
   } as Transition,
 };
-
-export const viewport = viewportDefaults;

@@ -8,13 +8,12 @@ import { useTheme } from '../../context/ThemeContext';
 import { Section } from '../layout/Section';
 import { AnimatedSection } from '../motion/AnimatedSection';
 import { BlurIn } from '../motion/BlurIn';
+import { Reveal } from '../motion/Reveal';
 import { cn } from '../../lib/utils';
 import { typography } from '../../lib/typography';
 import { cardReveal, titleReveal } from '../../lib/motion/motionPresets';
 import {
   fadeUp,
-  scaleIn,
-  staggerContainer,
 } from '../../lib/motion/variants';
 
 export const HowIHelpSection: React.FC = () => {
@@ -58,25 +57,23 @@ export const HowIHelpSection: React.FC = () => {
         </motion.div>
 
         {/* 3 — Subtitle / body */}
-        <motion.p
-          variants={fadeUp}
+        <Reveal
+          as="p"
           className={cn(typography.body, 'max-w-[60ch] font-medium mb-12', darkMode ? 'text-gray-300' : 'text-gray-600')}
         >
           {howIHelp.subtitle}
-        </motion.p>
+        </Reveal>
 
-        {/* 4 — Service cards: staggerContainer → scaleIn per card */}
-        <motion.div
+        {/* 4 — Service cards: staggerContainer → cardReveal per card */}
+        <Reveal
+          preset="card"
+          staggerChildren
           className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8"
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={cardReveal.viewport}
         >
           {howIHelp.cards.map((card) => (
             <motion.div
               key={card.id}
-              variants={scaleIn}
+              variants={cardReveal.defaultVariants}
               className={cn(
                 'rounded-surface glass border p-6 sm:p-8 transition-colors duration-500',
                 darkMode ? 'bg-black/40 border-white/10' : 'bg-white/70 border-black/5'
@@ -113,10 +110,10 @@ export const HowIHelpSection: React.FC = () => {
               </div>
             </motion.div>
           ))}
-        </motion.div>
+        </Reveal>
 
         {/* 5 — CTA link: last in cascade */}
-        <motion.div variants={fadeUp} className="mt-8">
+        <Reveal className="mt-8">
           {isCalCta ? (
             <button
               type="button"
@@ -143,7 +140,7 @@ export const HowIHelpSection: React.FC = () => {
               {howIHelp.ctaLabel} <ArrowUpRight size={18} />
             </a>
           )}
-        </motion.div>
+        </Reveal>
       </AnimatedSection>
     </Section>
   );

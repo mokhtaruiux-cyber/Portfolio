@@ -15,7 +15,6 @@ import {
   cardReveal,
   contentReveal,
   mediaReveal,
-  staggerContainer,
   titleReveal,
 } from '../../lib/motion/motionPresets';
 
@@ -143,12 +142,10 @@ export const ProjectDetailPage = ({
             </Reveal>
           </div>
 
-          <motion.div
+          <Reveal
+            preset="card"
+            staggerChildren
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
-            variants={staggerContainer()}
-            initial="initial"
-            whileInView="animate"
-            viewport={cardReveal.viewport}
           >
             {[{
               label: siteContent.projectDetail.metaLabels.role,
@@ -164,18 +161,16 @@ export const ProjectDetailPage = ({
                 <ProjectMetaItem label={item.label} value={item.value} darkMode={darkMode} />
               </motion.div>
             ))}
-          </motion.div>
+          </Reveal>
         </div>
       </Section>
 
       {isBehanceStyleGallery ? (
         <Section className="pb-0 pt-6 md:pt-8">
-          <motion.div
+          <Reveal
+            preset="media"
+            staggerChildren
             className="space-y-0"
-            variants={staggerContainer()}
-            initial="initial"
-            whileInView="animate"
-            viewport={mediaReveal.viewport}
           >
             {project.gallery.map((item, index) => (
               <motion.div key={`${project.slug}-gallery-${index}`} variants={mediaReveal.variants({ reduceMotion })} className="w-full">
@@ -202,16 +197,14 @@ export const ProjectDetailPage = ({
                 </button>
               </motion.div>
             ))}
-          </motion.div>
+          </Reveal>
         </Section>
       ) : (
         <Section eyebrow={siteContent.projectDetail.galleryEyebrow}>
-          <motion.div
+          <Reveal
+            preset="media"
+            staggerChildren
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
-            variants={staggerContainer()}
-            initial="initial"
-            whileInView="animate"
-            viewport={mediaReveal.viewport}
           >
             {project.gallery.map((item, index) => (
               <motion.div key={`${project.slug}-gallery-${index}`} variants={mediaReveal.variants({ reduceMotion })}>
@@ -222,17 +215,14 @@ export const ProjectDetailPage = ({
                 />
               </motion.div>
             ))}
-          </motion.div>
+          </Reveal>
         </Section>
       )}
 
       <Section eyebrow={siteContent.projectDetail.caseStudyEyebrow}>
-        <motion.div
+        <Reveal
+          staggerChildren
           className="space-y-12 text-left"
-          variants={staggerContainer()}
-          initial="initial"
-          whileInView="animate"
-          viewport={contentReveal.viewport}
         >
           {project.caseStudySections.map((section) => (
             <motion.div key={section.title} className="space-y-3" variants={contentReveal.variants({ reduceMotion })}>
@@ -240,16 +230,13 @@ export const ProjectDetailPage = ({
               <p className={cn(typography.body, 'max-w-[60ch] font-medium', typography.textSubtle, darkMode ? 'text-white' : 'text-black')}>{section.content}</p>
             </motion.div>
           ))}
-        </motion.div>
+        </Reveal>
       </Section>
 
       <Section eyebrow={siteContent.projectDetail.metricsEyebrow}>
-        <motion.div
+        <Reveal
+          staggerChildren
           className="grid grid-cols-2 sm:grid-cols-3 gap-4 md:gap-6 text-left"
-          variants={staggerContainer()}
-          initial="initial"
-          whileInView="animate"
-          viewport={contentReveal.viewport}
         >
           {project.metrics.map((metric) => (
             <motion.div key={metric.label} variants={contentReveal.variants({ reduceMotion })}>
@@ -257,7 +244,7 @@ export const ProjectDetailPage = ({
               <span className={cn(typography.h3, 'font-black', darkMode ? 'text-white' : 'text-black')}>{metric.value}</span>
             </motion.div>
           ))}
-        </motion.div>
+        </Reveal>
       </Section>
 
       {nextProject && (

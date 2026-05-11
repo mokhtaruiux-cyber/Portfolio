@@ -7,14 +7,13 @@ import { useTheme } from '../../context/ThemeContext';
 import { Section } from '../layout/Section';
 import { AnimatedSection } from '../motion/AnimatedSection';
 import { BlurIn } from '../motion/BlurIn';
+import { Reveal } from '../motion/Reveal';
 import { sectionPacing } from '../../lib/motionTokens';
 import { cardReveal } from '../../lib/motion/motionPresets';
 import { cn } from '../../lib/utils';
 import { typography } from '../../lib/typography';
 import {
   fadeUp,
-  scaleIn,
-  staggerContainer,
 } from '../../lib/motion/variants';
 
 export const ExperienceSection: React.FC = () => {
@@ -55,25 +54,23 @@ export const ExperienceSection: React.FC = () => {
         </motion.div>
 
         {/* 3 — Intro body */}
-        <motion.p
-          variants={fadeUp}
+        <Reveal
+          as="p"
           className={cn(typography.body, 'font-medium max-w-[60ch] mb-12', darkMode ? 'text-gray-300' : 'text-gray-600')}
         >
           {siteContent.experience.intro}
-        </motion.p>
+        </Reveal>
 
         {/* 4 — Experience rows: stagger each row individually */}
-        <motion.div
+        <Reveal
+          preset="card"
+          staggerChildren
           className="divide-y"
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={cardReveal.viewport}
         >
           {siteContent.experience.items.map((item, idx) => (
             <motion.div
               key={item.id}
-              variants={scaleIn}
+              variants={cardReveal.defaultVariants}
               className={cn(
                 'py-8 sm:py-10 flex flex-col md:flex-row md:items-center md:justify-between gap-4',
                 idx === siteContent.experience.items.length - 1 ? 'border-b-0' : 'border-b',
@@ -89,7 +86,7 @@ export const ExperienceSection: React.FC = () => {
               </div>
             </motion.div>
           ))}
-        </motion.div>
+        </Reveal>
       </AnimatedSection>
     </Section>
   );

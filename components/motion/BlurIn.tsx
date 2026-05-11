@@ -4,7 +4,7 @@ import { motion, useInView, useReducedMotion } from 'motion/react';
 import * as React from 'react';
 import { cn } from '../../lib/utils';
 import { VIEWPORT_REVEAL } from '../../lib/motion';
-import { titleReveal } from '../../lib/motion/motionPresets';
+import { titleWordReveal } from '../../lib/motion/motionPresets';
 
 type BlurInProps = {
     as?: React.ElementType;
@@ -62,8 +62,8 @@ const renderAnimatedChildren = (
                             <motion.span
                                 key={`${word}-${wordIndex}`}
                                 className={cn(wordClass, context.stackWords && 'basis-full')}
-                                custom={titleReveal.getWordCustom(context.delay, wordIndex, context.reduceMotion)}
-                                variants={titleReveal.wordVariants}
+                                custom={titleWordReveal.getCustom(context.delay, wordIndex, context.reduceMotion)}
+                                variants={titleWordReveal.variants}
                                 initial={context.reduceMotion ? false : 'initial'}
                                 animate={context.isInView ? 'animate' : 'initial'}
                             >

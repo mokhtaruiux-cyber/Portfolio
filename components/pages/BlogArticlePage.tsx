@@ -9,7 +9,6 @@ import { typography } from '../../lib/typography';
 import {
   contentReveal,
   mediaReveal,
-  staggerContainer,
   titleReveal,
 } from '../../lib/motion/motionPresets';
 import { cn } from '../../lib/utils';
@@ -117,12 +116,9 @@ export const BlogArticlePage = ({
       </Section>
 
       <Section>
-        <motion.div
+        <Reveal
+          staggerChildren
           className="max-w-[60ch] mx-auto space-y-8 text-left"
-          variants={staggerContainer(titleReveal.sectionDelay)}
-          initial="initial"
-          whileInView="animate"
-          viewport={contentReveal.viewport}
         >
           {post.contentBlocks.map((block, index) => (
             <motion.div
@@ -132,7 +128,7 @@ export const BlogArticlePage = ({
               <BlogBlock block={block} darkMode={darkMode} />
             </motion.div>
           ))}
-        </motion.div>
+        </Reveal>
       </Section>
 
       {nextPost && (

@@ -4,7 +4,8 @@ import React from 'react';
 import { motion, useInView, useReducedMotion } from 'motion/react';
 import { cn } from '../../lib/utils';
 import { VIEWPORT_SECTION_REVEAL } from '../../lib/motion';
-import { durations, easing, distances } from '../../lib/motion/motionTokens';
+import { durations, easing } from '../../lib/motion/motionTokens';
+import { sectionReveal } from '../../lib/motion/motionPresets';
 
 type RevealSectionProps = {
   children: React.ReactNode;
@@ -43,11 +44,11 @@ export const RevealSection: React.FC<RevealSectionProps> = ({
       };
     }
     return {
-      initial: { opacity: 1, y: distances.md },
+      initial: { opacity: 1, y: sectionReveal.defaultDistance },
       animate: {
         opacity: 1,
         y: 0,
-        transition: { duration: durations.slow, ease: easing.smooth, delay },
+        transition: { duration: sectionReveal.defaultDuration, ease: easing.smooth, delay },
       },
     };
   }, [delay, disableTransform, reduceMotion]);

@@ -12,7 +12,7 @@ export type RouteMatch = {
 const normalizeSegments = (segments?: string[]) =>
   (segments ?? []).filter((segment) => segment.length > 0);
 
-export const pathFromSegments = (segments?: string[]) => {
+const pathFromSegments = (segments?: string[]) => {
   const cleanSegments = normalizeSegments(segments);
   return cleanSegments.length === 0 ? '/' : `/${cleanSegments.join('/')}`;
 };

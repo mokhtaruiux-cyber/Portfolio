@@ -1,7 +1,13 @@
 'use client';
 
 import React from "react";
-import { motion, Variants, useReducedMotion } from "motion/react";
+import {
+  motion,
+  useInView,
+  useReducedMotion,
+  type HTMLMotionProps,
+  type Variants,
+} from "motion/react";
 import {
   cardReveal,
   contentReveal,
@@ -9,7 +15,10 @@ import {
   staggerContainer,
 } from "../../lib/motion/motionPresets";
 
-interface RevealProps {
+type RevealElement = "div" | "p" | "span" | "section" | "article" | "ul" | "li";
+
+interface RevealProps extends Omit<HTMLMotionProps<"div">, "children" | "className"> {
+  as?: RevealElement;
   children: React.ReactNode;
   delay?: number;
   direction?: "up" | "down" | "left" | "right";
@@ -20,39 +29,55 @@ interface RevealProps {
 }
 
 export const Reveal: React.FC<RevealProps> = ({
+  as = "div",
   children,
   delay = 0,
   direction = "up",
   className,
   preset = "content",
   staggerChildren: useStagger = false,
+  ...motionProps
 }) => {
   const reduce = useReducedMotion() ?? false;
+  const ref = React.useRef<HTMLElement | null>(null);
 
-  const variants: Variants = useStagger
-    ? (staggerContainer(delay) as Variants)
-    : preset === "card"
-      ? cardReveal.variants({ delay, reduceMotion: reduce })
-      : preset === "media"
-        ? mediaReveal.variants({ delay, reduceMotion: reduce })
-        : contentReveal.variants({ delay, direction, reduceMotion: reduce });
+  const variants: Variants = React.useMemo(() => {
+    if (useStagger) {
+      const childStagger = preset === "card" ? cardReveal.stagger : undefined;
+      return staggerContainer(delay, childStagger) as Variants;
+    }
 
-  const viewport =
+    if (preset === "card") {
+      return cardReveal.variants({ delay, reduceMotion: reduce });
+    }
+
+    if (preset === "media") {
+      return mediaReveal.variants({ delay, reduceMotion: reduce });
+    }
+
+    return contentReveal.variants({ delay, direction, reduceMotion: reduce });
+  }, [delay, direction, preset, reduce, useStagger]);
+
+  const viewport = React.useMemo(() => (
     preset === "card"
       ? cardReveal.viewport
       : preset === "media"
         ? mediaReveal.viewport
-        : contentReveal.viewport;
+        : contentReveal.viewport
+  ), [preset]);
+  const isInView = useInView(ref, viewport);
+  const MotionTag = motion[as] as typeof motion.div;
 
   return (
-    <motion.div
+    <MotionTag
+      ref={ref as React.Ref<HTMLDivElement>}
       variants={variants}
-      initial="initial"
-      whileInView="animate"
-      viewport={viewport}
+      initial={reduce ? false : "hidden"}
+      animate={reduce || isInView ? "visible" : "hidden"}
       className={className}
+      {...motionProps}
     >
       {children}
-    </motion.div>
+    </MotionTag>
   );
 };

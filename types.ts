@@ -1,11 +1,11 @@
 
-export type GalleryItem = {
+type GalleryItem = {
   type: "image" | "video";
   src: string;
   alt: string;
 };
 
-export type CaseStudySection = {
+type CaseStudySection = {
   title: string;
   content: string;
 };

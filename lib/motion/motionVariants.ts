@@ -129,7 +129,7 @@ export const titleRevealWordVariants: Variants = {
         },
 };
 
-export const buildRevealVariants = ({
+const buildRevealVariants = ({
   delay = 0,
   direction = "up",
   distance = distances.sm,
@@ -166,7 +166,7 @@ export const buildRevealVariants = ({
   };
 };
 
-export const buildBlurFadeUpVariants = ({
+const buildBlurFadeUpVariants = ({
   delay = 0,
   distance = distances.sm,
   blur = 0,
@@ -256,21 +256,6 @@ export const buildStaggerContainerVariants = (
     hidden: initial,
     visible: animate,
   };
-};
-
-export const staggerItemVariants: Variants = {
-  initial: { opacity: 0, y: distances.md },
-  animate: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: durations.medium, ease: easing.reveal },
-  },
-  hidden: { opacity: 0, y: distances.md },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: durations.medium, ease: easing.reveal },
-  },
 };
 
 export const pageTransitionVariants: Variants = {

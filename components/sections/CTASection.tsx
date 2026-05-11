@@ -8,6 +8,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { Section } from '../layout/Section';
 import { AnimatedSection } from '../motion/AnimatedSection';
 import { BlurIn } from '../motion/BlurIn';
+import { Reveal } from '../motion/Reveal';
 import { typography } from '../../lib/typography';
 import { cn } from '../../lib/utils';
 import { GlowButton } from '../ui/GlowButton';
@@ -64,18 +65,15 @@ export const CTASection = () => {
             </motion.div>
 
             {/* Description */}
-            <motion.p
-              variants={fadeUp}
+            <Reveal
+              as="p"
               className={cn(typography.body, 'max-w-[60ch] font-medium', darkMode ? 'text-gray-300' : 'text-gray-600')}
             >
               {siteContent.finalCta.description}
-            </motion.p>
+            </Reveal>
 
             {/* CTAs */}
-            <motion.div
-              variants={fadeUp}
-              className="flex flex-col sm:flex-row items-start sm:items-center gap-4"
-            >
+            <Reveal className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
               <GlowButton
                 size="cta"
                 calLink={cal.link}
@@ -93,7 +91,7 @@ export const CTASection = () => {
               >
                 {siteContent.finalCta.secondaryLabel}
               </a>
-            </motion.div>
+            </Reveal>
           </motion.div>
         </motion.div>
       </AnimatedSection>

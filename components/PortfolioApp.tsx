@@ -17,6 +17,7 @@ import { LivingBackground } from './background/LivingBackground';
 import { ScrollProgress } from './motion/ScrollProgress';
 import { AnimatedSection } from './motion/AnimatedSection';
 import { BlurIn } from './motion/BlurIn';
+import { Reveal } from './motion/Reveal';
 import { StackedCards } from './motion/StackedCards';
 import { fadeUp } from '../lib/motion/variants';
 
@@ -379,7 +380,7 @@ export function PortfolioApp() {
           </motion.div>
 
           {/* Filter tabs */}
-          <motion.div variants={fadeUp} className="sticky top-28 sm:top-32 z-40 mb-8 py-2 pointer-events-none">
+          <Reveal className="sticky top-28 sm:top-32 z-40 mb-8 py-2 pointer-events-none">
             <div className="pointer-events-auto flex justify-start">
               <SegmentTabs
                 tabs={workFilters.map((item) => item.label)}
@@ -387,17 +388,17 @@ export function PortfolioApp() {
                 onChange={setFilter}
               />
             </div>
-          </motion.div>
+          </Reveal>
 
           {/* Cards grid */}
-          <motion.div variants={fadeUp}>
+          <div>
             <StackedCards
               items={filteredProjects}
               renderItem={(project) => (
                 <ProjectCardWrapper project={project} onClick={handleProjectClick} />
               )}
             />
-          </motion.div>
+          </div>
         </AnimatedSection>
       </Section>
       <BlogSection onPostClick={handleBlogClick} />
@@ -416,19 +417,13 @@ export function PortfolioApp() {
       />
 
       <div className="sticky top-28 sm:top-32 z-40 mb-8 py-2 pointer-events-none">
-        <motion.div
-          variants={fadeUp}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.5 }}
-          className="pointer-events-auto flex justify-start"
-        >
+        <Reveal className="pointer-events-auto flex justify-start">
           <SegmentTabs
             tabs={workFilters.map((item) => item.label)}
             activeTab={filter}
             onChange={setFilter}
           />
-        </motion.div>
+        </Reveal>
       </div>
 
       <StackedCards

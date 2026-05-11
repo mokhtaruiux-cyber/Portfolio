@@ -9,8 +9,9 @@ import { cn } from '../../lib/utils';
 import { Container } from '../layout/Container';
 import { AnimatedSection } from '../motion/AnimatedSection';
 import { BlurIn } from '../motion/BlurIn';
-import { mediaReveal, titleReveal } from '../../lib/motion/motionPresets';
-import { fadeUp, scaleIn } from '../../lib/motion/variants';
+import { Reveal } from '../motion/Reveal';
+import { titleReveal } from '../../lib/motion/motionPresets';
+import { fadeUp } from '../../lib/motion/variants';
 
 interface TestimonialCardProps {
   testimonial: Testimonial;
@@ -192,20 +193,15 @@ export const TestimonialsSection = () => {
           </motion.div>
 
           {/* 3 — Body */}
-          <motion.p
-            variants={fadeUp}
+          <Reveal
+            as="p"
             className={cn(typography.body, 'max-w-xl font-medium mb-12', darkMode ? 'text-gray-300' : 'text-gray-600')}
           >
             {siteContent.testimonials.description}
-          </motion.p>
+          </Reveal>
 
           {/* 4 — Marquee rows */}
-          <motion.div
-            variants={scaleIn}
-            initial="hidden"
-            whileInView="visible"
-            viewport={mediaReveal.viewport}
-          >
+          <Reveal preset="media">
             <div className="relative">
               <div className={cn(
                 'absolute inset-y-0 left-0 w-32 sm:w-64 z-10 bg-gradient-to-r pointer-events-none',
@@ -220,7 +216,7 @@ export const TestimonialsSection = () => {
                 <TestimonialMarqueeRow items={row2} direction="left" darkMode={darkMode} shouldAnimate={shouldAnimate} isMobile={isMobile} phaseOffset={-18} rowDuration={64} />
               </div>
             </div>
-          </motion.div>
+          </Reveal>
         </AnimatedSection>
       </Container>
     </section>

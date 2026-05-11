@@ -9,11 +9,10 @@ import { AnimatedSection } from '../motion/AnimatedSection';
 import { typography } from '../../lib/typography';
 import { cn } from '../../lib/utils';
 import { BlurIn } from '../motion/BlurIn';
+import { Reveal } from '../motion/Reveal';
 import { cardReveal, titleReveal } from '../../lib/motion/motionPresets';
 import {
   fadeUp,
-  scaleIn,
-  staggerContainer,
 } from '../../lib/motion/variants';
 
 export const AboutSection: React.FC = () => {
@@ -58,16 +57,16 @@ export const AboutSection: React.FC = () => {
         </motion.div>
 
         {/* 3 — Subtitle */}
-        <motion.p
-          variants={fadeUp}
+        <Reveal
+          as="p"
           className={cn(typography.h3, 'font-semibold mb-4', darkMode ? 'text-white' : 'text-black')}
         >
           {siteContent.about.subtitle}
-        </motion.p>
+        </Reveal>
 
         {/* 4 — Body paragraph */}
-        <motion.p
-          variants={fadeUp}
+        <Reveal
+          as="p"
           className={cn(
             typography.body,
             'font-medium max-w-[60ch] mb-12',
@@ -75,20 +74,18 @@ export const AboutSection: React.FC = () => {
           )}
         >
           {siteContent.about.description}
-        </motion.p>
+        </Reveal>
 
         {/* 5 — Highlight cards: each card is its own stagger child */}
-        <motion.div
+        <Reveal
+          preset="card"
+          staggerChildren
           className="grid grid-cols-1 lg:grid-cols-3 gap-4"
-          variants={staggerContainer}
-          initial="hidden"
-          whileInView="visible"
-          viewport={cardReveal.viewport}
         >
           {siteContent.about.highlights.map((item) => (
             <motion.div
               key={item}
-              variants={scaleIn}
+              variants={cardReveal.defaultVariants}
               className={cn(
                 'p-6 sm:p-8 rounded-surface glass border',
                 darkMode ? 'bg-black/40 border-white/10' : 'bg-white/60 border-black/5'
@@ -99,7 +96,7 @@ export const AboutSection: React.FC = () => {
               </span>
             </motion.div>
           ))}
-        </motion.div>
+        </Reveal>
       </AnimatedSection>
     </Section>
   );

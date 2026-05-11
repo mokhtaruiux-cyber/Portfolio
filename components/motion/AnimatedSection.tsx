@@ -3,20 +3,20 @@
 /**
  * components/motion/AnimatedSection.tsx
  *
- * The GetBitBang choreography pattern:
- * ONE whileInView on the section → ALL children animate in sequence.
+ * The title/intro choreography pattern:
+ * One viewport trigger on the section cascades the top-level title rhythm.
  *
- * Children must use variants from lib/motion/variants.ts (fadeUp, scaleIn, etc.)
- * WITHOUT their own whileInView — they inherit state from this parent.
+ * Deeper body/card/media groups use Reveal so long sections can trigger
+ * their data as it actually enters the viewport.
  *
  * Usage:
  *   <AnimatedSection>
  *     <motion.p variants={fadeUp}>Eyebrow</motion.p>
  *     <motion.h2 variants={fadeUp}>Title</motion.h2>
- *     <motion.p variants={fadeUp}>Body text</motion.p>
- *     <motion.div variants={staggerContainer}>
- *       <motion.div variants={scaleIn}><Card /></motion.div>
- *     </motion.div>
+ *     <Reveal as="p">Body text</Reveal>
+ *     <Reveal preset="card" staggerChildren>
+ *       <motion.div variants={cardReveal.defaultVariants}><Card /></motion.div>
+ *     </Reveal>
  *   </AnimatedSection>
  */
 

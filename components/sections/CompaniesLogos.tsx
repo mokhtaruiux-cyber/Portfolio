@@ -5,10 +5,11 @@ import { useTheme } from '../../context/ThemeContext';
 import { Section } from '../layout/Section';
 import { AnimatedSection } from '../motion/AnimatedSection';
 import { BlurIn } from '../motion/BlurIn';
+import { Reveal } from '../motion/Reveal';
 import { cn } from '../../lib/utils';
 import { typography } from '../../lib/typography';
-import { mediaReveal, titleReveal } from '../../lib/motion/motionPresets';
-import { fadeUp, scaleIn } from '../../lib/motion/variants';
+import { titleReveal } from '../../lib/motion/motionPresets';
+import { fadeUp } from '../../lib/motion/variants';
 
 const marqueeStyle: React.CSSProperties = { width: 'fit-content' };
 
@@ -116,12 +117,7 @@ export const CompaniesLogos: React.FC = () => {
         </motion.div>
 
         {/* 3 — Marquee logos */}
-        <motion.div
-          variants={scaleIn}
-          initial="hidden"
-          whileInView="visible"
-          viewport={mediaReveal.viewport}
-        >
+        <Reveal preset="media">
         <div ref={containerRef} className="mt-10 relative">
           <div
             className="relative overflow-x-hidden"
@@ -212,7 +208,7 @@ export const CompaniesLogos: React.FC = () => {
             )}
           </AnimatePresence>
         </div>
-        </motion.div>
+        </Reveal>
       </AnimatedSection>
     </Section>
   );

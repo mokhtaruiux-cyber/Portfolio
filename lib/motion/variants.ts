@@ -19,7 +19,6 @@ import type { Variants } from 'motion/react';
 // ─── Easing ────────────────────────────────────────────────────────────────
 // [0.22, 1, 0.36, 1] — fast snap with elegant deceleration (getbitbang signature)
 export const EXPO = [0.22, 1, 0.36, 1] as const;
-export const SMOOTH = [0.4, 0, 0.2, 1] as const;
 
 // ─── Durations ─────────────────────────────────────────────────────────────
 export const DUR = {
@@ -30,7 +29,7 @@ export const DUR = {
 } as const;
 
 // ─── Stagger delays ────────────────────────────────────────────────────────
-export const STAGGER = {
+const STAGGER = {
   tight:  0.06,
   base:   0.10,
   loose:  0.12,
@@ -62,36 +61,6 @@ export const fadeUp: Variants = {
     y: 0,
     transition: {
       duration: DUR.slow,
-      ease: EXPO,
-    },
-  },
-};
-
-// ─── FADE UP — TIGHT ───────────────────────────────────────────────────────
-// For elements that are already offset by parent stagger — 36px is enough.
-// Used as children inside staggerContainer (cards, list items, badges).
-export const fadeUpTight: Variants = {
-  hidden: {
-    opacity: 0,
-    y: 36,
-  },
-  initial: {
-    opacity: 0,
-    y: 36,
-  },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: DUR.base,
-      ease: EXPO,
-    },
-  },
-  animate: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: DUR.base,
       ease: EXPO,
     },
   },
@@ -131,55 +100,8 @@ export const scaleIn: Variants = {
   },
 };
 
-// ─── FADE IN (pure opacity, no Y) ──────────────────────────────────────────
-// For decorative/overlay elements that shouldn't move.
-export const fadeIn: Variants = {
-  hidden:  { opacity: 0 },
-  initial: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: { duration: DUR.base, ease: SMOOTH },
-  },
-  animate: {
-    opacity: 1,
-    transition: { duration: DUR.base, ease: SMOOTH },
-  },
-};
-
-// ─── SLIDE IN FROM LEFT ────────────────────────────────────────────────────
-export const slideInLeft: Variants = {
-  hidden:  { opacity: 0, x: -40 },
-  initial: { opacity: 0, x: -40 },
-  visible: {
-    opacity: 1,
-    x: 0,
-    transition: { duration: DUR.slow, ease: EXPO },
-  },
-  animate: {
-    opacity: 1,
-    x: 0,
-    transition: { duration: DUR.slow, ease: EXPO },
-  },
-};
-
-// ─── SLIDE IN FROM RIGHT ───────────────────────────────────────────────────
-export const slideInRight: Variants = {
-  hidden:  { opacity: 0, x: 40 },
-  initial: { opacity: 0, x: 40 },
-  visible: {
-    opacity: 1,
-    x: 0,
-    transition: { duration: DUR.slow, ease: EXPO },
-  },
-  animate: {
-    opacity: 1,
-    x: 0,
-    transition: { duration: DUR.slow, ease: EXPO },
-  },
-};
-
 // ─── SECTION CONTAINER ─────────────────────────────────────────────────────
-// The ONLY component that has whileInView. Cascades 'visible' to all children.
+// Cascades 'visible' to direct title/intro children.
 // staggerChildren: 0.12 → tight, clearly sequential, not too slow.
 // This is what creates the waterfall: eyebrow (0ms) → title (120ms) → body (240ms)
 // → cards (360ms+) → CTA (last).
