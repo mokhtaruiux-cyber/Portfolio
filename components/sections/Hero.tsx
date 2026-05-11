@@ -8,6 +8,7 @@ import { useTheme } from '../../context/ThemeContext';
 import { typography } from '../../lib/typography';
 import { cn } from '../../lib/utils';
 import { HeroGlow } from '../background/HeroGlow';
+import { TitleReveal } from '../motion/TitleReveal';
 import { GlowButton } from '../ui/GlowButton';
 import { reveal } from '../../lib/motion/presets';
 import { sectionOrchestrator } from '../../lib/motion/variants';
@@ -44,8 +45,9 @@ export const Hero = ({ onWorkClick }: { onWorkClick: () => void }) => {
         animate={shouldReduce ? undefined : isReady ? 'visible' : 'hidden'}
         className="mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-10 text-center relative z-10 flex flex-col items-center gap-0"
       >
-        <motion.h1
-          {...reveal.heading}
+        <TitleReveal
+          as="h1"
+          wrapperClassName="w-full"
           className={cn(
             typography.h1,
             'font-black max-w-[18ch] block mx-auto !text-center text-balance relative z-10 w-full mt-10 sm:mt-8',
@@ -53,7 +55,7 @@ export const Hero = ({ onWorkClick }: { onWorkClick: () => void }) => {
           )}
         >
           {siteContent.hero.title}
-        </motion.h1>
+        </TitleReveal>
 
         <motion.p
           {...reveal.body}

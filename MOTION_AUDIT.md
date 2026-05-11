@@ -22,6 +22,8 @@
 
 - Added the brief motion files: `tokens.ts`, `variants.ts`, and `presets.ts`.
 - Rebuilt the listed sections around one section trigger plus inherited child variants.
+- Added `components/motion/TitleReveal.tsx` to codify the same title pattern used by `Working with teams across.`.
+- Replaced the remaining whole-heading title reveals in Hero, About, Services, Portfolio, Testimonials, Contact, and Archive with `TitleReveal`.
 - Hero now uses the brief's above-the-fold mount exception with `animate`, not `whileInView`.
 - About, Services, Portfolio, Testimonials, and Contact now reveal heading, body, cards/media, and CTA content progressively.
 - Portfolio final `View All Work` CTA now lives inside the same card-grid reveal sequence and appears after the project cards begin cascading.
@@ -42,6 +44,7 @@
 
 ## Browser Observations
 
+- Title alignment pass: production DOM inspection confirmed Hero, `Working with teams across.`, About, Services, Portfolio, Testimonials, and Contact titles all render an `aria-hidden` word container with individual animated word spans using the same starting style: opacity `0`, blur `14px`, and `translateY(18px)`.
 - Desktop `1440x900`: hero H1 moved from opacity `0.599`, y `11.2` at 80ms to opacity `1`, y `0` by 900ms. Hero buttons remained hidden at 180ms, then staggered at 360ms (`0.763` / `0.344` opacity).
 - About: before scroll, heading/body/cards were opacity `0` with y offsets. During reveal, heading reached `0.741` opacity before body `0.135`, then cards followed (`card0 0.947`, `card1 0.854` at 760ms).
 - Services: heading/body revealed first, cards staggered, and CTA remained hidden until later in the sequence.

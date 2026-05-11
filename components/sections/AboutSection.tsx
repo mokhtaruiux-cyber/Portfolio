@@ -9,6 +9,7 @@ import { cn } from '../../lib/utils';
 import { reveal } from '../../lib/motion/presets';
 import { sectionOrchestrator } from '../../lib/motion/variants';
 import { motionTokens as t } from '../../lib/motion/tokens';
+import { TitleReveal } from '../motion/TitleReveal';
 
 export const AboutSection: React.FC = () => {
   const { darkMode } = useTheme();
@@ -32,8 +33,8 @@ export const AboutSection: React.FC = () => {
             {siteContent.about.eyebrow}
           </motion.p>
 
-          <motion.h2
-            {...reveal.heading}
+          <TitleReveal
+            as="h2"
             className={cn(
               'font-black max-w-[24ch] tracking-tighter text-4xl sm:text-5xl mb-6',
               darkMode ? 'text-white' : 'text-black'
@@ -46,7 +47,7 @@ export const AboutSection: React.FC = () => {
                 <span className="text-accent">{siteContent.about.highlight}</span>
               </>
             )}
-          </motion.h2>
+          </TitleReveal>
 
           <motion.p
             {...reveal.body}

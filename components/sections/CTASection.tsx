@@ -11,6 +11,7 @@ import { GlowButton } from '../ui/GlowButton';
 import { reveal } from '../../lib/motion/presets';
 import { sectionOrchestrator } from '../../lib/motion/variants';
 import { motionTokens as t } from '../../lib/motion/tokens';
+import { TitleReveal } from '../motion/TitleReveal';
 
 export const CTASection = () => {
   const { darkMode } = useTheme();
@@ -44,8 +45,8 @@ export const CTASection = () => {
               <span className={cn(typography.labelXs, 'text-accent')}>{siteContent.finalCta.badge}</span>
             </motion.div>
 
-            <motion.h2
-              {...reveal.heading}
+            <TitleReveal
+              as="h2"
               className={cn('font-black tracking-tighter text-4xl sm:text-5xl', darkMode ? 'text-white' : 'text-black')}
             >
               {ctaTitleLine}
@@ -55,7 +56,7 @@ export const CTASection = () => {
                   <span className="text-accent">{ctaHighlightLine}</span>
                 </>
               )}
-            </motion.h2>
+            </TitleReveal>
 
             <motion.p
               {...reveal.body}

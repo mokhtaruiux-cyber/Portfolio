@@ -4,11 +4,10 @@ import { siteContent } from '../../content';
 import { useTheme } from '../../context/ThemeContext';
 import { Section } from '../layout/Section';
 import { AnimatedSection } from '../motion/AnimatedSection';
-import { BlurIn } from '../motion/BlurIn';
 import { Reveal } from '../motion/Reveal';
+import { TitleReveal } from '../motion/TitleReveal';
 import { cn } from '../../lib/utils';
 import { typography } from '../../lib/typography';
-import { titleReveal } from '../../lib/motion/motionPresets';
 import { fadeUp } from '../../lib/motion/variants';
 
 const marqueeStyle: React.CSSProperties = { width: 'fit-content' };
@@ -100,21 +99,19 @@ export const CompaniesLogos: React.FC = () => {
         </motion.p>
 
         {/* 2 — Title */}
-        <motion.div variants={fadeUp} className="mb-8">
-          <BlurIn
-            as="h2"
-            delay={titleReveal.headingDelay}
-            className={cn('font-black tracking-tighter text-4xl sm:text-5xl', 'text-current')}
-          >
-            {siteContent.socialProof.title}
-            {siteContent.socialProof.highlight && (
-              <>
-                {' '}
-                <span className="text-accent">{siteContent.socialProof.highlight}</span>
-              </>
-            )}
-          </BlurIn>
-        </motion.div>
+        <TitleReveal
+          as="h2"
+          wrapperClassName="mb-8"
+          className={cn('font-black tracking-tighter text-4xl sm:text-5xl', 'text-current')}
+        >
+          {siteContent.socialProof.title}
+          {siteContent.socialProof.highlight && (
+            <>
+              {' '}
+              <span className="text-accent">{siteContent.socialProof.highlight}</span>
+            </>
+          )}
+        </TitleReveal>
 
         {/* 3 — Marquee logos */}
         <Reveal preset="media">

@@ -10,6 +10,7 @@ import { typography } from '../../lib/typography';
 import { reveal } from '../../lib/motion/presets';
 import { sectionOrchestrator } from '../../lib/motion/variants';
 import { motionTokens as t } from '../../lib/motion/tokens';
+import { TitleReveal } from '../motion/TitleReveal';
 
 export const HowIHelpSection: React.FC = () => {
   const { darkMode } = useTheme();
@@ -36,8 +37,8 @@ export const HowIHelpSection: React.FC = () => {
             {howIHelp.eyebrow}
           </motion.p>
 
-          <motion.h2
-            {...reveal.heading}
+          <TitleReveal
+            as="h2"
             className={cn('font-black tracking-tighter text-4xl sm:text-5xl mb-4', darkMode ? 'text-white' : 'text-black')}
           >
             {howIHelp.titleLines[0] ?? ''}
@@ -47,7 +48,7 @@ export const HowIHelpSection: React.FC = () => {
                 <span className="text-accent">{howIHelp.titleLines[1]}</span>
               </>
             )}
-          </motion.h2>
+          </TitleReveal>
 
           <motion.p
             {...reveal.body}

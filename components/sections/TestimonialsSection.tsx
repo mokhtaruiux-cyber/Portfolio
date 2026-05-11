@@ -9,6 +9,7 @@ import { cn } from '../../lib/utils';
 import { reveal } from '../../lib/motion/presets';
 import { sectionOrchestrator } from '../../lib/motion/variants';
 import { motionTokens as t } from '../../lib/motion/tokens';
+import { TitleReveal } from '../motion/TitleReveal';
 
 interface TestimonialCardProps {
   testimonial: Testimonial;
@@ -176,8 +177,8 @@ export const TestimonialsSection = () => {
             {siteContent.testimonials.eyebrow}
           </motion.p>
 
-          <motion.h2
-            {...reveal.heading}
+          <TitleReveal
+            as="h2"
             className={cn('font-black tracking-tighter text-4xl sm:text-5xl mb-4', darkMode ? 'text-white' : 'text-black')}
           >
             {siteContent.testimonials.title}
@@ -187,7 +188,7 @@ export const TestimonialsSection = () => {
                 <span className="text-accent">{siteContent.testimonials.highlight}</span>
               </>
             )}
-          </motion.h2>
+          </TitleReveal>
 
           <motion.p
             {...reveal.body}

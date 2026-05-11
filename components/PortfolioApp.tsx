@@ -14,6 +14,7 @@ import { cn } from '../lib/utils';
 import { LivingBackground } from './background/LivingBackground';
 import { ScrollProgress } from './motion/ScrollProgress';
 import { StackedCards } from './motion/StackedCards';
+import { TitleReveal } from './motion/TitleReveal';
 import { reveal } from '../lib/motion/presets';
 import { sectionOrchestrator } from '../lib/motion/variants';
 import { motionTokens as t } from '../lib/motion/tokens';
@@ -427,8 +428,8 @@ export function PortfolioApp() {
               {siteContent.featuredWork.eyebrow}
             </motion.p>
 
-            <motion.h2
-              {...reveal.heading}
+            <TitleReveal
+              as="h2"
               className={cn('font-black tracking-tighter text-4xl sm:text-5xl mb-10 text-left', darkMode ? 'text-white' : 'text-black')}
             >
               {siteContent.featuredWork.title}
@@ -438,7 +439,7 @@ export function PortfolioApp() {
                   <span className="text-accent">{siteContent.featuredWork.highlight}</span>
                 </>
               )}
-            </motion.h2>
+            </TitleReveal>
 
             <motion.div {...reveal.cta} className="sticky top-28 sm:top-32 z-40 mb-8 py-2 pointer-events-none">
               <div className="pointer-events-auto flex justify-start">
@@ -484,8 +485,8 @@ export function PortfolioApp() {
           <motion.p {...reveal.body} className={cn(typography.labelXs, 'mb-4 text-accent')}>
             {siteContent.featuredWork.archive.eyebrow}
           </motion.p>
-          <motion.h1
-            {...reveal.heading}
+          <TitleReveal
+            as="h1"
             aria-label={siteContent.featuredWork.archive.title}
             className={cn(
               typography.h1,
@@ -496,7 +497,7 @@ export function PortfolioApp() {
             The
             <br />
             <span className="text-accent">Archive.</span>
-          </motion.h1>
+          </TitleReveal>
           <motion.p
             {...reveal.body}
             className={cn(
