@@ -170,14 +170,7 @@ export function PortfolioApp() {
   const allProjectsFilter = workFilters[0];
   const [filter, setFilter] = useState(allProjectsFilter?.label ?? '');
   const orderedProjects = useMemo(() => {
-    const featuredSlug = 'homecare-medical-app';
-    const featuredProject = siteContent.projects.items.find((project) => project.slug === featuredSlug);
-    if (!featuredProject) return siteContent.projects.items;
-
-    return [
-      featuredProject,
-      ...siteContent.projects.items.filter((project) => project.slug !== featuredSlug),
-    ];
+    return siteContent.projects.items;
   }, []);
 
   useEffect(() => {
@@ -314,6 +307,11 @@ export function PortfolioApp() {
     const filtered = orderedProjects.filter((project) => project.category === activeFilter.category);
     return filtered.length > 0 ? filtered : orderedProjects;
   }, [filter, workFilters, allProjectsFilter, orderedProjects]);
+
+  const homeProjects = useMemo(
+    () => orderedProjects.filter((project) => project.category === 'Vibe Coding'),
+    [orderedProjects]
+  );
 
   const projectSlug = projectDetailMatch?.[1] ?? '';
   const blogSlug = blogDetailMatch?.[1] ?? '';
@@ -480,7 +478,7 @@ export function PortfolioApp() {
             <motion.div {...reveal.cardGrid}>
               <StackedCards
                 orchestrated
-                items={filteredProjects}
+                items={homeProjects}
                 renderItem={(project) => (
                   <ProjectCardWrapper project={project} onClick={handleProjectClick} />
                 )}

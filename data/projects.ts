@@ -141,7 +141,7 @@ export const projects: Project[] = [
     tools: ['React', 'TypeScript', 'Node.js', 'Prisma', 'Playwright', 'AI-Assisted Development'],
     coverGradient: 'from-sky-500/20 to-blue-500/20',
     description:
-      'An Arabic-first workforce platform for Saudi companies, connecting attendance, employee records, leave, approvals, payroll, compliance, performance, reporting, and employee mobile workflows.',
+      'منصة عربية لإدارة القوى العاملة للشركات السعودية، تربط الحضور وملفات الموظفين والإجازات والموافقات والرواتب والامتثال والأداء والتقارير وتجارب الموظفين على الجوال.',
     impact: 'Turned a broad HR product vision into a live, role-based web and mobile platform with Saudi-ready operations and bilingual delivery.',
     image: stockImage('projects/dawwem/cover.png'),
     livePreviewUrl: 'https://dawwemhrsystemdemo.vercel.app/',
@@ -268,9 +268,9 @@ export const projects: Project[] = [
       },
       {
         type: 'image',
-        src: stockImage('projects/restuhub/order-progress.png'),
-        alt: 'RestuHub order confirmation and live progress screen',
-        caption: 'Connected fulfilment — After checkout, the guest receives a clear confirmation and can track the order while cashier and kitchen teams handle the same order lifecycle.',
+        src: stockImage('projects/restuhub/orders.png'),
+        alt: 'RestuHub cashier order operations workspace',
+        caption: 'Order operations — Cashiers can open the till, search and filter unresolved orders, review channel and status, and hand each order through the service lifecycle with a clear operational view.',
       },
       {
         type: 'image',
