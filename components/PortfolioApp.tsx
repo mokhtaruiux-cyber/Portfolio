@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Suspense, lazy, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { Suspense, lazy, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { usePathname, useRouter } from 'next/navigation';
 
@@ -80,6 +80,38 @@ const normalizePathname = (value: string | null) => {
   const withoutTrailingSlash = value.length > 1 ? value.replace(/\/+$/, '') : value;
   return withoutTrailingSlash || '/';
 };
+
+interface ProjectFilterBarProps {
+  tabs: string[];
+  activeTab: string;
+  darkMode: boolean;
+  onChange: (tab: string) => void;
+  action?: React.ReactNode;
+}
+
+const ProjectFilterBar = ({ tabs, activeTab, darkMode, onChange, action }: ProjectFilterBarProps) => (
+  <div className="sticky top-28 sm:top-32 z-floating mb-8 py-2 pointer-events-none">
+    <span
+      aria-hidden="true"
+      data-project-filter-mask=""
+      className={cn(
+        'pointer-events-none absolute inset-x-[-1rem] -top-28 bottom-0 z-0 sm:inset-x-[-1.5rem] sm:-top-32 lg:inset-x-[-2.5rem]',
+        darkMode ? 'bg-[#030303]' : 'bg-[#fafafa]'
+      )}
+    />
+    <motion.div
+      {...reveal.cta}
+      className="relative z-10 flex flex-col items-start gap-3 pointer-events-auto sm:flex-row sm:items-center sm:justify-between"
+    >
+      <SegmentTabs
+        tabs={tabs}
+        activeTab={activeTab}
+        onChange={onChange}
+      />
+      {action && <div className="shrink-0">{action}</div>}
+    </motion.div>
+  </div>
+);
 
 export function PortfolioApp() {
   const router = useRouter();
@@ -178,41 +210,32 @@ export function PortfolioApp() {
     return () => media.removeListener(handler);
   }, [hasManualTheme]);
 
-  useEffect(() => {
-    const key = `scrollY:${pathname}`;
-    let restored = false;
+  useLayoutEffect(() => {
+    let frameId = 0;
+    let timeoutId = 0;
     const scrollToPosition = (value: number) => {
-      window.scrollTo(0, value);
+      window.scrollTo({ top: value, left: 0, behavior: 'auto' });
+      document.documentElement.scrollTop = value;
+      document.body.scrollTop = value;
     };
-    try {
-      const storedY = window.sessionStorage.getItem(key);
-      if (storedY !== null) {
-        const y = Number.parseInt(storedY, 10);
-        if (!Number.isNaN(y)) {
-          scrollToPosition(y);
-          restored = true;
-        }
-        window.sessionStorage.removeItem(key);
-      }
-    } catch {
-      // Ignore storage errors.
-    }
-    if (!restored) {
+    const forceTop = () => {
       scrollToPosition(0);
-    }
-  }, [pathname]);
-
-  useEffect(() => {
-    const key = `scrollY:${pathname}`;
-    const handleBeforeUnload = () => {
-      try {
-        window.sessionStorage.setItem(key, String(window.scrollY));
-      } catch {
-        // Ignore storage errors.
-      }
+      frameId = window.requestAnimationFrame(() => scrollToPosition(0));
+      timeoutId = window.setTimeout(() => scrollToPosition(0), 120);
     };
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    return () => window.removeEventListener('beforeunload', handleBeforeUnload);
+
+    // Every route is a new screen: start at the top on desktop and mobile.
+    // In-page section navigation is applied separately through scrollToSection.
+    try {
+      window.history.scrollRestoration = 'manual';
+    } catch {
+      // Ignore browser history API restrictions.
+    }
+    forceTop();
+    return () => {
+      if (frameId) window.cancelAnimationFrame(frameId);
+      if (timeoutId) window.clearTimeout(timeoutId);
+    };
   }, [pathname]);
 
   const scrollToElement = useCallback((target: HTMLElement | null) => {
@@ -425,13 +448,13 @@ export function PortfolioApp() {
         className="py-20 md:py-24 relative z-10 scroll-mt-28 sm:scroll-mt-32 mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-10"
       >
             <span ref={homeWorkTriggerRef} className="absolute left-0 top-0 h-px w-px" aria-hidden="true" />
-            <motion.p {...reveal.body} className={cn(typography.labelXs, eyebrowChipClass, 'mb-4 sm:mb-6')}>
+            <motion.p {...reveal.body} className={cn(typography.labelXs, eyebrowChipClass, 'relative z-overlay mb-4 sm:mb-6')}>
               {siteContent.featuredWork.eyebrow}
             </motion.p>
 
             <TitleReveal
               as="h2"
-              className={cn('font-black tracking-tighter text-4xl sm:text-5xl mb-10 text-left', darkMode ? 'text-white' : 'text-black')}
+              className={cn('relative z-overlay font-black tracking-tighter text-4xl sm:text-5xl mb-10 text-left', darkMode ? 'text-white' : 'text-black')}
             >
               {siteContent.featuredWork.title}
               {siteContent.featuredWork.highlight && (
@@ -442,15 +465,17 @@ export function PortfolioApp() {
               )}
             </TitleReveal>
 
-            <motion.div {...reveal.cta} className="sticky top-28 sm:top-32 z-40 mb-8 py-2 pointer-events-none">
-              <div className="pointer-events-auto flex justify-start">
-                <SegmentTabs
-                  tabs={workFilters.map((item) => item.label)}
-                  activeTab={filter}
-                  onChange={setFilter}
-                />
-              </div>
-            </motion.div>
+            <ProjectFilterBar
+              tabs={workFilters.map((item) => item.label)}
+              activeTab={filter}
+              darkMode={darkMode}
+              onChange={setFilter}
+              action={(
+                <GlowButton onClick={() => navigateTo('work')} size="cta" glow={false}>
+                  View All Work
+                </GlowButton>
+              )}
+            />
 
             <motion.div {...reveal.cardGrid}>
               <StackedCards
@@ -460,12 +485,6 @@ export function PortfolioApp() {
                   <ProjectCardWrapper project={project} onClick={handleProjectClick} />
                 )}
               />
-
-              <motion.div {...reveal.cta} className="mt-8 flex justify-start">
-                <GlowButton onClick={() => navigateTo('work')} size="cta" glow={false}>
-                  View All Work
-                </GlowButton>
-              </motion.div>
             </motion.div>
       </motion.section>
       <BlogSection onPostClick={handleBlogClick} />
@@ -483,7 +502,7 @@ export function PortfolioApp() {
       className="pb-8 pt-32 md:pb-10 md:pt-36 relative z-10 scroll-mt-28 sm:scroll-mt-32 mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-10"
     >
           <span ref={workPageTriggerRef} className="absolute left-0 top-0 h-px w-px" aria-hidden="true" />
-          <motion.p {...reveal.body} className={cn(typography.labelXs, eyebrowChipClass, 'mb-4')}>
+          <motion.p {...reveal.body} className={cn(typography.labelXs, eyebrowChipClass, 'relative z-overlay mb-4')}>
             {siteContent.featuredWork.archive.eyebrow}
           </motion.p>
           <TitleReveal
@@ -491,7 +510,7 @@ export function PortfolioApp() {
             aria-label={siteContent.featuredWork.archive.title}
             className={cn(
               typography.h1,
-              'max-w-[18ch] text-balance font-black',
+              'relative z-overlay max-w-[18ch] text-balance font-black',
               darkMode ? 'text-white' : 'text-black'
             )}
           >
@@ -503,22 +522,19 @@ export function PortfolioApp() {
             {...reveal.body}
             className={cn(
               typography.body,
-              'mt-6 mb-10 max-w-2xl text-pretty font-medium',
+              'relative z-overlay mt-6 mb-10 max-w-2xl text-pretty font-medium',
               darkMode ? 'text-white/70' : 'text-black/65'
             )}
           >
             A full index of selected case studies, systems, and product work across apps, websites, and service platforms.
           </motion.p>
 
-          <motion.div {...reveal.cta} className="sticky top-28 sm:top-32 z-40 mb-8 py-2 pointer-events-none">
-            <div className="pointer-events-auto flex justify-start">
-              <SegmentTabs
-                tabs={workFilters.map((item) => item.label)}
-                activeTab={filter}
-                onChange={setFilter}
-              />
-            </div>
-          </motion.div>
+          <ProjectFilterBar
+            tabs={workFilters.map((item) => item.label)}
+            activeTab={filter}
+            darkMode={darkMode}
+            onChange={setFilter}
+          />
 
           <motion.div {...reveal.cardGrid}>
             <StackedCards

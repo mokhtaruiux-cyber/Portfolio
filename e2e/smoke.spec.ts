@@ -10,6 +10,22 @@ test('projects route loads', async ({ page }) => {
   await expect(page.getByRole('heading', { name: /The Archive/i })).toBeVisible();
 });
 
+test('vibe coding cards keep the agreed order and release scrolling after IronCore', async ({ page }) => {
+  await page.goto('/projects');
+  await page.getByRole('button', { name: 'Vibe Coding', exact: true }).click();
+
+  await expect(page.locator('h4')).toHaveText([
+    'Dawwem HR System',
+    'RestuHub',
+    'LDUN Redesign',
+    'IronCore GYM System',
+  ]);
+
+  const finalCta = page.getByRole('heading', { name: 'Ready to get started?' });
+  await finalCta.scrollIntoViewIfNeeded();
+  await expect(finalCta).toBeVisible();
+});
+
 test('project detail route loads', async ({ page }) => {
   await page.goto('/projects/nodel-restaurant-system');
   await expect(page.getByRole('heading', { name: /Nodel Restaurant App/i })).toBeVisible();

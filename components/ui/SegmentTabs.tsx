@@ -32,7 +32,7 @@ export const SegmentTabs: React.FC<SegmentTabsProps> = ({ tabs, activeTab, onCha
                             key={tab}
                             onClick={() => onChange(tab)}
                             className={cn(
-                                "relative h-10 px-4 sm:px-5 rounded-control whitespace-nowrap z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40",
+                                "relative z-10 h-10 cursor-pointer whitespace-nowrap rounded-control px-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 sm:px-5",
                                 typography.labelXs,
                                 isActive
                                     ? "bg-accent text-white shadow-sm"

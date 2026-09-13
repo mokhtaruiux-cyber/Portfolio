@@ -7,6 +7,7 @@ import { transitions } from '../../lib/motionTokens';
 import { contentReveal, mediaReveal, staggerContainer } from '../../lib/motion/motionPresets';
 import { typography } from '../../lib/typography';
 import { cn } from '../../lib/utils';
+import { eyebrowChipClass } from '../../lib/chipStyles';
 import { TiltCard } from '../motion/TiltCard';
 import { useIsDesktop } from '../../hooks/useMediaQuery';
 import { GlowButton } from '../ui/GlowButton';
@@ -21,6 +22,7 @@ const ProjectCardWrapperComponent: React.FC<ProjectCardWrapperProps> = ({ projec
   const { darkMode } = useTheme();
   const isDesktop = useIsDesktop();
   const reduceMotion = useReducedMotion() ?? false;
+  const isVibeCodingProject = project.category === 'Vibe Coding';
 
   const cardButton = (
     <button
@@ -40,7 +42,9 @@ const ProjectCardWrapperComponent: React.FC<ProjectCardWrapperProps> = ({ projec
         <motion.div className="order-2 lg:order-1 flex flex-col justify-between h-full text-left" variants={contentReveal.variants({ reduceMotion })}>
           <div>
             <div className={cn('flex flex-wrap items-center gap-3 mb-4', typography.labelXs)}>
-              <span className="tracking-[0.3em] text-accent">{project.category}</span>
+              <span className={cn(isVibeCodingProject ? eyebrowChipClass : 'tracking-[0.3em] text-accent')}>
+                {project.category}
+              </span>
               <span className={cn(typography.textMuted, darkMode ? 'text-white' : 'text-black')}>{project.type}</span>
             </div>
             <h4 className={cn(typography.h1, 'font-black mb-4 sm:mb-8 group-hover:text-accent transition-colors duration-500 max-w-[18ch]', darkMode ? 'text-white' : 'text-black')}>
@@ -75,8 +79,8 @@ const ProjectCardWrapperComponent: React.FC<ProjectCardWrapperProps> = ({ projec
             transition={transitions.smooth}
             src={project.image}
             alt={project.title}
-            loading="lazy"
-            decoding="async"
+            loading="eager"
+            decoding="sync"
             width={1600}
             height={1000}
             sizes="(max-width: 1024px) 100vw, 50vw"

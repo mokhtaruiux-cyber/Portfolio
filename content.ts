@@ -33,8 +33,17 @@ const bookingUrl = `https://cal.com/${calLink}`;
 const calNamespace = 'book-call';
 const calConfig = { layout: 'month_view' } as const;
 const calConfigJson = JSON.stringify(calConfig);
-const visibleProjectSlugs = new Set(['homecare-medical-app', 'nodel-restaurant-system']);
-const publishedProjects = projects.filter((project) => !project.isDraft && visibleProjectSlugs.has(project.slug));
+const visibleProjectSlugs = [
+  'dawwem-hr-platform',
+  'restuhub-restaurant-platform',
+  'ldun-redesign',
+  'ironcore-gym-system',
+  'homecare-medical-app',
+  'nodel-restaurant-system',
+];
+const publishedProjects = visibleProjectSlugs
+  .map((slug) => projects.find((project) => project.slug === slug && !project.isDraft))
+  .filter((project): project is NonNullable<typeof project> => Boolean(project));
 const publicProjectCategories = new Set(publishedProjects.map((project) => project.category));
 const visibleTestimonialNames = new Set(['Christine Zaki', 'Noha Khattab', 'Kenza Mo', 'Shroug Alshehri', 'Mohammed Samir']);
 const publishedTestimonials = testimonials.filter((testimonial) => visibleTestimonialNames.has(testimonial.name));
@@ -61,7 +70,7 @@ export const siteContent = {
   hero: {
     title: 'Designing Digital Products That Scale With Clarity.',
     description:
-      'Digital Product Designer and Creative Engineer helping teams turn complex ideas into clear, scalable products. I partner with cross-functional teams to align strategy, usability, and execution across web and mobile.',
+      'I bring over a decade of experience leading digital products from strategy to execution. Today, I use AI as a powerful partner in my process—helping businesses move faster from complex ideas to clear, scalable, working products without replacing the judgment, leadership, and craft that make them successful.',
     ctaPrimary: 'Book a Strategy Call',
     ctaSecondary: 'View Selected Work',
     badgeItems: ['100+ companies onboarded', '$4.8M in funding influenced', 'Scalable design systems'],
@@ -81,19 +90,19 @@ export const siteContent = {
     eyebrow: 'About',
     title: 'Building Clarity',
     highlight: 'at Scale.',
-    subtitle: 'Product and experience leadership for complex, high-impact digital systems.',
+    subtitle: 'Product leadership and hands-on AI-assisted building for complex, high-impact digital systems.',
     description:
-      'I lead product and experience work across B2B and consumer platforms—partnering with product, engineering, and stakeholders to turn complex requirements into clear journeys, scalable systems, and measurable outcomes..',
+      'I lead product and experience work across B2B and consumer platforms, and take ideas further with AI-assisted development—turning complex requirements into clear journeys, working prototypes, and demo-ready products.',
     highlights: [
       'Product strategy grounded in user insight and business constraints',
       'Design systems that scale across teams, products, and platforms',
-      'High-fidelity prototypes that reduce delivery risk and rework',
+      'AI-assisted prototypes and builds that turn ideas into working products faster',
     ],
   },
   howIHelp: {
     eyebrow: 'Service-Focused',
     titleLines: ['How I can', 'help.'],
-    subtitle: 'End-to-end digital product design and execution — from brand foundations to production-ready handoff.',
+    subtitle: 'From product strategy to a clear, scalable, demo-ready product.',
     outcomeLabel: 'Outcome',
     ctaLabel: 'Book a Product Strategy Session',
     ctaHref: bookingUrl,
@@ -129,14 +138,14 @@ export const siteContent = {
         outcome: 'Consistent, accessible systems that scale across teams and products.',
       },
       {
-        id: 'product-review',
-        titleLines: ['Product Review', '& Optimization'],
+        id: 'ai-assisted-building',
+        titleLines: ['AI-Assisted Building', '& Vibe Coding'],
         bullets: [
-          'Identify UX gaps, friction, and drop-off points',
-          'Prioritize KPI-driven wins and high-leverage fixes',
-          'Deliver clear recommendations without unnecessary rebuilds',
+          'Use AI-assisted workflows to accelerate prototyping and implementation',
+          'Build connected, working web and mobile experiences—not static mockups',
+          'Make practical product and technical decisions while iterating in code',
         ],
-        outcome: 'Targeted improvements with measurable impact and focused effort.',
+        outcome: 'A working, demo-ready product stakeholders can see and use.',
       },
     ],
   },
@@ -151,7 +160,7 @@ export const siteContent = {
     eyebrow: 'Process',
     title: 'From idea to launch,',
     highlight: 'step by step.',
-    description: 'A focused, repeatable flow that keeps teams aligned and reduces delivery risk.',
+    description: 'A focused, AI-accelerated flow that keeps teams aligned, keeps me hands-on, and reduces delivery risk.',
     steps: processSteps,
   },
   featuredWork: {
@@ -162,6 +171,7 @@ export const siteContent = {
     filters: [
       { label: 'All Projects', category: 'All Projects' },
       { label: 'Apps', category: 'Mobile Apps' },
+      { label: 'Vibe Coding', category: 'Vibe Coding' },
       { label: 'Websites', category: 'Websites' },
       { label: 'Design Systems', category: 'Design Systems' },
     ].filter((item) => item.category === 'All Projects' || publicProjectCategories.has(item.category)),
@@ -182,11 +192,11 @@ export const siteContent = {
       tools: 'Tools',
     },
     galleryEyebrow: 'Gallery',
+    livePreviewLabel: 'View live preview',
     caseStudyEyebrow: 'Case Study',
     metricsEyebrow: 'Metrics',
     nextProjectLabel: 'Next Project',
     nextProjectButton: 'View Project',
-    videoLabel: 'VIDEO',
   },
   writing: {
     eyebrow: 'Blog',
@@ -215,13 +225,13 @@ export const siteContent = {
     badge: 'Available for new projects',
     title: 'Ready to get started?',
     titleLines: ['Ready to get', 'started?'],
-    description: 'Book a short strategy call to align on goals, scope, and expected outcomes.',
+    description: 'If you need an idea turned into a working product—not just a deck of screens—let’s bring strategy, design, and AI-assisted execution together.',
     primaryLabel: 'Book a Strategy Call',
     secondaryLabel: 'Prefer email? Contact me',
     secondaryHref: 'mailto:mokhtaruiux@gmail.com',
   },
   footer: {
-    tagline: 'Transforming complex digital challenges into clear, scalable product experiences.',
+    tagline: 'Product Designer and Vibe Coder turning complex ideas into clear, scalable products with AI.',
     columns: [
       {
         title: 'Navigation',
@@ -243,7 +253,7 @@ export const siteContent = {
     copyright: '© 2026 Mohammed Mokhtar • All Rights Reserved',
   },
   seo: {
-    title: 'Mohammed Mokhtar | Product Designer & Engineer',
-    description: 'Product designer and creative engineer crafting premium digital experiences.',
+    title: 'Mohammed Mokhtar | Product Designer & Vibe Coder',
+    description: 'Product designer and vibe coder with 10+ years of experience using strategy, UX, and AI-assisted development to ship working web and mobile products.',
   },
 };

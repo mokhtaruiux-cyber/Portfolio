@@ -1,8 +1,9 @@
 
 type GalleryItem = {
-  type: "image" | "video";
+  type: "image";
   src: string;
   alt: string;
+  caption?: string;
 };
 
 type CaseStudySection = {
@@ -42,6 +43,7 @@ export interface Project {
   }[];
   tags: string[];
   caseStudySections: CaseStudySection[];
+  livePreviewUrl?: string;
   isDraft?: boolean;
 }
 

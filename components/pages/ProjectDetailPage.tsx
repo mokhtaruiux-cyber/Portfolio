@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { motion, useReducedMotion } from 'motion/react';
+import { Brush, CalendarDays, Code2, Server, Smartphone, UserRound, type LucideIcon } from 'lucide-react';
 import { Project } from '../../types';
 import { siteContent } from '../../content';
 import { useTheme } from '../../context/ThemeContext';
@@ -8,6 +9,7 @@ import { BlurIn } from '../motion/BlurIn';
 import { Reveal } from '../motion/Reveal';
 import { typography } from '../../lib/typography';
 import { cn } from '../../lib/utils';
+import { eyebrowChipClass } from '../../lib/chipStyles';
 import { GlowButton } from '../ui/GlowButton';
 import { ProjectImageViewer } from '../ui/ProjectImageViewer';
 import { ProjectTagChips } from '../ui/ProjectTagChips';
@@ -24,16 +26,56 @@ type ViewerImage = {
   id: string;
 };
 
-const ProjectMetaItem = ({ label, value, darkMode }: { label: string; value: string; darkMode: boolean }) => {
+type StackItem = {
+  icon: LucideIcon;
+  label: string;
+};
+
+type ProjectMetaItemProps = {
+  label: string;
+  value: string;
+  darkMode: boolean;
+  icon?: LucideIcon;
+  stackItems?: StackItem[];
+};
+
+const getStackIcon = (tool: string): LucideIcon => {
+  if (/figma/i.test(tool)) return Brush;
+  if (/react native|mobile|swift|android|ios/i.test(tool)) return Smartphone;
+  if (/node|api|server/i.test(tool)) return Server;
+  return Code2;
+};
+
+const ProjectMetaItem = ({ label, value, darkMode, icon: Icon, stackItems }: ProjectMetaItemProps) => {
   return (
     <div
       className={cn(
-        'p-6 sm:p-8 rounded-panel glass border',
+        'flex h-full min-h-[136px] flex-col rounded-panel border p-6 glass sm:min-h-[152px] sm:p-8',
         darkMode ? 'bg-black/40 border-white/10' : 'bg-white/60 border-black/5'
       )}
     >
-      <span className={cn(typography.labelXs, typography.textMuted, 'mb-2 block')}>{label}</span>
-      <span className={cn(typography.body, 'font-semibold', darkMode ? 'text-white' : 'text-black')}>{value}</span>
+      <div className="mb-3 flex items-center gap-2">
+        {Icon && <Icon className="size-4 text-accent" aria-hidden="true" />}
+        <span className={cn(typography.labelXs, typography.textMuted, 'block')}>{label}</span>
+      </div>
+      {stackItems ? (
+        <div className="mt-auto flex flex-wrap gap-2">
+          {stackItems.map(({ icon: StackIcon, label: stackLabel }) => (
+            <span
+              key={stackLabel}
+              className={cn(
+                'inline-flex items-center gap-2 rounded-mini border px-3 py-1.5',
+                darkMode ? 'border-white/10 bg-white/5 text-white' : 'border-black/10 bg-black/5 text-black'
+              )}
+            >
+              <StackIcon className="size-4 text-accent" aria-hidden="true" />
+              <span className="text-sm font-semibold">{stackLabel}</span>
+            </span>
+          ))}
+        </div>
+      ) : (
+        <span className={cn(typography.body, 'mt-auto font-semibold', darkMode ? 'text-white' : 'text-black')}>{value}</span>
+      )}
     </div>
   );
 };
@@ -71,11 +113,6 @@ const ProjectGalleryItem = ({
           className="h-full w-full object-cover"
         />
       </button>
-      {item.type === 'video' && (
-        <div className="pointer-events-none absolute inset-0 bg-black/45 flex items-center justify-center">
-          <span className={cn(typography.labelXs, 'tracking-[0.3em] text-white')}>{siteContent.projectDetail.videoLabel}</span>
-        </div>
-      )}
     </div>
   );
 };
@@ -90,7 +127,8 @@ export const ProjectDetailPage = ({
   onNextProject: (slug: string) => void;
 }) => {
   const { darkMode } = useTheme();
-  const isBehanceStyleGallery = project.slug === 'homecare-medical-app';
+  const isVibeCodingProject = project.category === 'Vibe Coding';
+  const isBehanceStyleGallery = project.slug === 'homecare-medical-app' || isVibeCodingProject;
   const reduceMotion = useReducedMotion() ?? false;
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   const [initialViewerIndex, setInitialViewerIndex] = useState(0);
@@ -116,6 +154,29 @@ export const ProjectDetailPage = ({
     setIsViewerOpen(false);
   }, []);
 
+  const metaItems = useMemo(() => {
+    const toolsValue = project.tools.join(' • ');
+    return [{
+      label: siteContent.projectDetail.metaLabels.role,
+      value: project.role,
+      icon: isVibeCodingProject ? UserRound : undefined,
+    }, {
+      label: siteContent.projectDetail.metaLabels.year,
+      value: project.year,
+      icon: isVibeCodingProject ? CalendarDays : undefined,
+    }, {
+      label: isVibeCodingProject ? 'Tools and Stack' : siteContent.projectDetail.metaLabels.tools,
+      value: toolsValue,
+      icon: isVibeCodingProject ? Code2 : undefined,
+      stackItems: isVibeCodingProject
+        ? project.tools.map((tool) => ({
+            label: tool,
+            icon: getStackIcon(tool),
+          }))
+        : undefined,
+    }];
+  }, [isVibeCodingProject, project.role, project.tools, project.year]);
+
   return (
     <>
       <ProjectImageViewer
@@ -131,7 +192,14 @@ export const ProjectDetailPage = ({
       <Section className={cn('pt-28 md:pt-36', isBehanceStyleGallery && 'pb-0')}>
         <div className="text-left space-y-10">
           <div className="space-y-4">
-            <BlurIn as="span" delay={titleReveal.sectionDelay} className={cn(typography.labelXs, 'tracking-[0.3em] text-accent')}>
+            <BlurIn
+              as="span"
+              delay={titleReveal.sectionDelay}
+              className={cn(
+                typography.labelXs,
+                isVibeCodingProject ? eyebrowChipClass : 'tracking-[0.3em] text-accent'
+              )}
+            >
               {project.category}
             </BlurIn>
             <BlurIn as="h1" delay={titleReveal.headingDelay} className={cn(typography.h1Display, 'font-black max-w-[18ch] tracking-normal', darkMode ? 'text-white' : 'text-black')}>
@@ -140,25 +208,35 @@ export const ProjectDetailPage = ({
             <Reveal delay={titleReveal.headingDelay}>
               <p className={cn(typography.body, 'max-w-[60ch] font-medium', typography.textSubtle, darkMode ? 'text-white' : 'text-black')}>{project.description}</p>
             </Reveal>
+            {project.livePreviewUrl && (
+              <Reveal delay={titleReveal.headingDelay}>
+                <GlowButton
+                  as="a"
+                  href={project.livePreviewUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  size="cta"
+                >
+                  {siteContent.projectDetail.livePreviewLabel}
+                </GlowButton>
+              </Reveal>
+            )}
           </div>
 
           <Reveal
             preset="card"
             staggerChildren
-            className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"
+            className="grid grid-cols-1 items-stretch gap-6 md:grid-cols-2 md:gap-8 lg:grid-cols-3"
           >
-            {[{
-              label: siteContent.projectDetail.metaLabels.role,
-              value: project.role
-            }, {
-              label: siteContent.projectDetail.metaLabels.year,
-              value: project.year
-            }, {
-              label: siteContent.projectDetail.metaLabels.tools,
-              value: project.tools.join(' • ')
-            }].map((item) => (
-              <motion.div key={item.label} variants={cardReveal.variants({ reduceMotion })}>
-                <ProjectMetaItem label={item.label} value={item.value} darkMode={darkMode} />
+            {metaItems.map((item) => (
+              <motion.div key={item.label} className="h-full" variants={cardReveal.variants({ reduceMotion })}>
+                <ProjectMetaItem
+                  label={item.label}
+                  value={item.value}
+                  darkMode={darkMode}
+                  icon={item.icon}
+                  stackItems={item.stackItems}
+                />
               </motion.div>
             ))}
           </Reveal>
@@ -167,13 +245,16 @@ export const ProjectDetailPage = ({
 
       {isBehanceStyleGallery ? (
         <Section className="pb-0 pt-6 md:pt-8">
-          <Reveal
-            preset="media"
-            staggerChildren
-            className="space-y-0"
-          >
+          <div className="space-y-0">
             {project.gallery.map((item, index) => (
-              <motion.div key={`${project.slug}-gallery-${index}`} variants={mediaReveal.variants({ reduceMotion })} className="w-full">
+              <motion.figure
+                key={`${project.slug}-gallery-${index}`}
+                variants={mediaReveal.variants({ reduceMotion })}
+                initial={reduceMotion ? false : 'hidden'}
+                whileInView="visible"
+                viewport={mediaReveal.viewport}
+                className="w-full"
+              >
                 <button
                   type="button"
                   ref={(node) => {
@@ -183,21 +264,33 @@ export const ProjectDetailPage = ({
                   className={cn(
                     'block w-full overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 focus-visible:ring-offset-2',
                     index === 0 && 'rounded-t-[16px] sm:rounded-t-[20px] md:rounded-t-[24px]',
-                    index === project.gallery.length - 1 && 'rounded-b-[16px] sm:rounded-b-[20px] md:rounded-b-[24px]'
+                    index === project.gallery.length - 1 && !item.caption && 'rounded-b-[16px] sm:rounded-b-[20px] md:rounded-b-[24px]'
                   )}
                   aria-label={`Open image viewer: ${item.alt}`}
                 >
                   <img
                     src={item.src}
                     alt={item.alt}
-                    loading="lazy"
-                    decoding="async"
+                    loading="eager"
+                    decoding="sync"
                     className="block h-auto w-full"
                   />
                 </button>
-              </motion.div>
+                {item.caption && (
+                  <figcaption
+                    className={cn(
+                      'border-x px-5 py-5 text-left sm:px-7 sm:py-6 md:px-9',
+                      index === project.gallery.length - 1 && 'rounded-b-[16px] border-b sm:rounded-b-[20px] md:rounded-b-[24px]',
+                      darkMode ? 'border-white/10 bg-white/[0.04] text-white/70' : 'border-black/10 bg-black/[0.035] text-black/65',
+                      typography.body
+                    )}
+                  >
+                    {item.caption}
+                  </figcaption>
+                )}
+              </motion.figure>
             ))}
-          </Reveal>
+          </div>
         </Section>
       ) : (
         <Section eyebrow={siteContent.projectDetail.galleryEyebrow}>

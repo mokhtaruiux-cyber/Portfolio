@@ -13,6 +13,7 @@
 }
 
 html {
+  position: relative;
   scroll-behavior: auto;
 }
 
@@ -22,6 +23,16 @@ body {
   padding: 0;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+}
+
+button:not(:disabled),
+a[href],
+[role="button"] {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
 }
 
 ::-webkit-scrollbar {
@@ -158,6 +169,7 @@ html.lenis body {
   align-items: center;
   justify-content: center;
   gap: 12px;
+  cursor: pointer;
   white-space: nowrap;
   font-size: 1.125rem;
   border: 1px solid rgba(255, 255, 255, 0.1);

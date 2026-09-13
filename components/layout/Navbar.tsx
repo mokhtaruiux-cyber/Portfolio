@@ -160,14 +160,14 @@ export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
               </div>
               <span className={cn(typography.brand, darkMode ? 'text-white' : 'text-black')}>{siteContent.brand.name}</span>
             </Link>
-            <div className="hidden md:flex flex-1 items-center justify-center gap-6">
+            <div className="hidden md:flex flex-1 items-center justify-center gap-5 lg:gap-6">
               {navItems.map((item) => (
                 <button
                   key={item.label}
                   onClick={() => handleNavClick(item)}
                   className={cn(
-                    typography.labelSm,
-                    'transition-colors',
+                    typography.navItem,
+                    'cursor-pointer transition-colors',
                     item.page && isActive(item.page) ? 'text-accent' : darkMode ? 'text-white/70 hover:text-white' : 'text-black/70 hover:text-black'
                   )}
                 >
@@ -176,20 +176,21 @@ export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
               ))}
             </div>
             <div className="flex items-center gap-4">
-              <GlowButton
-                className="hidden md:inline-flex"
-                size="cta"
-                calLink={cal.link}
-                calNamespace={cal.namespace}
-                calConfig={cal.configJson}
-              >
-                {siteContent.hero.ctaPrimary}
-              </GlowButton>
+              <div className="hidden md:block">
+                <GlowButton
+                  size="cta"
+                  calLink={cal.link}
+                  calNamespace={cal.namespace}
+                  calConfig={cal.configJson}
+                >
+                  {siteContent.hero.ctaPrimary}
+                </GlowButton>
+              </div>
               <button
                 onClick={() => setDarkMode(!darkMode)}
                 className={cn(
                   typography.navControl,
-                  'rounded-control text-white/90 flex items-center justify-center hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30',
+                  'rounded-control text-white/90 flex cursor-pointer items-center justify-center hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30',
                   !darkMode && 'text-black'
                 )}
                 aria-label={siteContent.nav.toggleThemeLabel}
@@ -203,7 +204,7 @@ export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
                 }}
                 className={cn(
                   typography.navControl,
-                  'rounded-control text-white/90 flex items-center justify-center hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 md:hidden',
+                  'rounded-control text-white/90 flex cursor-pointer items-center justify-center hover:bg-white/5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/30 md:hidden',
                   !darkMode && 'text-black'
                 )}
                 aria-label={siteContent.nav.openMenuLabel}
@@ -253,7 +254,7 @@ export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
                     onClick={() => handleNavClick(item)}
                     className={cn(
                       typography.menuItem,
-                      'transition-all w-full text-center',
+                      'w-full cursor-pointer text-center transition-all',
                       item.page && isActive(item.page) ? 'opacity-100 text-accent' : typography.textMuted
                     )}
                   >

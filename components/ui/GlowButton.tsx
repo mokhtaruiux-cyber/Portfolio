@@ -42,6 +42,8 @@ export const GlowButton: React.FC<GlowButtonProps> = ({
   const isCalLink = Boolean(calLink);
   const Element = as ?? (isCalLink ? 'button' : href ? 'a' : 'button');
   const elementProps = Element === 'a' ? { href, target, rel } : Element === 'button' ? { type } : {};
+  const WrapperElement = Element === 'span' ? 'span' : 'div';
+  const DecorativeElement = Element === 'span' ? 'span' : 'div';
   const calProps = calLink && Element === 'button'
     ? {
         'data-cal-link': calLink,
@@ -52,12 +54,12 @@ export const GlowButton: React.FC<GlowButtonProps> = ({
 
   if (!glow) {
     return (
-      <div className={cn(fullWidth && 'w-full', !darkMode && 'light-glow-button', className)}>
+      <WrapperElement className={cn(fullWidth && 'w-full', !darkMode && 'light-glow-button', className)}>
         <Element
           {...elementProps}
           {...calProps}
           className={cn(
-            'glow-button-inner group w-full items-center justify-center transition-all duration-300 active:scale-[0.98]',
+            'glow-button-inner group w-full cursor-pointer items-center justify-center transition-all duration-300 active:scale-[0.98]',
             size === 'cta' ? 'h-12 !py-0 !px-4 sm:!px-6' : 'px-8 py-4 sm:px-10 sm:py-5'
           )}
           onClick={onClick}
@@ -70,12 +72,12 @@ export const GlowButton: React.FC<GlowButtonProps> = ({
             {children}
           </motion.span>
         </Element>
-      </div>
+      </WrapperElement>
     );
   }
 
   return (
-    <div
+    <WrapperElement
       className={cn(
         'glow-border-container',
         !darkMode && 'light-glow-button',
@@ -83,12 +85,12 @@ export const GlowButton: React.FC<GlowButtonProps> = ({
         className
       )}
     >
-      <div className="glow-border-bg"></div>
+      <DecorativeElement className="glow-border-bg" aria-hidden="true" />
       <Element
         {...elementProps}
         {...calProps}
         className={cn(
-          'glow-button-inner group w-full items-center justify-center transition-all duration-300 active:scale-[0.98]',
+          'glow-button-inner group w-full cursor-pointer items-center justify-center transition-all duration-300 active:scale-[0.98]',
           size === 'cta' ? 'h-12 !py-0 !px-4 sm:!px-6' : 'px-8 py-4 sm:px-10 sm:py-5'
         )}
         onClick={onClick}
@@ -101,6 +103,6 @@ export const GlowButton: React.FC<GlowButtonProps> = ({
           {children}
         </motion.span>
       </Element>
-    </div>
+    </WrapperElement>
   );
 };
