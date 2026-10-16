@@ -1,6 +1,6 @@
 'use client';
 
-import React, { Suspense, lazy, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react';
 import { motion, AnimatePresence, useReducedMotion } from 'framer-motion';
 import { usePathname, useRouter } from 'next/navigation';
 
@@ -18,7 +18,7 @@ import { StackedCards } from './motion/StackedCards';
 import { TitleReveal } from './motion/TitleReveal';
 import { reveal } from '../lib/motion/presets';
 import { sectionOrchestrator } from '../lib/motion/variants';
-import { motionTokens as t } from '../lib/motion/tokens';
+import { SectionSequence, SectionSequenceProvider } from './motion/SectionSequence';
 
 import { SegmentTabs } from './ui/SegmentTabs';
 
@@ -39,6 +39,9 @@ import { Footer } from './layout/Footer';
 import { ThemeProvider } from '../context/ThemeContext';
 import { ErrorBoundary } from './ErrorBoundary';
 import { NotFoundPage } from './pages/NotFoundPage';
+import { BlogIndexPage } from './pages/BlogIndexPage';
+import { BlogArticlePage } from './pages/BlogArticlePage';
+import { ProjectDetailPage } from './pages/ProjectDetailPage';
 
 const pageToPath = (page: PageKey, slug = '') => {
   switch (page) {
@@ -59,21 +62,6 @@ const pageToPath = (page: PageKey, slug = '') => {
       return '/';
   }
 };
-
-const BlogIndexPage = lazy(async () => {
-  const module = await import('./pages/BlogIndexPage');
-  return { default: module.BlogIndexPage };
-});
-
-const BlogArticlePage = lazy(async () => {
-  const module = await import('./pages/BlogArticlePage');
-  return { default: module.BlogArticlePage };
-});
-
-const ProjectDetailPage = lazy(async () => {
-  const module = await import('./pages/ProjectDetailPage');
-  return { default: module.ProjectDetailPage };
-});
 
 const normalizePathname = (value: string | null) => {
   if (!value) return '/';
@@ -113,17 +101,21 @@ const ProjectFilterBar = ({ tabs, activeTab, darkMode, onChange, action }: Proje
   </div>
 );
 
+const presentationProjectSlugs = new Set(['shipo-inventory-shipping', 'wayloom-trip-planner', 'khazna-banking-app']);
+
 export function PortfolioApp() {
   const router = useRouter();
   const pathname = normalizePathname(usePathname());
   const reduceMotion = useReducedMotion();
-  const homeWorkTriggerRef = useRef<HTMLSpanElement | null>(null);
-  const workPageTriggerRef = useRef<HTMLSpanElement | null>(null);
-  const [homeWorkInView, setHomeWorkInView] = useState(false);
-  const [workPageInView, setWorkPageInView] = useState(false);
 
   const [hasManualTheme, setHasManualTheme] = useState(true);
   const [darkMode, setDarkMode] = useState(true);
+  const [hasMounted, setHasMounted] = useState(false);
+
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => setHasMounted(true));
+    return () => window.cancelAnimationFrame(frame);
+  }, []);
 
   const projectDetailMatch = pathname.match(/^\/projects\/([^/]+)$/);
   const blogDetailMatch = pathname.match(/^\/blog\/([^/]+)$/);
@@ -205,7 +197,6 @@ export function PortfolioApp() {
 
   useLayoutEffect(() => {
     let frameId = 0;
-    let timeoutId = 0;
     const scrollToPosition = (value: number) => {
       window.scrollTo({ top: value, left: 0, behavior: 'auto' });
       document.documentElement.scrollTop = value;
@@ -214,7 +205,6 @@ export function PortfolioApp() {
     const forceTop = () => {
       scrollToPosition(0);
       frameId = window.requestAnimationFrame(() => scrollToPosition(0));
-      timeoutId = window.setTimeout(() => scrollToPosition(0), 120);
     };
 
     // Every route is a new screen: start at the top on desktop and mobile.
@@ -227,7 +217,6 @@ export function PortfolioApp() {
     forceTop();
     return () => {
       if (frameId) window.cancelAnimationFrame(frameId);
-      if (timeoutId) window.clearTimeout(timeoutId);
     };
   }, [pathname]);
 
@@ -309,7 +298,7 @@ export function PortfolioApp() {
   }, [filter, workFilters, allProjectsFilter, orderedProjects]);
 
   const homeProjects = useMemo(
-    () => orderedProjects.filter((project) => project.category === 'Vibe Coding'),
+    () => orderedProjects.filter((project) => project.category === 'Vibe Coding' || presentationProjectSlugs.has(project.slug)),
     [orderedProjects]
   );
 
@@ -356,68 +345,6 @@ export function PortfolioApp() {
     applySeoToDocument(seo);
   }, [seo]);
 
-  useEffect(() => {
-    if (reduceMotion || homeWorkInView || currentPage !== 'home') return;
-    const node = homeWorkTriggerRef.current;
-    if (!node) return;
-    let frameId = 0;
-    const observer = new IntersectionObserver(([entry]) => {
-      if (!entry?.isIntersecting) return;
-      setHomeWorkInView(true);
-      observer.disconnect();
-    }, { threshold: t.threshold });
-    const revealIfVisible = () => {
-      const rect = node.getBoundingClientRect();
-      if (rect.top >= window.innerHeight || rect.bottom <= 0) return;
-      setHomeWorkInView(true);
-      observer.disconnect();
-      window.removeEventListener('scroll', revealIfVisible);
-      window.removeEventListener('resize', revealIfVisible);
-      if (frameId) window.cancelAnimationFrame(frameId);
-    };
-    observer.observe(node);
-    window.addEventListener('scroll', revealIfVisible, { passive: true });
-    window.addEventListener('resize', revealIfVisible, { passive: true });
-    frameId = window.requestAnimationFrame(revealIfVisible);
-    return () => {
-      observer.disconnect();
-      window.removeEventListener('scroll', revealIfVisible);
-      window.removeEventListener('resize', revealIfVisible);
-      if (frameId) window.cancelAnimationFrame(frameId);
-    };
-  }, [currentPage, homeWorkInView, reduceMotion]);
-
-  useEffect(() => {
-    if (reduceMotion || workPageInView || currentPage !== 'work') return;
-    const node = workPageTriggerRef.current;
-    if (!node) return;
-    let frameId = 0;
-    const observer = new IntersectionObserver(([entry]) => {
-      if (!entry?.isIntersecting) return;
-      setWorkPageInView(true);
-      observer.disconnect();
-    }, { threshold: t.threshold });
-    const revealIfVisible = () => {
-      const rect = node.getBoundingClientRect();
-      if (rect.top >= window.innerHeight || rect.bottom <= 0) return;
-      setWorkPageInView(true);
-      observer.disconnect();
-      window.removeEventListener('scroll', revealIfVisible);
-      window.removeEventListener('resize', revealIfVisible);
-      if (frameId) window.cancelAnimationFrame(frameId);
-    };
-    observer.observe(node);
-    window.addEventListener('scroll', revealIfVisible, { passive: true });
-    window.addEventListener('resize', revealIfVisible, { passive: true });
-    frameId = window.requestAnimationFrame(revealIfVisible);
-    return () => {
-      observer.disconnect();
-      window.removeEventListener('scroll', revealIfVisible);
-      window.removeEventListener('resize', revealIfVisible);
-      if (frameId) window.cancelAnimationFrame(frameId);
-    };
-  }, [currentPage, reduceMotion, workPageInView]);
-
   const routeAnnouncement = useMemo(() => {
     if (activeProject) return `Project ${activeProject.title} page loaded`;
     if (activePost) return `Article ${activePost.title} page loaded`;
@@ -430,22 +357,19 @@ export function PortfolioApp() {
 
   const homeElement = (
     <>
-      <Hero onWorkClick={() => scrollToElement(document.getElementById('work'))} />
-      <CompaniesLogos />
-      <AboutSection />
-      <HowIHelpSection />
-      <ExperienceSection />
-      <ProcessReelSection />
-      <motion.section
+      <SectionSequence immediate><Hero onWorkClick={() => scrollToElement(document.getElementById('work'))} /></SectionSequence>
+      <SectionSequence><CompaniesLogos /></SectionSequence>
+      <SectionSequence><AboutSection /></SectionSequence>
+      <SectionSequence><HowIHelpSection /></SectionSequence>
+      <SectionSequence><ExperienceSection /></SectionSequence>
+      <SectionSequence><ProcessReelSection /></SectionSequence>
+      <SectionSequence>{(stage) => <motion.section
         id="work"
-        viewport={{ once: true, amount: 'some' }}
-        onViewportEnter={() => setHomeWorkInView(true)}
-        variants={reduceMotion ? undefined : sectionOrchestrator}
-        initial={reduceMotion ? undefined : 'hidden'}
-        animate={reduceMotion ? undefined : homeWorkInView ? 'visible' : 'hidden'}
+        variants={sectionOrchestrator}
+        initial={reduceMotion || stage === 'skipped' ? false : 'hidden'}
+        animate={reduceMotion || stage !== 'pending' ? 'visible' : 'hidden'}
         className="py-20 md:py-24 relative z-10 scroll-mt-28 sm:scroll-mt-32 mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-10"
       >
-            <span ref={homeWorkTriggerRef} className="absolute left-0 top-0 h-px w-px" aria-hidden="true" />
             <motion.p {...reveal.body} className={cn(typography.labelXs, eyebrowChipClass, 'relative z-overlay mb-4 sm:mb-6')}>
               {siteContent.featuredWork.eyebrow}
             </motion.p>
@@ -475,31 +399,27 @@ export function PortfolioApp() {
               )}
             />
 
-            <motion.div {...reveal.cardGrid}>
+            <div>
               <StackedCards
-                orchestrated
                 items={homeProjects}
                 renderItem={(project) => (
                   <ProjectCardWrapper project={project} onClick={handleProjectClick} />
                 )}
               />
-            </motion.div>
-      </motion.section>
-      <BlogSection onPostClick={handleBlogClick} />
-      <TestimonialsSection />
+            </div>
+      </motion.section>}</SectionSequence>
+      <SectionSequence><BlogSection onPostClick={handleBlogClick} /></SectionSequence>
+      <SectionSequence><TestimonialsSection /></SectionSequence>
     </>
   );
 
   const workElement = (
-    <motion.section
-      viewport={{ once: true, amount: 'some' }}
-      onViewportEnter={() => setWorkPageInView(true)}
-      variants={reduceMotion ? undefined : sectionOrchestrator}
-      initial={reduceMotion ? undefined : 'hidden'}
-      animate={reduceMotion ? undefined : workPageInView ? 'visible' : 'hidden'}
+    <SectionSequence immediate>{(stage) => <motion.section
+      variants={sectionOrchestrator}
+      initial={reduceMotion || stage === 'skipped' ? false : 'hidden'}
+      animate={reduceMotion || stage !== 'pending' ? 'visible' : 'hidden'}
       className="pb-8 pt-32 md:pb-10 md:pt-36 relative z-10 scroll-mt-28 sm:scroll-mt-32 mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-10"
     >
-          <span ref={workPageTriggerRef} className="absolute left-0 top-0 h-px w-px" aria-hidden="true" />
           <motion.p {...reveal.body} className={cn(typography.labelXs, eyebrowChipClass, 'relative z-overlay mb-4')}>
             {siteContent.featuredWork.archive.eyebrow}
           </motion.p>
@@ -534,22 +454,21 @@ export function PortfolioApp() {
             onChange={setFilter}
           />
 
-          <motion.div {...reveal.cardGrid}>
+          <div>
             <StackedCards
-              orchestrated
               items={filteredProjects}
               renderItem={(project) => (
                 <ProjectCardWrapper project={project} onClick={handleProjectClick} />
               )}
             />
-          </motion.div>
-    </motion.section>
+          </div>
+    </motion.section>}</SectionSequence>
   );
 
   const aboutElement = (
     <div>
-      <AboutSection />
-      <TestimonialsSection />
+      <SectionSequence immediate><AboutSection headingAs="h1" /></SectionSequence>
+      <SectionSequence><TestimonialsSection /></SectionSequence>
     </div>
   );
 
@@ -610,23 +529,17 @@ export function PortfolioApp() {
               <motion.div
                 key={pathname}
                 variants={pageTransitionVariants}
-                initial="initial"
+                initial={hasMounted ? 'initial' : false}
                 animate="animate"
                 exit="exit"
               >
-                <Suspense
-                  fallback={(
-                    <section className="min-h-[60vh] w-full px-6 py-24 sm:px-10" aria-busy="true" aria-live="polite">
-                      <p className={cn(typography.body, darkMode ? 'text-white/70' : 'text-black/70')}>Loading page...</p>
-                    </section>
-                  )}
-                >
+                <SectionSequenceProvider>
                   {routeElement}
-                </Suspense>
+                  {currentPage !== 'blog-details' && <SectionSequence><CTASection /></SectionSequence>}
+                </SectionSequenceProvider>
               </motion.div>
             </AnimatePresence>
           </ErrorBoundary>
-          {currentPage !== 'blog-details' && <CTASection />}
         </main>
         <Footer
           currentPage={currentPage}

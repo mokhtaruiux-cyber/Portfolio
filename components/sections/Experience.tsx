@@ -8,7 +8,7 @@ import { Section } from '../layout/Section';
 import { AnimatedSection } from '../motion/AnimatedSection';
 import { BlurIn } from '../motion/BlurIn';
 import { Reveal } from '../motion/Reveal';
-import { sectionPacing } from '../../lib/motionTokens';
+import { sectionPacing } from '../../lib/motion/motionTokens';
 import { cardReveal } from '../../lib/motion/motionPresets';
 import { eyebrowChipClass } from '../../lib/chipStyles';
 import { cn } from '../../lib/utils';
@@ -38,7 +38,7 @@ export const ExperienceSection: React.FC = () => {
         </motion.p>
 
         {/* 2 — Title */}
-        <motion.div variants={fadeUp} className="mb-4">
+        <motion.div variants={{ hidden: {}, visible: {} }} className="mb-4">
           <BlurIn
             as="h2"
             delay={pacing.title}

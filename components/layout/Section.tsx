@@ -7,6 +7,7 @@ import { BlurIn } from '../motion/BlurIn';
 import { typography } from '../../lib/typography';
 import { eyebrowChipClass } from '../../lib/chipStyles';
 import { titleReveal } from '../../lib/motion/motionPresets';
+import { SectionSequence, useCanSequenceSection } from '../motion/SectionSequence';
 
 interface SectionProps {
     children: React.ReactNode;
@@ -15,6 +16,7 @@ interface SectionProps {
     eyebrow?: string;
     motion?: "lift" | "fade";
     reveal?: boolean;
+    sequenceImmediate?: boolean;
 }
 
 export const Section: React.FC<SectionProps> = ({
@@ -24,7 +26,9 @@ export const Section: React.FC<SectionProps> = ({
     eyebrow,
     motion = "lift",
     reveal = true,
+    sequenceImmediate = false,
 }) => {
+    const canSequence = useCanSequenceSection();
     const content = (
       <>
         {eyebrow && (
@@ -44,7 +48,7 @@ export const Section: React.FC<SectionProps> = ({
       </>
     );
 
-    return (
+    const section = (
         <section
           id={id}
           className={cn(
@@ -61,4 +65,6 @@ export const Section: React.FC<SectionProps> = ({
             </Container>
         </section>
     );
+
+    return canSequence ? <SectionSequence immediate={sequenceImmediate}>{section}</SectionSequence> : section;
 };

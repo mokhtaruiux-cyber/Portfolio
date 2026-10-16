@@ -34,6 +34,9 @@ const calNamespace = 'book-call';
 const calConfig = { layout: 'month_view' } as const;
 const calConfigJson = JSON.stringify(calConfig);
 const visibleProjectSlugs = [
+  'shipo-inventory-shipping',
+  'wayloom-trip-planner',
+  'khazna-banking-app',
   'dawwem-hr-platform',
   'restuhub-restaurant-platform',
   'ldun-redesign',
@@ -171,6 +174,7 @@ export const siteContent = {
     filters: [
       { label: 'All Projects', category: 'All Projects' },
       { label: 'Apps', category: 'Mobile Apps' },
+      { label: 'Dashboards', category: 'Dashboards' },
       { label: 'Vibe Coding', category: 'Vibe Coding' },
       { label: 'Websites', category: 'Websites' },
       { label: 'Design Systems', category: 'Design Systems' },

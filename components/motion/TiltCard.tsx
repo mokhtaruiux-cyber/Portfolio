@@ -1,7 +1,7 @@
 
 import React, { useCallback, useEffect, useRef } from 'react';
 import { motion, useMotionValue, useSpring, useTransform, useReducedMotion } from 'motion/react';
-import { transitions } from '../../lib/motionTokens';
+import { transitions } from '../../lib/motion/motionTokens';
 import { useCanHover } from '../../hooks/useMediaQuery';
 
 interface TiltCardProps {

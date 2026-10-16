@@ -79,16 +79,6 @@ html.lenis body {
   -webkit-overflow-scrolling: touch;
 }
 
-@keyframes moveGrid {
-  0% {
-    background-position: 0 0;
-  }
-
-  100% {
-    background-position: 60px 60px;
-  }
-}
-
 @keyframes rotate-glow {
   from {
     transform: rotate(0deg);
@@ -108,17 +98,13 @@ html.lenis body {
   }
 }
 
-@keyframes marquee-px {
-  from {
-    transform: translate3d(var(--marquee-from, 0px), 0, 0);
-  }
-  to {
-    transform: translate3d(var(--marquee-to, -100px), 0, 0);
-  }
+@keyframes process-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
 }
 
-.animate-grid {
-  animation: moveGrid 20s linear infinite;
+.process-progress {
+  animation: process-progress linear forwards;
 }
 
 .glow-border-container {
@@ -152,6 +138,10 @@ html.lenis body {
     transparent 65%,
     transparent 100%
   );
+}
+
+.glow-border-container:hover .glow-border-bg,
+.glow-border-container:focus-within .glow-border-bg {
   animation: rotate-glow 5s linear infinite;
 }
 
@@ -234,6 +224,20 @@ html.lenis body {
     animation: none !important;
   }
 
+  .glow-border-bg {
+    animation: none !important;
+  }
+
+  .process-progress {
+    animation: none !important;
+  }
+
+  [data-title-word] {
+    opacity: 1 !important;
+    filter: none !important;
+    transform: none !important;
+  }
+
   [style*="opacity:0"],
   [style*="opacity: 0"] {
     opacity: 1 !important;
@@ -264,5 +268,29 @@ html.lenis body {
   .glass--nav {
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
+  }
+}
+
+/* Hero title entrance runs in CSS so it starts at first paint, before JS hydrates. */
+@keyframes title-word-intro {
+  from {
+    opacity: 0;
+    transform: translateY(var(--title-distance, 20px));
+    filter: blur(5px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+}
+
+.title-word-intro {
+  animation: title-word-intro 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .title-word-intro {
+    animation: none;
   }
 }

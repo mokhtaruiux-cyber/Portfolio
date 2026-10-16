@@ -14,6 +14,8 @@ export const SegmentTabs: React.FC<SegmentTabsProps> = ({ tabs, activeTab, onCha
     const { darkMode } = useTheme();
     return (
         <div
+          role="group"
+          aria-label="Project category"
           className={cn(
             "relative inline-flex max-w-full overflow-hidden rounded-panel border shadow-sm",
             darkMode ? "border-white/10" : "border-black/10"
@@ -30,6 +32,8 @@ export const SegmentTabs: React.FC<SegmentTabsProps> = ({ tabs, activeTab, onCha
                     return (
                         <button
                             key={tab}
+                            type="button"
+                            aria-pressed={isActive}
                             onClick={() => onChange(tab)}
                             className={cn(
                                 "relative z-10 h-10 cursor-pointer whitespace-nowrap rounded-control px-4 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/40 sm:px-5",

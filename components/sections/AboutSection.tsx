@@ -11,10 +11,13 @@ import { reveal } from '../../lib/motion/presets';
 import { sectionOrchestrator } from '../../lib/motion/variants';
 import { motionTokens as t } from '../../lib/motion/tokens';
 import { TitleReveal } from '../motion/TitleReveal';
+import { useSectionMotion } from '../motion/SectionSequence';
 
-export const AboutSection: React.FC = () => {
+export const AboutSection: React.FC<{ headingAs?: 'h1' | 'h2' }> = ({ headingAs = 'h2' }) => {
   const { darkMode } = useTheme();
   const reduceMotion = useReducedMotion();
+  const { status } = useSectionMotion();
+  const instant = reduceMotion || status === 'skipped';
   const sectionRef = React.useRef<HTMLElement | null>(null);
   const isInView = useInView(sectionRef, { once: true, amount: t.threshold });
 
@@ -22,9 +25,9 @@ export const AboutSection: React.FC = () => {
     <motion.section
       ref={sectionRef}
       id="about"
-      variants={reduceMotion ? undefined : sectionOrchestrator}
-      initial={reduceMotion ? undefined : 'hidden'}
-      animate={reduceMotion ? undefined : isInView ? 'visible' : 'hidden'}
+      variants={sectionOrchestrator}
+      initial={instant ? false : 'hidden'}
+      animate={instant || (status !== 'pending' && isInView) ? 'visible' : 'hidden'}
       className="py-20 md:py-24 relative z-10 scroll-mt-28 sm:scroll-mt-32 mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-10"
     >
       <motion.p
@@ -40,7 +43,7 @@ export const AboutSection: React.FC = () => {
       >
         <div className="text-left space-y-6">
           <TitleReveal
-            as="h2"
+            as={headingAs}
             className={cn(
               'font-black max-w-[24ch] tracking-tighter text-4xl sm:text-5xl mb-6',
               darkMode ? 'text-white' : 'text-black'

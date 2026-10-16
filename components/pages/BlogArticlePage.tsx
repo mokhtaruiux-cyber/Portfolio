@@ -79,7 +79,7 @@ export const BlogArticlePage = ({
   const reduceMotion = useReducedMotion() ?? false;
   return (
     <>
-      <Section className="pt-28 md:pt-36">
+      <Section sequenceImmediate className="pt-28 md:pt-36">
         <div className="mx-auto flex w-full max-w-[60ch] flex-col items-start text-left space-y-10">
           <div className="space-y-4">
             <Reveal delay={titleReveal.sectionDelay}>

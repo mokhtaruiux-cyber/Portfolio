@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { motion, AnimatePresence, useMotionValueEvent, useScroll, useVelocity } from 'motion/react';
+import { motion, AnimatePresence, useMotionValueEvent, useReducedMotion, useScroll, useVelocity } from 'motion/react';
 import { Sun, Moon, Menu, X } from 'lucide-react';
 import Link from 'next/link';
 import { siteContent } from '../../content';
 import { useTheme } from '../../context/ThemeContext';
 import { PageKey } from '../../types';
-import { durations, easing, transitions } from '../../lib/motionTokens';
+import { durations, easing } from '../../lib/motion/motionTokens';
 import { cn } from '../../lib/utils';
 import { typography } from '../../lib/typography';
 import { Container } from './Container';
@@ -19,6 +19,7 @@ interface NavbarProps {
 export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
   const { scrollY } = useScroll();
   const scrollVelocity = useVelocity(scrollY);
+  const reduceMotion = useReducedMotion() ?? false;
   const { darkMode, setDarkMode } = useTheme();
   const [scrolled, setScrolled] = useState(false);
   const [navHidden, setNavHidden] = useState(false);
@@ -143,9 +144,9 @@ export const Navbar = ({ currentPage, onNavigate }: NavbarProps) => {
             scrolled && 'shadow-2xl',
             darkMode ? 'bg-black/60 border-white/10' : 'bg-white/70 border-black/10'
           )}
-          initial={{ y: -10, opacity: 0 }}
+          initial={reduceMotion ? false : { y: -12, opacity: 0.82 }}
           animate={{ y: 0, opacity: 1 }}
-          transition={transitions.smooth}
+          transition={{ duration: reduceMotion ? 0 : durations.slow, ease: easing.reveal }}
         >
           <div className="flex items-center justify-between h-full px-4 sm:px-6">
             <Link

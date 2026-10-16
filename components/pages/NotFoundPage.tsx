@@ -24,7 +24,7 @@ export const NotFoundPage: React.FC<NotFoundPageProps> = ({
   onReadBlog,
 }) => {
   return (
-    <Section className="pb-6 pt-28 md:pt-32" eyebrow="404">
+    <Section sequenceImmediate className="pb-6 pt-28 md:pt-32" eyebrow="404">
       <div className="max-w-4xl text-left">
         <PageIntro
           eyebrow="Page not found"

@@ -1,5 +1,7 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
 
+const auditLog = process.env.AUDIT_VERBOSE ? console.log : () => {};
+
 const viewports = [
   { name: 'mobile-390x844', width: 390, height: 844 },
   { name: 'tablet-768x1024', width: 768, height: 1024 },
@@ -31,19 +33,19 @@ async function clipNavZone(
   const navZ = await nav.evaluate((el: HTMLElement) => getComputedStyle(el).zIndex);
   const targetZ = await target.evaluate((el: HTMLElement) => getComputedStyle(el).zIndex);
 
-  console.log(`[${label}] nav bbox:`, navBox);
-  console.log(`[${label}] target bbox:`, targetBox);
-  console.log(`[${label}] nav z-index:`, navZ);
-  console.log(`[${label}] target z-index:`, targetZ);
+  auditLog(`[${label}] nav bbox:`, navBox);
+  auditLog(`[${label}] target bbox:`, targetBox);
+  auditLog(`[${label}] nav z-index:`, navZ);
+  auditLog(`[${label}] target z-index:`, targetZ);
 
   if (navBox && targetBox) {
     const navBottom = navBox.y + navBox.height;
     const overlap = targetBox.y < navBottom;
-    console.log(
+    auditLog(
       `[${label}] overlap: target.top (${targetBox.y.toFixed(1)}) < nav.bottom (${navBottom.toFixed(1)}) => ${overlap}`,
     );
   } else {
-    console.log(`[${label}] overlap: could not resolve both bounding boxes.`);
+    auditLog(`[${label}] overlap: could not resolve both bounding boxes.`);
   }
 
   const viewport = page.viewportSize();
@@ -94,12 +96,12 @@ test.describe('UI audit (read-only visual proof)', () => {
       const backToTop = page.locator('button', { hasText: /top/i });
       const fixedFloating = page.locator('[class*="fixed"][class*="bottom"]');
 
-      console.log(`[B-${vp.name}] back count:`, await backButton.count());
-      console.log(`[B-${vp.name}] top count:`, await backToTop.count());
-      console.log(`[B-${vp.name}] fixed-bottom count:`, await fixedFloating.count());
+      auditLog(`[B-${vp.name}] back count:`, await backButton.count());
+      auditLog(`[B-${vp.name}] top count:`, await backToTop.count());
+      auditLog(`[B-${vp.name}] fixed-bottom count:`, await fixedFloating.count());
 
       const fixedBox = (await fixedFloating.count()) ? await fixedFloating.first().boundingBox() : null;
-      console.log(`[B-${vp.name}] fixed-bottom bbox:`, fixedBox);
+      auditLog(`[B-${vp.name}] fixed-bottom bbox:`, fixedBox);
 
       await shot(page, `B-${vp.name}-detail-full`);
 
@@ -139,10 +141,10 @@ test.describe('UI audit (read-only visual proof)', () => {
     const projectCardBox = await firstProjectCard.boundingBox();
     const projectImgBox = await projectImg.boundingBox();
 
-    console.log('[C-projects] card bbox:', projectCardBox);
-    console.log('[C-projects] img bbox:', projectImgBox);
+    auditLog('[C-projects] card bbox:', projectCardBox);
+    auditLog('[C-projects] img bbox:', projectImgBox);
     if (projectImgBox) {
-      console.log('[C-projects] img aspect:', (projectImgBox.width / projectImgBox.height).toFixed(3));
+      auditLog('[C-projects] img aspect:', (projectImgBox.width / projectImgBox.height).toFixed(3));
     }
 
     await shot(page, 'C-desktop-projects-full');
@@ -158,10 +160,10 @@ test.describe('UI audit (read-only visual proof)', () => {
     const blogCardBox = await firstBlogCard.boundingBox();
     const blogImgBox = await blogImg.boundingBox();
 
-    console.log('[C-blog] card bbox:', blogCardBox);
-    console.log('[C-blog] img bbox:', blogImgBox);
+    auditLog('[C-blog] card bbox:', blogCardBox);
+    auditLog('[C-blog] img bbox:', blogImgBox);
     if (blogImgBox) {
-      console.log('[C-blog] img aspect:', (blogImgBox.width / blogImgBox.height).toFixed(3));
+      auditLog('[C-blog] img aspect:', (blogImgBox.width / blogImgBox.height).toFixed(3));
     }
 
     await shot(page, 'C-desktop-blog-full');

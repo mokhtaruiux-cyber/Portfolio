@@ -1,9 +1,10 @@
 import React from 'react';
+import Image from 'next/image';
 import { motion, useReducedMotion } from 'motion/react';
 import { Project } from '../../types';
 import { useTheme } from '../../context/ThemeContext';
 import { siteContent } from '../../content';
-import { transitions } from '../../lib/motionTokens';
+import { transitions } from '../../lib/motion/motionTokens';
 import { contentReveal, mediaReveal, staggerContainer } from '../../lib/motion/motionPresets';
 import { typography } from '../../lib/typography';
 import { cn } from '../../lib/utils';
@@ -74,18 +75,19 @@ const ProjectCardWrapperComponent: React.FC<ProjectCardWrapperProps> = ({ projec
           </div>
         </motion.div>
         <motion.div className="order-1 lg:order-2 relative rounded-surface overflow-hidden group aspect-[16/10] lg:aspect-[4/3.2]" variants={mediaReveal.variants({ reduceMotion })}>
-          <motion.img
+          <motion.div
             whileHover={{ scale: 1.008 }}
             transition={transitions.smooth}
-            src={project.image}
-            alt={project.title}
-            loading="eager"
-            decoding="sync"
-            width={1600}
-            height={1000}
-            sizes="(max-width: 1024px) 100vw, 50vw"
-            className="w-full h-full object-contain"
-          />
+            className="absolute inset-0"
+          >
+            <Image
+              src={project.image}
+              alt={project.title}
+              fill
+              sizes="(max-width: 1024px) 100vw, 50vw"
+              className="object-contain"
+            />
+          </motion.div>
         </motion.div>
       </motion.div>
     </button>

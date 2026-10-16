@@ -12,10 +12,13 @@ import { reveal } from '../../lib/motion/presets';
 import { sectionOrchestrator } from '../../lib/motion/variants';
 import { motionTokens as t } from '../../lib/motion/tokens';
 import { TitleReveal } from '../motion/TitleReveal';
+import { useSectionMotion } from '../motion/SectionSequence';
 
 export const HowIHelpSection: React.FC = () => {
   const { darkMode } = useTheme();
   const reduceMotion = useReducedMotion();
+  const { status } = useSectionMotion();
+  const instant = reduceMotion || status === 'skipped';
   const { cal } = siteContent;
   const { howIHelp } = siteContent;
   const isCalCta = howIHelp.ctaHref === siteContent.bookingUrl;
@@ -26,9 +29,9 @@ export const HowIHelpSection: React.FC = () => {
     <motion.section
       ref={sectionRef}
       id="help"
-      variants={reduceMotion ? undefined : sectionOrchestrator}
-      initial={reduceMotion ? undefined : 'hidden'}
-      animate={reduceMotion ? undefined : isInView ? 'visible' : 'hidden'}
+      variants={sectionOrchestrator}
+      initial={instant ? false : 'hidden'}
+      animate={instant || (status !== 'pending' && isInView) ? 'visible' : 'hidden'}
       className="py-20 md:py-24 relative z-10 scroll-mt-28 sm:scroll-mt-32 mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-10"
     >
           <motion.p

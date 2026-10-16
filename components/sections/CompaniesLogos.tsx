@@ -10,12 +10,14 @@ import { eyebrowChipClass } from '../../lib/chipStyles';
 import { cn } from '../../lib/utils';
 import { typography } from '../../lib/typography';
 import { fadeUp } from '../../lib/motion/variants';
+import { useSectionMotion } from '../motion/SectionSequence';
 
 const marqueeStyle: React.CSSProperties = { width: 'fit-content' };
 
 export const CompaniesLogos: React.FC = () => {
   const { darkMode } = useTheme();
   const reduceMotion = useReducedMotion();
+  const { ambientAllowed } = useSectionMotion();
   const [tooltip, setTooltip] = useState<{ label: string; left: number; top: number } | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
   const itemRefs = useRef<Array<HTMLButtonElement | null>>([]);
@@ -52,7 +54,7 @@ export const CompaniesLogos: React.FC = () => {
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, []);
 
-  const shouldAnimate = !reduceMotion && isInView && isPageVisible;
+  const shouldAnimate = !reduceMotion && isInView && isPageVisible && ambientAllowed;
 
   const showTooltip = (index: number, label: string) => {
     const container = containerRef.current;
@@ -172,6 +174,8 @@ export const CompaniesLogos: React.FC = () => {
                       <img
                         src={company.logoSrc}
                         alt={company.name}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-contain p-2 opacity-95"
                       />
                     </div>

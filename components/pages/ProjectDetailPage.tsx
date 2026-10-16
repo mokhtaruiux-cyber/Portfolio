@@ -1,10 +1,11 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
-import { motion, useReducedMotion } from 'motion/react';
+import { motion, useInView, useReducedMotion } from 'motion/react';
 import { Brush, CalendarDays, Code2, Server, Smartphone, UserRound, type LucideIcon } from 'lucide-react';
 import { Project } from '../../types';
 import { siteContent } from '../../content';
 import { useTheme } from '../../context/ThemeContext';
 import { Section } from '../layout/Section';
+import { Container } from '../layout/Container';
 import { BlurIn } from '../motion/BlurIn';
 import { Reveal } from '../motion/Reveal';
 import { typography } from '../../lib/typography';
@@ -19,6 +20,7 @@ import {
   mediaReveal,
   titleReveal,
 } from '../../lib/motion/motionPresets';
+import { SectionSequence, useSectionMotion } from '../motion/SectionSequence';
 
 type ViewerImage = {
   src: string;
@@ -44,6 +46,71 @@ const getStackIcon = (tool: string): LucideIcon => {
   if (/react native|mobile|swift|android|ios/i.test(tool)) return Smartphone;
   if (/node|api|server/i.test(tool)) return Server;
   return Code2;
+};
+
+const presentationHeights: Record<string, Record<string, number>> = {
+  shipo: {
+    '01-hero': 1240, '02-overview': 1454, '03-users-market': 1614, '04-goals-rules': 1654,
+    '05-flows': 1474, '06-design-system': 1930, '07-key-decisions': 1350, '08-overview-products': 1774,
+    '09-orders-shipments': 1918, '10-setup-team-settings': 1674, '11-warehouse-app': 1834,
+    '12-states-edge-cases': 1474, '13-iteration': 1278, '14-outcome': 1154, '15-closing': 1000,
+  },
+  wayloom: {
+    '01-hero': 1240, '02-overview': 1454, '03-persona-promises': 1210, '04-process-structure': 1394,
+    '05-design-system': 1546, '06-finding-the-look': 1534, '07-onboarding-discovery': 1350,
+    '08-creating-a-trip': 1554, '09-itinerary-stays-budget': 1674, '10-sharing-today-profile': 1514,
+    '11-sheets-dialogs-states': 1474, '12-rtl-and-money': 1090, '13-all-screens': 2674,
+    '14-outcome': 1010, '15-closing': 1000,
+  },
+  khazna: {
+    '01-hero': 1240, '02-overview': 1230, '03-principles': 1100, '04-design-system': 1290,
+    '05-illustration-kit': 1340, '06-onboarding': 1450, '07-home-accounts': 1450, '08-cards-transfers': 1474,
+    '09-bills-activity-insights': 1450, '10-savings-rewards-financing': 1594, '11-profile-system': 1414,
+    '12-closing': 1000,
+  },
+};
+
+const getShowcaseDimensions = (src: string): readonly [number, number] => {
+  if (src.includes('Home%20Care%20Presentation')) return [3200, 2480];
+  if (src.includes('/projects/dawwem/')) {
+    if (src.includes('/mobile-')) return [430, 932];
+    return src.includes('/dashboard-live.') ? [1600, 1100] : [1440, 1000];
+  }
+  if (src.includes('/projects/restuhub/')) {
+    if (src.includes('/mobile-showcase.')) return [1586, 992];
+    return /\/(order-history|support)\./.test(src) ? [1440, 1000] : [1440, 900];
+  }
+  if (src.includes('/projects/ldun/')) return [1440, 1000];
+  const presentation = src.match(/\/projects\/(shipo|wayloom|khazna)\/([^/]+)\.webp$/);
+  if (presentation) {
+    const folder = presentation[1] ?? '';
+    const name = presentation[2] ?? '';
+    return [1600, presentationHeights[folder]?.[name] ?? 1000];
+  }
+  if (src.includes('/projects/ironcore/')) {
+    if (src.includes('/dashboard.')) return [1440, 1558];
+    if (src.includes('/reports.')) return [1440, 1574];
+    if (src.includes('/attendance.')) return [1440, 1213];
+    if (src.includes('/members.')) return [1440, 1052];
+    return [1440, 1050];
+  }
+  return [1600, 1000];
+};
+
+const ShowcaseImage = ({ src, alt, index }: { src: string; alt: string; index: number }) => {
+  const [width, height] = getShowcaseDimensions(src);
+  return (
+    <img
+      src={src}
+      alt={alt}
+      width={width}
+      height={height}
+      loading={index === 0 ? 'eager' : 'lazy'}
+      decoding="async"
+      fetchPriority={index === 0 ? 'high' : 'low'}
+      className="block h-auto w-full"
+    />
+  );
 };
 
 const ProjectMetaItem = ({ label, value, darkMode, icon: Icon, stackItems }: ProjectMetaItemProps) => {
@@ -117,6 +184,26 @@ const ProjectGalleryItem = ({
   );
 };
 
+const SequencedGalleryFigure = ({ children }: { children: React.ReactNode }) => {
+  const ref = React.useRef<HTMLElement | null>(null);
+  const isInView = useInView(ref, mediaReveal.viewport);
+  const reduceMotion = useReducedMotion() ?? false;
+  const { status } = useSectionMotion();
+  const instant = reduceMotion || status === 'skipped';
+
+  return (
+    <motion.figure
+      ref={ref}
+      variants={mediaReveal.variants({ reduceMotion: instant })}
+      initial={instant ? false : 'hidden'}
+      animate={instant || (status !== 'pending' && isInView) ? 'visible' : 'hidden'}
+      className="w-full"
+    >
+      {children}
+    </motion.figure>
+  );
+};
+
 export const ProjectDetailPage = ({
   project,
   nextProject,
@@ -128,7 +215,7 @@ export const ProjectDetailPage = ({
 }) => {
   const { darkMode } = useTheme();
   const isVibeCodingProject = project.category === 'Vibe Coding';
-  const isBehanceStyleGallery = project.slug === 'homecare-medical-app' || isVibeCodingProject;
+  const isBehanceStyleGallery = project.slug === 'homecare-medical-app' || project.slug === 'shipo-inventory-shipping' || project.slug === 'wayloom-trip-planner' || project.slug === 'khazna-banking-app' || isVibeCodingProject;
   const reduceMotion = useReducedMotion() ?? false;
   const [isViewerOpen, setIsViewerOpen] = useState(false);
   const [initialViewerIndex, setInitialViewerIndex] = useState(0);
@@ -189,7 +276,7 @@ export const ProjectDetailPage = ({
         onClose={closeViewer}
       />
 
-      <Section className={cn('pt-28 md:pt-36', isBehanceStyleGallery && 'pb-0')}>
+      <Section sequenceImmediate className={cn('pt-28 md:pt-36', isBehanceStyleGallery && 'pb-0')}>
         <div className="text-left space-y-10">
           <div className="space-y-4">
             <BlurIn
@@ -244,54 +331,45 @@ export const ProjectDetailPage = ({
       </Section>
 
       {isBehanceStyleGallery ? (
-        <Section className="pb-0 pt-6 md:pt-8">
-          <div className="space-y-0">
-            {project.gallery.map((item, index) => (
-              <motion.figure
-                key={`${project.slug}-gallery-${index}`}
-                variants={mediaReveal.variants({ reduceMotion })}
-                initial={reduceMotion ? false : 'hidden'}
-                whileInView="visible"
-                viewport={mediaReveal.viewport}
-                className="w-full"
-              >
-                <button
-                  type="button"
-                  ref={(node) => {
-                    galleryTriggerRefs.current[index] = node;
-                  }}
-                  onClick={(event) => openViewerAt(index, event.currentTarget)}
-                  className={cn(
-                    'block w-full overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 focus-visible:ring-offset-2',
-                    index === 0 && 'rounded-t-[16px] sm:rounded-t-[20px] md:rounded-t-[24px]',
-                    index === project.gallery.length - 1 && !item.caption && 'rounded-b-[16px] sm:rounded-b-[20px] md:rounded-b-[24px]'
-                  )}
-                  aria-label={`Open image viewer: ${item.alt}`}
-                >
-                  <img
-                    src={item.src}
-                    alt={item.alt}
-                    loading="eager"
-                    decoding="sync"
-                    className="block h-auto w-full"
-                  />
-                </button>
-                {item.caption && (
-                  <figcaption
-                    className={cn(
-                      'border-x px-5 py-5 text-left sm:px-7 sm:py-6 md:px-9',
-                      index === project.gallery.length - 1 && 'rounded-b-[16px] border-b sm:rounded-b-[20px] md:rounded-b-[24px]',
-                      darkMode ? 'border-white/10 bg-white/[0.04] text-white/70' : 'border-black/10 bg-black/[0.035] text-black/65',
-                      typography.body
+        <section className="relative z-10 pb-0 pt-6 md:pt-8">
+          <Container>
+            <div className="space-y-0">
+              {project.gallery.map((item, index) => (
+                <SectionSequence key={`${project.slug}-gallery-${index}`}>
+                  <SequencedGalleryFigure>
+                    <button
+                      type="button"
+                      ref={(node) => {
+                        galleryTriggerRefs.current[index] = node;
+                      }}
+                      onClick={(event) => openViewerAt(index, event.currentTarget)}
+                      className={cn(
+                        'block w-full overflow-hidden focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/50 focus-visible:ring-offset-2',
+                        index === 0 && 'rounded-t-[16px] sm:rounded-t-[20px] md:rounded-t-[24px]',
+                        index === project.gallery.length - 1 && !item.caption && 'rounded-b-[16px] sm:rounded-b-[20px] md:rounded-b-[24px]'
+                      )}
+                      aria-label={`Open image viewer: ${item.alt}`}
+                    >
+                      <ShowcaseImage src={item.src} alt={item.alt} index={index} />
+                    </button>
+                    {item.caption && (
+                      <figcaption
+                        className={cn(
+                          'border-x px-5 py-5 text-left sm:px-7 sm:py-6 md:px-9',
+                          index === project.gallery.length - 1 && 'rounded-b-[16px] border-b sm:rounded-b-[20px] md:rounded-b-[24px]',
+                          darkMode ? 'border-white/10 bg-white/[0.04] text-white/70' : 'border-black/10 bg-black/[0.035] text-black/65',
+                          typography.body
+                        )}
+                      >
+                        {item.caption}
+                      </figcaption>
                     )}
-                  >
-                    {item.caption}
-                  </figcaption>
-                )}
-              </motion.figure>
-            ))}
-          </div>
-        </Section>
+                  </SequencedGalleryFigure>
+                </SectionSequence>
+              ))}
+            </div>
+          </Container>
+        </section>
       ) : (
         <Section eyebrow={siteContent.projectDetail.galleryEyebrow}>
           <Reveal

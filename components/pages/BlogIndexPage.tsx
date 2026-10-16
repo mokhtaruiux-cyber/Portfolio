@@ -11,7 +11,7 @@ import { cardReveal } from '../../lib/motion/motionPresets';
 export const BlogIndexPage = ({ onPostClick }: { onPostClick: (slug: string) => void }) => {
   const { darkMode } = useTheme();
   return (
-    <Section className="pb-8 pt-32 md:pb-10 md:pt-36" eyebrow={siteContent.writing.index.eyebrow}>
+    <Section sequenceImmediate className="pb-8 pt-32 md:pb-10 md:pt-36" eyebrow={siteContent.writing.index.eyebrow}>
       <PageIntro
         title="Latest"
         highlight="Articles."

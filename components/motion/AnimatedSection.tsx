@@ -25,6 +25,7 @@ import { motion, useReducedMotion } from 'framer-motion';
 import { sectionOrchestrator } from '../../lib/motion/variants';
 import { motionTokens as t } from '../../lib/motion/tokens';
 import { cn } from '../../lib/utils';
+import { useSectionMotion } from './SectionSequence';
 
 interface AnimatedSectionProps {
   children: React.ReactNode;
@@ -46,16 +47,22 @@ export const AnimatedSection: React.FC<AnimatedSectionProps> = ({
   as: Tag = 'div',
 }) => {
   const shouldReduce = useReducedMotion();
+  const { status } = useSectionMotion();
+  const instant = shouldReduce || status === 'skipped';
   const MotionTag = motion[Tag] as typeof motion.div;
 
   return (
     <MotionTag
       id={id}
       className={cn('w-full', className)}
-      variants={shouldReduce ? undefined : sectionOrchestrator}
-      initial={shouldReduce ? undefined : 'hidden'}
-      {...(shouldReduce ? {} : animate ? { animate } : { whileInView: 'visible' })}
-      viewport={shouldReduce || animate ? undefined : { once: true, amount }}
+      variants={sectionOrchestrator}
+      initial={instant ? false : 'hidden'}
+      {...(instant
+        ? { animate: 'visible' }
+        : status !== 'pending'
+          ? animate ? { animate } : { whileInView: 'visible' }
+          : { animate: 'hidden' })}
+      viewport={instant || status === 'pending' || animate ? undefined : { once: true, amount }}
     >
       {children}
     </MotionTag>

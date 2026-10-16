@@ -10,6 +10,7 @@ import { cn } from '../../lib/utils';
 import { reveal } from '../../lib/motion/presets';
 import { sectionOrchestrator } from '../../lib/motion/variants';
 import { motionTokens as t } from '../../lib/motion/tokens';
+import { useSectionMotion } from '../motion/SectionSequence';
 import { TitleReveal } from '../motion/TitleReveal';
 
 interface TestimonialCardProps {
@@ -43,6 +44,8 @@ const TestimonialCard: React.FC<TestimonialCardProps> = ({ testimonial, darkMode
           <img
             src={testimonial.avatar}
             alt={testimonial.name}
+            loading="lazy"
+            decoding="async"
             className={cn(
               "w-full h-full object-cover object-center",
               testimonial.id === '1'
@@ -137,6 +140,8 @@ const TestimonialMarqueeRow = ({
 export const TestimonialsSection = () => {
   const { darkMode } = useTheme();
   const reduceMotion = useReducedMotion() ?? false;
+  const { status, ambientAllowed } = useSectionMotion();
+  const instant = reduceMotion || status === 'skipped';
   const sectionRef = useRef<HTMLElement | null>(null);
   const isInView = useInView(sectionRef, { amount: 0.2 });
   const revealInView = useInView(sectionRef, { once: true, amount: t.threshold });
@@ -144,7 +149,7 @@ export const TestimonialsSection = () => {
   const [isMobile, setIsMobile] = useState(false);
   const row1 = siteContent.testimonials.items.slice(0, 3);
   const row2 = siteContent.testimonials.items.slice(3);
-  const shouldAnimate = !reduceMotion && isInView && isPageVisible;
+  const shouldAnimate = !reduceMotion && isInView && isPageVisible && ambientAllowed;
 
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -169,9 +174,9 @@ export const TestimonialsSection = () => {
     <motion.section
       ref={sectionRef}
       id="testimonials"
-      variants={reduceMotion ? undefined : sectionOrchestrator}
-      initial={reduceMotion ? undefined : 'hidden'}
-      animate={reduceMotion ? undefined : revealInView ? 'visible' : 'hidden'}
+      variants={sectionOrchestrator}
+      initial={instant ? false : 'hidden'}
+      animate={instant || (status !== 'pending' && revealInView) ? 'visible' : 'hidden'}
       className="py-16 md:py-24 relative z-10 overflow-hidden mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-10"
     >
           <motion.p {...reveal.body} className={cn(typography.labelXs, eyebrowChipClass, 'mb-2')}>

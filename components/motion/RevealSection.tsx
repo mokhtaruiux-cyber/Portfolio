@@ -6,6 +6,7 @@ import { cn } from '../../lib/utils';
 import { VIEWPORT_SECTION_REVEAL } from '../../lib/motion';
 import { durations, easing } from '../../lib/motion/motionTokens';
 import { sectionReveal } from '../../lib/motion/motionPresets';
+import { useSectionMotion } from './SectionSequence';
 
 type RevealSectionProps = {
   children: React.ReactNode;
@@ -23,12 +24,14 @@ export const RevealSection: React.FC<RevealSectionProps> = ({
   const ref = React.useRef<HTMLDivElement | null>(null);
   const isInView = useInView(ref, VIEWPORT_SECTION_REVEAL);
   const reduceMotion = useReducedMotion() ?? false;
+  const { status } = useSectionMotion();
+  const instant = reduceMotion || status === 'skipped';
 
   // CRITICAL FIX: opacity starts at 1 (not 0) so children's own opacity
   // animations are visible. Only the Y transform is used here.
   // This prevents the outer wrapper from masking child reveal animations.
   const variants = React.useMemo(() => {
-    if (reduceMotion) {
+    if (instant) {
       return {
         initial: { opacity: 1, y: 0 },
         animate: { opacity: 1, y: 0 },
@@ -51,13 +54,13 @@ export const RevealSection: React.FC<RevealSectionProps> = ({
         transition: { duration: sectionReveal.defaultDuration, ease: easing.smooth, delay },
       },
     };
-  }, [delay, disableTransform, reduceMotion]);
+  }, [delay, disableTransform, instant]);
 
   return (
     <motion.div
       ref={ref}
-      initial="initial"
-      animate={isInView ? 'animate' : 'initial'}
+      initial={instant ? false : 'initial'}
+      animate={instant || (status !== 'pending' && isInView) ? 'animate' : 'initial'}
       variants={variants}
       className={cn('w-full', className)}
     >

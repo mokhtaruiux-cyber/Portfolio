@@ -3,7 +3,7 @@
 import React from 'react';
 import { MotionConfig } from 'motion/react';
 
-import { transitions } from '../../lib/motionTokens';
+import { transitions } from '../../lib/motion/motionTokens';
 
 export const MotionProvider = ({ children }: { children: React.ReactNode }) => (
   <MotionConfig reducedMotion="user" transition={transitions.smooth}>

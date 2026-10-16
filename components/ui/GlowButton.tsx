@@ -3,7 +3,7 @@ import { motion } from 'motion/react';
 import { useTheme } from '../../context/ThemeContext';
 import { cn } from '../../lib/utils';
 import { typography } from '../../lib/typography';
-import { transitions } from '../../lib/motionTokens';
+import { transitions } from '../../lib/motion/motionTokens';
 
 export interface GlowButtonProps {
   children: React.ReactNode;

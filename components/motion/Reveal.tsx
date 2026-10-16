@@ -14,6 +14,7 @@ import {
   mediaReveal,
   staggerContainer,
 } from "../../lib/motion/motionPresets";
+import { useSectionMotion } from './SectionSequence';
 
 type RevealElement = "div" | "p" | "span" | "section" | "article" | "ul" | "li";
 
@@ -38,7 +39,8 @@ export const Reveal: React.FC<RevealProps> = ({
   staggerChildren: useStagger = false,
   ...motionProps
 }) => {
-  const reduce = useReducedMotion() ?? false;
+  const { status } = useSectionMotion();
+  const reduce = (useReducedMotion() ?? false) || status === 'skipped';
   const ref = React.useRef<HTMLElement | null>(null);
 
   const variants: Variants = React.useMemo(() => {
@@ -73,7 +75,7 @@ export const Reveal: React.FC<RevealProps> = ({
       ref={ref as React.Ref<HTMLDivElement>}
       variants={variants}
       initial={reduce ? false : "hidden"}
-      animate={reduce || isInView ? "visible" : "hidden"}
+      animate={reduce || (status !== 'pending' && isInView) ? "visible" : "hidden"}
       className={className}
       {...motionProps}
     >

@@ -14,40 +14,40 @@ export const easing = {
 };
 
 export const durations = {
-  fast: 0.22,
-  normal: 0.65,
-  medium: 0.65,
-  slow: 0.72,
-  glacial: 0.8,
+  fast: 0.24,
+  normal: 0.72,
+  medium: 0.72,
+  slow: 0.9,
+  glacial: 1.05,
 };
 
 export const sectionPacing = {
   hero: {
-    lead: 0.1,
-    body: 0.18,
-    actions: 0.32,
+    lead: 0.08,
+    body: 0.5,
+    actions: 0.8,
   },
   feature: {
     title: 0.04,
-    body: 0.16,
-    content: 0.24,
+    body: 0.3,
+    content: 0.48,
   },
   support: {
     title: 0.04,
-    body: 0.16,
-    content: 0.24,
+    body: 0.3,
+    content: 0.48,
   },
   cta: {
     badge: 0.04,
     title: 0.04,
-    body: 0.16,
-    actions: 0.24,
+    body: 0.3,
+    actions: 0.48,
   },
 } as const;
 
 export const distances = {
   xs: 12,
-  sm: 18,
+  sm: 12,
   md: 28,
   lg: 36,
   heroImage: 44,
@@ -55,33 +55,33 @@ export const distances = {
 };
 
 export const staggerValues = {
-  section: 0.12,
-  cards: 0.10,
-  lines: 0.08,
+  section: 0.14,
+  cards: 0.12,
+  lines: 0.05,
   fast: 0.05,
 };
 
 export const viewportDefaults = {
   once: true,
-  amount: 0.22,
+  amount: 0.12,
   margin: "0px 0px -8% 0px",
 } as const;
 
 export const viewportAmounts = {
   title: viewportDefaults.amount,
   section: viewportDefaults.amount,
-  content: 0.3,
-  card: 0.24,
-  media: 0.24,
+  content: 0.14,
+  card: 0.01,
+  media: 0.12,
 } as const;
 
 export const titleReveal = {
-  distance: distances.sm,
-  blur: 14,
-  duration: durations.slow,
-  stagger: 0.055,
-  headingDelay: 0.1,
-  startDelayMs: 70,
+  distance: 20,
+  blur: 5,
+  duration: 0.8,
+  stagger: 0.05,
+  headingDelay: 0.04,
+  startDelayMs: 0,
 } as const;
 
 export const masterTitleReveal = {
@@ -104,8 +104,13 @@ export const contentRevealTokens = {
 export const routeReveal = {
   distance: 10,
   exitDistance: -4,
-  duration: 0.3,
-  exitDuration: 0.24,
+  duration: durations.normal,
+  exitDuration: durations.fast,
+} as const;
+
+export const sectionSequence = {
+  durationMs: 1700,
+  leadPx: 64,
 } as const;
 
 export const scrollTiming = {
@@ -122,8 +127,8 @@ export const smoothScroll = {
 export const cardReveal = {
   distance: distances.lg,
   duration: durations.slow,
-  stagger: 0.10,
-  viewportMargin: "0px 0px -12% 0px",
+  stagger: 0.12,
+  viewportMargin: "0px",
 } as const;
 
 export const mediaRevealTokens = {

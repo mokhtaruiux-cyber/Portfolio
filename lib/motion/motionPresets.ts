@@ -36,8 +36,10 @@ export const titleWordReveal = {
     baseDelay = 0,
     wordIndex = 0,
     reduceMotion = false,
+    distance: number = titleRevealTokens.distance,
   ): TitleRevealWordCustom => ({
     baseDelay,
+    distance,
     reduceMotion,
     wordIndex,
   }),

@@ -5,6 +5,7 @@ import * as React from 'react';
 import { cn } from '../../lib/utils';
 import { VIEWPORT_REVEAL } from '../../lib/motion';
 import { titleWordReveal } from '../../lib/motion/motionPresets';
+import { useSectionMotion } from './SectionSequence';
 
 type BlurInProps = {
     as?: React.ElementType;
@@ -14,13 +15,17 @@ type BlurInProps = {
     delay?: number;
     stackWords?: boolean;
     'aria-label'?: string;
+    /** Above-the-fold titles animate with CSS so the entrance starts at first paint, before hydration. */
+    cssIntro?: boolean;
 } & React.HTMLAttributes<HTMLElement>;
 
 const wordClass = 'inline-block will-change-transform';
 const wordContainerClass = 'flex flex-wrap gap-x-[0.25em]';
 
 type RenderContext = {
+    cssIntro: boolean;
     delay: number;
+    distance: number;
     isInView: boolean;
     reduceMotion: boolean;
     stackWords: boolean;
@@ -58,11 +63,27 @@ const renderAnimatedChildren = (
                     .map((word) => {
                         const wordIndex = counter.value;
                         counter.value += 1;
+                        if (context.cssIntro) {
+                            return (
+                                <span
+                                    key={`${word}-${wordIndex}`}
+                                    data-title-word=""
+                                    className={cn(wordClass, 'title-word-intro', context.stackWords && 'basis-full')}
+                                    style={{
+                                        animationDelay: `${titleWordReveal.resolveDelay(context.delay, wordIndex)}s`,
+                                        '--title-distance': `${context.distance}px`,
+                                    } as React.CSSProperties}
+                                >
+                                    {word}
+                                </span>
+                            );
+                        }
                         return (
                             <motion.span
                                 key={`${word}-${wordIndex}`}
+                                data-title-word=""
                                 className={cn(wordClass, context.stackWords && 'basis-full')}
-                                custom={titleWordReveal.getCustom(context.delay, wordIndex, context.reduceMotion)}
+                                custom={titleWordReveal.getCustom(context.delay, wordIndex, context.reduceMotion, context.distance)}
                                 variants={titleWordReveal.variants}
                                 initial={context.reduceMotion ? false : 'initial'}
                                 animate={context.isInView ? 'animate' : 'initial'}
@@ -102,6 +123,7 @@ export const BlurIn = ({
     contentClassName,
     delay = 0,
     stackWords = false,
+    cssIntro = false,
     'aria-label': ariaLabel,
     ...props
 }: BlurInProps) => {
@@ -109,17 +131,21 @@ export const BlurIn = ({
     const isInView = useInView(ref, VIEWPORT_REVEAL);
     const MotionComponent = React.useMemo(() => motion.create(Component), [Component]);
     const reduceMotion = useReducedMotion() ?? false;
+    const { status } = useSectionMotion();
+    const instant = reduceMotion || status === 'skipped';
     const accessibleLabel = ariaLabel ?? getAccessibleText(children);
 
     const animatedChildren = React.useMemo(() => {
         const counter = { value: 0 };
         return renderAnimatedChildren(children, counter, {
+            cssIntro,
             delay,
-            isInView,
-            reduceMotion,
+            distance: Component === 'h1' ? 20 : 10,
+            isInView: isInView && status !== 'pending',
+            reduceMotion: instant,
             stackWords,
         });
-    }, [children, delay, isInView, reduceMotion, stackWords]);
+    }, [Component, children, cssIntro, delay, instant, isInView, stackWords, status]);
 
     return (
         <MotionComponent

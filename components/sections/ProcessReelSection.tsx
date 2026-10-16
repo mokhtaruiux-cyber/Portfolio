@@ -11,6 +11,7 @@ import { typography } from '../../lib/typography';
 import { cn } from '../../lib/utils';
 import { cardReveal, titleReveal } from '../../lib/motion/motionPresets';
 import { fadeUp } from '../../lib/motion/variants';
+import { useSectionMotion } from '../motion/SectionSequence';
 
 type ProcessReelSectionProps = {
   autoPlay?: boolean;
@@ -30,19 +31,20 @@ export const ProcessReelSection: React.FC<ProcessReelSectionProps> = ({
   const { darkMode } = useTheme();
   const steps = siteContent.process.steps;
   const reduceMotion = useReducedMotion();
+  const { ambientAllowed } = useSectionMotion();
   const containerRef = useRef<HTMLDivElement | null>(null);
   const inView = useInView(containerRef, { margin: '-120px' });
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
 
   const [activeIndex, setActiveIndex] = useState(0);
-  const [progress, setProgress] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [isUserInteracting, setIsUserInteracting] = useState(false);
   const [isPageVisible, setIsPageVisible] = useState(true);
   const touchStartX = useRef<number | null>(null);
   const interactionTimeout = useRef<ReturnType<typeof window.setTimeout> | null>(null);
 
-  const isAutoPlayEnabled = autoPlay && !reduceMotion && isPageVisible;
+  const isAutoPlayEnabled = autoPlay && !reduceMotion && isPageVisible && ambientAllowed;
+  const isPlaying = isAutoPlayEnabled && inView && !isPaused && !isUserInteracting && (loop || activeIndex < steps.length - 1);
 
   useEffect(() => {
     const handleVisibilityChange = () => {
@@ -56,35 +58,12 @@ export const ProcessReelSection: React.FC<ProcessReelSectionProps> = ({
   }, []);
 
   useEffect(() => {
-    if (!isAutoPlayEnabled || !inView || isPaused || isUserInteracting) return;
-
-    let frameId = 0;
-    let lastTime = 0;
-    const tick = (time: number) => {
-      if (!lastTime) lastTime = time;
-      const delta = time - lastTime;
-      lastTime = time;
-
-      setProgress((prev) => {
-        const next = prev + delta / stepDurationMs;
-        if (next >= 1) {
-          setActiveIndex((current) => {
-            if (loop) return (current + 1) % steps.length;
-            return Math.min(current + 1, steps.length - 1);
-          });
-          return 0;
-        }
-        return next;
-      });
-
-      frameId = window.requestAnimationFrame(tick);
-    };
-
-    frameId = window.requestAnimationFrame(tick);
-    return () => {
-      window.cancelAnimationFrame(frameId);
-    };
-  }, [inView, isPaused, isUserInteracting, isAutoPlayEnabled, loop, stepDurationMs, steps.length]);
+    if (!isPlaying) return;
+    const timeoutId = window.setTimeout(() => {
+      setActiveIndex((current) => loop ? (current + 1) % steps.length : Math.min(current + 1, steps.length - 1));
+    }, stepDurationMs);
+    return () => window.clearTimeout(timeoutId);
+  }, [activeIndex, isPlaying, loop, stepDurationMs, steps.length]);
 
   useEffect(() => {
     if (!isUserInteracting) return;
@@ -99,7 +78,6 @@ export const ProcessReelSection: React.FC<ProcessReelSectionProps> = ({
 
   const handleSelect = (index: number) => {
     setActiveIndex(index);
-    setProgress(0);
     setIsUserInteracting(true);
   };
 
@@ -129,7 +107,6 @@ export const ProcessReelSection: React.FC<ProcessReelSectionProps> = ({
         if (delta < 0) return (current + 1) % steps.length;
         return (current - 1 + steps.length) % steps.length;
       });
-      setProgress(0);
       setIsUserInteracting(true);
     }
     touchStartX.current = null;
@@ -148,7 +125,7 @@ export const ProcessReelSection: React.FC<ProcessReelSectionProps> = ({
           </motion.p>
 
           {/* 2 — Title */}
-          <motion.div variants={fadeUp} className="mb-4">
+          <motion.div variants={{ hidden: {}, visible: {} }} className="mb-4">
             <BlurIn
               as="h2"
               delay={titleReveal.headingDelay}
@@ -225,10 +202,8 @@ export const ProcessReelSection: React.FC<ProcessReelSectionProps> = ({
                   </div>
                   <div className="h-1 w-full rounded-mini bg-black/10 dark:bg-white/10 overflow-hidden mb-4">
                     <div
-                      className="h-full bg-accent origin-left will-change-transform"
-                      style={{
-                        transform: isActive && isAutoPlayEnabled ? `scaleX(${Math.min(progress, 1)})` : 'scaleX(0)',
-                      }}
+                      className={cn('h-full bg-accent origin-left scale-x-0', isActive && isPlaying && 'process-progress')}
+                      style={{ animationDuration: `${stepDurationMs}ms` }}
                     />
                   </div>
                   <h3 className={cn(typography.h3, "font-black mb-3", darkMode ? "text-white" : "text-black")}>{step.title}</h3>

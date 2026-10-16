@@ -37,7 +37,7 @@ export const BlogSection = ({ onPostClick }: { onPostClick: (slug: string) => vo
         </motion.p>
 
         {/* 2 — Title */}
-        <motion.div variants={fadeUp} className="mb-4">
+        <motion.div variants={{ hidden: {}, visible: {} }} className="mb-4">
           <BlurIn
             as="h2"
             delay={titleReveal.headingDelay}

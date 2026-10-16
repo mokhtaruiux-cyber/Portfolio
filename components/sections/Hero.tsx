@@ -13,23 +13,21 @@ import { GlowButton } from '../ui/GlowButton';
 import { reveal } from '../../lib/motion/presets';
 import { sectionOrchestrator } from '../../lib/motion/variants';
 import { motionTokens as t } from '../../lib/motion/tokens';
+import { sectionPacing } from '../../lib/motion/motionTokens';
+import { useSectionMotion } from '../motion/SectionSequence';
 
 export const Hero = ({ onWorkClick }: { onWorkClick: () => void }) => {
   const { darkMode } = useTheme();
   const { cal } = siteContent;
   const shouldReduce = useReducedMotion();
-  const [isReady, setIsReady] = React.useState(false);
-
-  React.useEffect(() => {
-    const frame = window.requestAnimationFrame(() => setIsReady(true));
-    return () => window.cancelAnimationFrame(frame);
-  }, []);
+  const { status } = useSectionMotion();
+  const instant = shouldReduce || status === 'skipped';
 
   return (
     <motion.section
-      variants={shouldReduce ? undefined : sectionOrchestrator}
-      initial={shouldReduce ? undefined : 'hidden'}
-      animate={shouldReduce ? undefined : 'visible'}
+      variants={sectionOrchestrator}
+      initial={instant ? false : 'hidden'}
+      animate={instant || status !== 'pending' ? 'visible' : 'hidden'}
       className="relative pt-28 pb-14 md:pt-32 md:pb-16 overflow-hidden min-h-[70vh] sm:min-h-[75vh] flex flex-col justify-center"
     >
       <HeroGlow darkMode={darkMode} />
@@ -40,13 +38,14 @@ export const Hero = ({ onWorkClick }: { onWorkClick: () => void }) => {
         )}
       />
       <motion.div
-        variants={shouldReduce ? undefined : sectionOrchestrator}
-        initial={shouldReduce ? undefined : 'hidden'}
-        animate={shouldReduce ? undefined : isReady ? 'visible' : 'hidden'}
+        variants={sectionOrchestrator}
+        initial={instant ? false : 'hidden'}
+        animate={instant || status !== 'pending' ? 'visible' : 'hidden'}
         className="mx-auto w-full max-w-[1200px] px-4 sm:px-6 lg:px-10 text-center relative z-10 flex flex-col items-center gap-0"
       >
         <TitleReveal
           as="h1"
+          cssIntro
           wrapperClassName="w-full"
           contentClassName="justify-center"
           className={cn(
@@ -59,7 +58,14 @@ export const Hero = ({ onWorkClick }: { onWorkClick: () => void }) => {
         </TitleReveal>
 
         <motion.p
-          {...reveal.body}
+          variants={{
+            hidden: { opacity: 0, y: 10 },
+            visible: {
+              opacity: 1,
+              y: 0,
+              transition: { duration: 1, ease: t.ease.expo, delay: sectionPacing.hero.body },
+            },
+          }}
           className={cn(
             'max-w-2xl font-medium mx-auto !text-center mt-5 sm:mt-4',
             typography.body,

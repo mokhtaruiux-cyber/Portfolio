@@ -39,6 +39,7 @@ export type IndexedRevealVariantOptions = {
 
 export type TitleRevealWordCustom = {
   baseDelay?: number;
+  distance?: number;
   reduceMotion?: boolean;
   wordIndex?: number;
 };
@@ -77,18 +78,20 @@ export const resolveTitleWordDelay = (
 export const titleRevealWordVariants: Variants = {
   initial: (custom: TitleRevealWordCustom = {}) =>
     custom.reduceMotion
-      ? { opacity: 1 }
+      ? { opacity: 1, y: 0, filter: "blur(0px)" }
       : {
           opacity: 0,
-          y: titleReveal.distance,
+          y: custom.distance ?? titleReveal.distance,
           filter: `blur(${titleReveal.blur}px)`,
         },
   animate: (custom: TitleRevealWordCustom = {}) =>
     custom.reduceMotion
       ? {
           opacity: 1,
+          y: 0,
+          filter: "blur(0px)",
           transition: {
-            duration: durations.fast,
+            duration: 0,
           },
         }
       : {
@@ -103,18 +106,20 @@ export const titleRevealWordVariants: Variants = {
         },
   hidden: (custom: TitleRevealWordCustom = {}) =>
     custom.reduceMotion
-      ? { opacity: 1 }
+      ? { opacity: 1, y: 0, filter: "blur(0px)" }
       : {
           opacity: 0,
-          y: titleReveal.distance,
+          y: custom.distance ?? titleReveal.distance,
           filter: `blur(${titleReveal.blur}px)`,
         },
   visible: (custom: TitleRevealWordCustom = {}) =>
     custom.reduceMotion
       ? {
           opacity: 1,
+          y: 0,
+          filter: "blur(0px)",
           transition: {
-            duration: durations.fast,
+            duration: 0,
           },
         }
       : {
@@ -137,14 +142,13 @@ const buildRevealVariants = ({
   reduceMotion = false,
 }: RevealVariantOptions = {}): Variants => {
   const axis = resolveDirectionalOffset(direction, distance);
-  const initial = reduceMotion ? { opacity: 1 } : { opacity: 0, ...axis };
+  const initial = reduceMotion ? { opacity: 1, x: 0, y: 0 } : { opacity: 0, ...axis };
   const animate = reduceMotion
     ? {
         opacity: 1,
         transition: {
-          duration: durations.fast,
-          ease: easing.smooth,
-          delay,
+          duration: 0,
+          delay: 0,
         },
       }
     : {
@@ -174,11 +178,12 @@ const buildBlurFadeUpVariants = ({
   reduceMotion = false,
 }: RevealVariantOptions = {}): Variants => {
   if (reduceMotion) {
-    const initial = { opacity: 1, y: 0 };
+    const initial = { opacity: 1, y: 0, filter: "blur(0px)" };
     const animate = {
       opacity: 1,
       y: 0,
-      transition: revealTransition(0, durations.fast),
+      filter: "blur(0px)",
+      transition: { duration: 0 },
     };
 
     return {
@@ -282,12 +287,12 @@ export const buildCardRevealVariants = ({
   delay = 0,
   reduceMotion = false,
 }: IndexedRevealVariantOptions = {}): Variants => {
-  const initial = reduceMotion ? { opacity: 1 } : { opacity: 0, y: cardRevealTokens.distance };
+  const initial = reduceMotion ? { opacity: 1, y: 0 } : { opacity: 0, y: cardRevealTokens.distance };
   const animate = {
     opacity: 1,
     y: 0,
     transition: {
-      duration: reduceMotion ? durations.fast : cardRevealTokens.duration,
+      duration: reduceMotion ? 0 : cardRevealTokens.duration,
       ease: easing.reveal,
       delay: reduceMotion ? 0 : delay,
     },
@@ -308,7 +313,7 @@ export const buildMediaRevealVariants = ({
   reduceMotion = false,
 }: IndexedRevealVariantOptions = {}): Variants => {
   const initial = reduceMotion
-    ? { opacity: 1 }
+    ? { opacity: 1, y: 0, scale: 1 }
     : {
         opacity: 0,
         y: mediaRevealTokens.distance,
@@ -319,7 +324,7 @@ export const buildMediaRevealVariants = ({
     y: 0,
     scale: 1,
     transition: {
-      duration: reduceMotion ? durations.fast : mediaRevealTokens.duration,
+      duration: reduceMotion ? 0 : mediaRevealTokens.duration,
       ease: easing.reveal,
       delay: reduceMotion ? 0 : delay,
     },
